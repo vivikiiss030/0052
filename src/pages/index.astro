@@ -87,7 +87,7 @@ if (latest && latest.data.photos.length) {
 const fmt = (d) => `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0')}`;
 ---
 
-<Base bare title={null}>
+<Base bare wide title={null}>
   <section class="hero">
     <Picture
       src={satin}
@@ -135,6 +135,7 @@ const fmt = (d) => `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0
     </div>
   </section>
 
+  <div class="below">
   {
     latest && (
       <section class="wrap block">
@@ -190,6 +191,7 @@ const fmt = (d) => `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0
       </section>
     )
   }
+  </div>
 </Base>
 
 <script>
@@ -219,20 +221,23 @@ const fmt = (d) => `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0
     const loop = (now) => {
       const t = now * 0.001;
       // 第一屏滚出视野之后就不再计算
-      const active = !hero || sy < hero.offsetHeight + 200;
+      const heroH = hero ? hero.offsetHeight : window.innerHeight;
+      const active = sy < heroH + 200;
       if (active) {
+        // 第一屏被钉住，用「滚过了多少」当进度，位移才不会飞出去
+        const prog = Math.min(sy / heroH, 1);
         for (const o of els) {
-          // 漂浮：周期 25–35 秒，幅度随 depth，几乎察觉不到但画面是活的
-          const amp = 3 + o.d * 5;
-          const fx = Math.sin(t * 0.22 + o.ph) * amp;
-          const fy = Math.cos(t * 0.17 + o.ph) * amp * 0.7;
-          // 视差：越"近"的元素跟着滚动走得越多
-          const px = 0;
-          const py = -sy * o.d * 0.17;
+          // 漂浮：周期约 20 秒，幅度 8–24px —— 看得见在动，但依然是慢的
+          const amp = 8 + o.d * 16;
+          const fx = Math.sin(t * 0.3 + o.ph) * amp;
+          const fy = Math.cos(t * 0.23 + o.ph) * amp * 0.75;
+          // 视差：越「近」的元素随滚动上移越多，最多 220px
+          const py = -prog * 220 * o.d;
+          const px = Math.sin(o.ph) * prog * 26 * o.d;
           o.el.style.setProperty('--tx', (fx + px).toFixed(2) + 'px');
           o.el.style.setProperty('--ty', (fy + py).toFixed(2) + 'px');
         }
-        if (mark) mark.style.setProperty('--mty', (-sy * 0.05).toFixed(2) + 'px');
+        if (mark) mark.style.setProperty('--mty', (-prog * 70).toFixed(2) + 'px');
       }
       requestAnimationFrame(loop);
     };
@@ -261,7 +266,8 @@ const fmt = (d) => `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0
 <style>
   /* ── 第一屏：丝缎为地的拼贴 ───────────────── */
   .hero {
-    position: relative;
+    position: sticky;
+    top: 0;
     height: 100svh;
     min-height: 560px;
     overflow: hidden;
@@ -331,7 +337,7 @@ const fmt = (d) => `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0
   .nautilus2 { top: 39%; right: 3%; width: 5.6vmin; --rot: -24deg; z-index: 4; }
 
   /* 左上，月牙搭在第一个 0 的肩上 */
-  .star { top: 5%; left: 8%; width: 12.2vmin; --rot: -10deg; z-index: 3; }
+  .star { top: 10%; left: 14%; width: 12.2vmin; --rot: -10deg; z-index: 3; }
   .moon { top: 24%; left: 25%; width: 14.4vmin; --rot: -19deg; z-index: 5; }
   .blueflower { top: 33%; left: 12%; width: 9.9vmin; --rot: 16deg; z-index: 4; }
   .nightflower { top: 45%; left: 4%; width: 8.0vmin; --rot: -14deg; z-index: 3; }
@@ -344,7 +350,7 @@ const fmt = (d) => `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0
   .lilypad { top: 60%; left: 19%; width: 20.0vmin; --rot: 9deg; z-index: 4; }
   .lotus { top: 52%; left: 7%; width: 28.0vmin; --rot: -6deg; z-index: 5; }
   .lilypad2 { top: 70%; left: 84%; width: 13.8vmin; --rot: -11deg; z-index: 3; }
-  .starfish { top: 78%; left: 2%; width: 12.0vmin; --rot: 20deg; z-index: 4; }
+  .starfish { top: 70%; left: 2%; width: 12.0vmin; --rot: 20deg; z-index: 4; }
   .begonia { top: 75%; left: 28%; width: 13.6vmin; --rot: -16deg; z-index: 3; }
 
   /* 右下，小天使守着 2 */
@@ -352,8 +358,8 @@ const fmt = (d) => `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0
   .planet { top: 63%; left: 87%; width: 6.4vmin; z-index: 4; }
   .moon2 { top: 43%; left: 86%; width: 7.4vmin; --rot: 26deg; z-index: 3; }
   .orchid { top: 76%; left: 60%; width: 10.4vmin; --rot: 10deg; z-index: 4; }
-  .nautilus3 { top: 82%; left: 93%; width: 5.1vmin; --rot: 8deg; z-index: 3; }
-  .moonlet { top: 88%; left: 69%; width: 4.8vmin; z-index: 3; }
+  .nautilus3 { top: 74%; left: 94%; width: 5.1vmin; --rot: 8deg; z-index: 3; }
+  .moonlet { top: 84%; left: 66%; width: 4.8vmin; z-index: 3; }
 
   /* 上下两条 */
   .topbar,
@@ -450,8 +456,19 @@ const fmt = (d) => `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0
     .feelings { font-size: 13px; gap: 12px 16px; }
   }
 
-  /* ── 第一屏之下 ───────────────────────────── */
-  .block { margin-top: 120px; }
+  /* ── 第一屏之下：一块从下方升起、盖住第一屏的面板 ── */
+  .below {
+    position: relative;
+    z-index: 5;
+    background: var(--ground);
+    border-radius: 30px 30px 0 0;
+    box-shadow: 0 -26px 64px rgba(96, 74, 72, 0.18);
+    padding-top: 76px;
+    padding-bottom: 40px;
+  }
+
+  .block { margin-top: 96px; }
+  .block:first-child { margin-top: 0; }
 
   .block-head {
     display: flex;
