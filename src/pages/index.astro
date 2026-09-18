@@ -29,40 +29,43 @@ import moonlet from '../assets/collage/moonlet.png';
 
 // 拼贴元素：位置是相对第一屏的百分比，尺寸用 vw，所以整幅构图
 // 会随窗口等比缩放，而不是散架。手机上另有一套（见下方 media query）。
+// depth 决定视差幅度（越"近"动得越多），ph 是漂浮的相位差
 const pieces = [
-  { k: 'caladium', src: caladium, alt: '粉脉彩叶芋' },
-  { k: 'paleflower2', src: paleflower2, alt: '淡蓝色花' },
-  { k: 'paleflower', src: paleflower, alt: '浅蓝色花' },
-  { k: 'uranus', src: uranus, alt: '天王星' },
-  { k: 'nautilus2', src: nautilus2, alt: '鹦鹉螺壳' },
-  { k: 'star', src: star, alt: '金色星芒' },
-  { k: 'moon', src: moon, alt: '金色月牙' },
-  { k: 'blueflower', src: blueflower, alt: '蓝色花' },
-  { k: 'nightflower', src: nightflower, alt: '深蓝色花' },
-  { k: 'nautilus', src: nautilus, alt: '鹦鹉螺壳' },
-  { k: 'dagger', src: dagger, alt: '匕首' },
-  { k: 'lilypad', src: lilypad, alt: '荷叶' },
-  { k: 'lilypad2', src: lilypad2, alt: '荷叶' },
-  { k: 'lotus', src: lotus, alt: '粉色睡莲' },
-  { k: 'begonia', src: begonia, alt: '螺旋秋海棠叶' },
-  { k: 'starfish', src: starfish, alt: '海星' },
-  { k: 'orchid', src: orchid, alt: '绿色兰花' },
-  { k: 'cherub', src: cherub, alt: '金色小天使' },
-  { k: 'planet', src: planet, alt: '蓝色星球' },
-  { k: 'moon2', src: moon2, alt: '金色月牙' },
-  { k: 'moonlet', src: moonlet, alt: '月亮' },
-  { k: 'nautilus3', src: nautilus3, alt: '鹦鹉螺壳' },
+  { k: 'caladium', src: caladium, alt: '粉脉彩叶芋', d: 1.0, ph: 0.0 },
+  { k: 'paleflower2', src: paleflower2, alt: '淡蓝色花', d: 0.35, ph: 1.7 },
+  { k: 'paleflower', src: paleflower, alt: '浅蓝色花', d: 0.55, ph: 0.4 },
+  { k: 'uranus', src: uranus, alt: '天王星', d: 0.3, ph: 2.9 },
+  { k: 'nautilus2', src: nautilus2, alt: '鹦鹉螺壳', d: 0.3, ph: 1.1 },
+  { k: 'star', src: star, alt: '金色星芒', d: 0.85, ph: 2.2 },
+  { k: 'moon', src: moon, alt: '金色月牙', d: 0.7, ph: 0.8 },
+  { k: 'blueflower', src: blueflower, alt: '蓝色花', d: 0.55, ph: 3.4 },
+  { k: 'nightflower', src: nightflower, alt: '深蓝色花', d: 0.5, ph: 1.5 },
+  { k: 'nautilus', src: nautilus, alt: '鹦鹉螺壳', d: 0.4, ph: 2.6 },
+  { k: 'dagger', src: dagger, alt: '匕首', d: 0.95, ph: 0.3 },
+  { k: 'lilypad', src: lilypad, alt: '荷叶', d: 0.8, ph: 1.9 },
+  { k: 'lilypad2', src: lilypad2, alt: '荷叶', d: 0.6, ph: 3.1 },
+  { k: 'lotus', src: lotus, alt: '粉色睡莲', d: 1.0, ph: 0.6 },
+  { k: 'begonia', src: begonia, alt: '螺旋秋海棠叶', d: 0.6, ph: 2.4 },
+  { k: 'starfish', src: starfish, alt: '海星', d: 0.6, ph: 1.3 },
+  { k: 'orchid', src: orchid, alt: '绿色兰花', d: 0.5, ph: 0.9 },
+  { k: 'cherub', src: cherub, alt: '金色小天使', d: 0.9, ph: 2.0 },
+  { k: 'planet', src: planet, alt: '蓝色星球', d: 0.3, ph: 3.6 },
+  { k: 'moon2', src: moon2, alt: '金色月牙', d: 0.35, ph: 1.2 },
+  { k: 'moonlet', src: moonlet, alt: '月亮', d: 0.25, ph: 2.8 },
+  { k: 'nautilus3', src: nautilus3, alt: '鹦鹉螺壳', d: 0.3, ph: 0.5 },
 ];
 
+// 八个感觉是 moodboard，不是分区。已经有东西落地的做成链接，
+// 其余先留白 —— 等它们各自长出内容或设计元素再接上。
 const feelings = [
-  { id: 'amber', cjk: '琥珀' },
-  { id: 'glass', cjk: '玻璃' },
-  { id: 'smoke', cjk: '烟雾' },
-  { id: 'satin', cjk: '丝缎' },
-  { id: 'water', cjk: '纯净水' },
-  { id: 'dusk', cjk: '暮色' },
-  { id: 'blade', cjk: '刀' },
-  { id: 'night', cjk: '暗夜' },
+  { cjk: '琥珀' },
+  { cjk: '玻璃' },
+  { cjk: '烟雾' },
+  { cjk: '丝缎' },
+  { cjk: '纯净水', href: '/volumes/chun-jing-shui/' },
+  { cjk: '暮色' },
+  { cjk: '刀' },
+  { cjk: '暗夜', href: '/volumes/an-ye/' },
 ];
 
 const covers = import.meta.glob('/src/assets/volumes/**/*.{jpg,jpeg,png,webp,avif,JPG,JPEG,PNG}');
@@ -99,8 +102,18 @@ const fmt = (d) => `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0
     <div class="stage">
       <p class="mark">00:52</p>
       {
-        pieces.map((p) => (
-          <Image src={p.src} alt={p.alt} format="webp" quality={80} class={`el ${p.k}`} loading="eager" />
+        pieces.map((p, i) => (
+          <Image
+            src={p.src}
+            alt={p.alt}
+            format="webp"
+            quality={80}
+            class={`el ${p.k}`}
+            loading="eager"
+            data-d={p.d}
+            data-ph={p.ph}
+            style={`--i:${i}`}
+          />
         ))
       }
     </div>
@@ -115,7 +128,9 @@ const fmt = (d) => `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0
     </div>
 
     <div class="bottombar">
-      <p class="feelings">{feelings.map((f) => <span>{f.cjk}</span>)}</p>
+      <p class="feelings">
+        {feelings.map((f) => (f.href ? <a href={f.href}>{f.cjk}</a> : <span>{f.cjk}</span>))}
+      </p>
       <span class="label sig">V. &nbsp;/&nbsp; 2026</span>
     </div>
   </section>
@@ -177,6 +192,72 @@ const fmt = (d) => `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0
   }
 </Base>
 
+<script>
+  // 丝缎的动感：滚动视差 + 极慢的漂浮。
+  // 两者都只改 transform，合成一个 rAF 循环，不触发重排。
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const stage = document.querySelector('.stage');
+  const mark = document.querySelector('.mark');
+
+  if (stage && !reduce) {
+    const els = [...stage.querySelectorAll('.el')].map((el) => ({
+      el,
+      d: parseFloat(el.dataset.d || '0.5'),
+      ph: parseFloat(el.dataset.ph || '0'),
+    }));
+
+    let sy = 0;
+    let ticking = false;
+    const onScroll = () => {
+      sy = window.scrollY;
+      if (!ticking) { ticking = true; requestAnimationFrame(() => { ticking = false; }); }
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+
+    const hero = document.querySelector('.hero');
+
+    const loop = (now) => {
+      const t = now * 0.001;
+      // 第一屏滚出视野之后就不再计算
+      const active = !hero || sy < hero.offsetHeight + 200;
+      if (active) {
+        for (const o of els) {
+          // 漂浮：周期 25–35 秒，幅度随 depth，几乎察觉不到但画面是活的
+          const amp = 3 + o.d * 5;
+          const fx = Math.sin(t * 0.22 + o.ph) * amp;
+          const fy = Math.cos(t * 0.17 + o.ph) * amp * 0.7;
+          // 视差：越"近"的元素跟着滚动走得越多
+          const px = 0;
+          const py = -sy * o.d * 0.17;
+          o.el.style.setProperty('--tx', (fx + px).toFixed(2) + 'px');
+          o.el.style.setProperty('--ty', (fy + py).toFixed(2) + 'px');
+        }
+        if (mark) mark.style.setProperty('--mty', (-sy * 0.05).toFixed(2) + 'px');
+      }
+      requestAnimationFrame(loop);
+    };
+    requestAnimationFrame(loop);
+  }
+
+  // 下方区块进入视口时浮起
+  const blocks = document.querySelectorAll('.block');
+  if (blocks.length) {
+    if (reduce || !('IntersectionObserver' in window)) {
+      blocks.forEach((b) => b.classList.add('in'));
+    } else {
+      const io = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((e) => {
+            if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+          });
+        },
+        { rootMargin: '0px 0px -12% 0px' }
+      );
+      blocks.forEach((b) => io.observe(b));
+    }
+  }
+</script>
+
 <style>
   /* ── 第一屏：丝缎为地的拼贴 ───────────────── */
   .hero {
@@ -214,45 +295,64 @@ const fmt = (d) => `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0
     letter-spacing: 0.005em;
     color: #665049;
     z-index: 2;
+    transform: translate3d(0, var(--mty, 0px), 0);
+    will-change: transform;
   }
 
   /* 所有拼贴元素共用：真实投影，跟着裁剪的轮廓走 */
   .el {
     position: absolute;
     height: auto;
-    filter: drop-shadow(0 1.4vw 2.4vw rgba(118, 94, 90, 0.26));
+    filter: drop-shadow(0 1.4vmin 2.4vmin rgba(118, 94, 90, 0.26));
+    transform: translate3d(var(--tx, 0px), var(--ty, 0px), 0) rotate(var(--rot, 0deg));
+    will-change: transform;
+  }
+
+  /* 进场：轻轻浮上来，错开时间 */
+  @media (prefers-reduced-motion: no-preference) {
+    .el,
+    .mark {
+      opacity: 0;
+      animation: rise 1.1s cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
+      animation-delay: calc(var(--i, 0) * 45ms);
+    }
+  }
+
+  @keyframes rise {
+    from { opacity: 0; }
+    to { opacity: 1; }
   }
 
   /* 右上一堆，切出画面 */
-  .caladium { top: 6%; right: -4%; width: 29.6vmin; transform: rotate(13deg); z-index: 4; }
-  .paleflower2 { top: 17%; left: 19%; width: 9.3vmin; transform: rotate(12deg); z-index: 3; }
-  .paleflower { top: 18%; right: 11%; width: 12.8vmin; transform: rotate(-8deg); z-index: 5; }
+  .caladium { top: 6%; right: -4%; width: 29.6vmin; --rot: 13deg; z-index: 4; }
+  .paleflower2 { top: 17%; left: 19%; width: 9.3vmin; --rot: 12deg; z-index: 3; }
+  .paleflower { top: 18%; right: 11%; width: 12.8vmin; --rot: -8deg; z-index: 5; }
   .uranus { top: 27%; right: 6%; width: 7.4vmin; z-index: 4; }
-  .nautilus2 { top: 39%; right: 3%; width: 5.6vmin; transform: rotate(-24deg); z-index: 4; }
+  .nautilus2 { top: 39%; right: 3%; width: 5.6vmin; --rot: -24deg; z-index: 4; }
 
   /* 左上，月牙搭在第一个 0 的肩上 */
-  .star { top: 5%; left: 8%; width: 12.2vmin; transform: rotate(-10deg); z-index: 3; }
-  .moon { top: 24%; left: 25%; width: 14.4vmin; transform: rotate(-19deg); z-index: 5; }
-  .blueflower { top: 33%; left: 12%; width: 9.9vmin; transform: rotate(16deg); z-index: 4; }
-  .nightflower { top: 45%; left: 4%; width: 8.0vmin; transform: rotate(-14deg); z-index: 3; }
+  .star { top: 5%; left: 8%; width: 12.2vmin; --rot: -10deg; z-index: 3; }
+  .moon { top: 24%; left: 25%; width: 14.4vmin; --rot: -19deg; z-index: 5; }
+  .blueflower { top: 33%; left: 12%; width: 9.9vmin; --rot: 16deg; z-index: 4; }
+  .nightflower { top: 45%; left: 4%; width: 8.0vmin; --rot: -14deg; z-index: 3; }
 
   /* 鹦鹉螺嵌进 5 里 */
-  .nautilus { top: 58%; left: 52%; width: 8.0vmin; transform: rotate(18deg); z-index: 6; }
+  .nautilus { top: 58%; left: 52%; width: 8.0vmin; --rot: 18deg; z-index: 6; }
 
   /* 左下，压住数字下缘的一堆 */
-  .dagger { top: 3%; left: 41.7%; width: 26.4vmin; transform: rotate(69deg); z-index: 5; }
-  .lilypad { top: 60%; left: 19%; width: 20.0vmin; transform: rotate(9deg); z-index: 4; }
-  .lotus { top: 52%; left: 7%; width: 28.0vmin; transform: rotate(-6deg); z-index: 5; }
-  .lilypad2 { top: 70%; left: 84%; width: 13.8vmin; transform: rotate(-11deg); z-index: 3; }
-  .starfish { top: 78%; left: 2%; width: 12.0vmin; transform: rotate(20deg); z-index: 4; }
-  .begonia { top: 75%; left: 28%; width: 13.6vmin; transform: rotate(-16deg); z-index: 3; }
+  .dagger { top: 3%; left: 41.7%; width: 26.4vmin; --rot: 69deg; z-index: 5; }
+  .lilypad { top: 60%; left: 19%; width: 20.0vmin; --rot: 9deg; z-index: 4; }
+  .lotus { top: 52%; left: 7%; width: 28.0vmin; --rot: -6deg; z-index: 5; }
+  .lilypad2 { top: 70%; left: 84%; width: 13.8vmin; --rot: -11deg; z-index: 3; }
+  .starfish { top: 78%; left: 2%; width: 12.0vmin; --rot: 20deg; z-index: 4; }
+  .begonia { top: 75%; left: 28%; width: 13.6vmin; --rot: -16deg; z-index: 3; }
 
   /* 右下，小天使守着 2 */
-  .cherub { top: 53%; left: 71%; width: 20.0vmin; transform: rotate(-13deg); z-index: 5; }
+  .cherub { top: 53%; left: 71%; width: 20.0vmin; --rot: -13deg; z-index: 5; }
   .planet { top: 63%; left: 87%; width: 6.4vmin; z-index: 4; }
-  .moon2 { top: 43%; left: 86%; width: 7.4vmin; transform: rotate(26deg); z-index: 3; }
-  .orchid { top: 76%; left: 60%; width: 10.4vmin; transform: rotate(10deg); z-index: 4; }
-  .nautilus3 { top: 82%; left: 93%; width: 5.1vmin; transform: rotate(8deg); z-index: 3; }
+  .moon2 { top: 43%; left: 86%; width: 7.4vmin; --rot: 26deg; z-index: 3; }
+  .orchid { top: 76%; left: 60%; width: 10.4vmin; --rot: 10deg; z-index: 4; }
+  .nautilus3 { top: 82%; left: 93%; width: 5.1vmin; --rot: 8deg; z-index: 3; }
   .moonlet { top: 88%; left: 69%; width: 4.8vmin; z-index: 3; }
 
   /* 上下两条 */
@@ -294,7 +394,34 @@ const fmt = (d) => `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0
     color: #8a7370;
   }
 
+  .feelings a {
+    border-bottom: 1px solid transparent;
+    padding-bottom: 3px;
+    transition: color 0.3s, border-color 0.3s;
+  }
+
+  .feelings a:hover {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+  }
+
+  .feelings span { opacity: 0.55; }
+
   .sig { color: #9c8983; }
+
+  /* 下方区块：进入视口时浮起 */
+  .block {
+    opacity: 0;
+    transform: translateY(26px);
+    transition: opacity 0.9s cubic-bezier(0.22, 0.61, 0.36, 1),
+      transform 0.9s cubic-bezier(0.22, 0.61, 0.36, 1);
+  }
+
+  .block.in { opacity: 1; transform: none; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .block { opacity: 1; transform: none; transition: none; }
+  }
 
   /* ── 手机：只留八个元素，重新摆位 ───────────── */
   @media (max-width: 780px) {
