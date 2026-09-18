@@ -1,0 +1,208 @@
+/* ─────────────────────────────────────────────
+   00:52 — 视觉系统
+   暖色方向：米白地 + 深绿黑字 + 一点赭石
+   ───────────────────────────────────────────── */
+
+/* 字体全部自托管。不用 Google Fonts —— 它在中国大陆被墙，
+   国内读者会看到整站字体回落，设计直接垮掉。 */
+@import '@fontsource/bodoni-moda/latin-400.css';
+@import '@fontsource/bodoni-moda/latin-500.css';
+@import '@fontsource/karla/latin-300.css';
+@import '@fontsource/karla/latin-400.css';
+
+/* 中文用裁过的思源宋体子集，由 scripts/subset-fonts.py 生成。
+   完整字体 2.9 MB，裁完 145 KB。每次 build 会自动重新生成。 */
+@font-face {
+  font-family: 'Noto Serif SC Subset';
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+  src: url('/fonts/noto-serif-sc-300.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Noto Serif SC Subset';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/noto-serif-sc-400.woff2') format('woff2');
+}
+
+:root {
+  /* 颜色。没有纯黑，没有纯白。 */
+  --ground: #efeae1;
+  --ground-deep: #e7e0d4;
+  --ink: #22271f;
+  --ink-soft: #5e6158;
+  --ink-faint: #8b8d83;
+  --rule: #d8d1c3;
+  --accent: #a9784f;
+
+  /* 字体 */
+  --display: 'Bodoni Moda', 'Noto Serif SC Subset', 'Songti SC', serif;
+  --sans: 'Karla', -apple-system, 'Helvetica Neue', sans-serif;
+  --serif-cjk: 'Noto Serif SC Subset', 'Songti SC', 'Source Han Serif SC', serif;
+
+  /* 节奏 */
+  --gutter: clamp(20px, 5vw, 72px);
+  --measure: 36em; /* 中文正文一行约 36 字 */
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--ground);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 16px;
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* 中日韩文字的标点挤压，支持的浏览器上会自动生效 */
+@supports (text-spacing-trim: trim-start) {
+  body {
+    text-spacing-trim: trim-start;
+  }
+}
+
+img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+::selection {
+  background: var(--accent);
+  color: var(--ground);
+}
+
+/* ── 通用排版类 ───────────────────────────── */
+
+.label {
+  font-family: var(--sans);
+  font-size: 11px;
+  font-weight: 400;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+.rule {
+  height: 1px;
+  border: 0;
+  margin: 0;
+  background: var(--rule);
+}
+
+.wrap {
+  padding-inline: var(--gutter);
+  max-width: 1440px;
+  margin-inline: auto;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* ── 长正文（文章页）───────────────────────
+   这是整站最重要的一块。中文正文的可读性
+   靠的是行高、字距和栏宽，不是字号。       */
+
+.prose {
+  max-width: var(--measure);
+  font-family: var(--serif-cjk);
+  font-size: 17px;
+  font-weight: 300;
+  line-height: 2;
+  letter-spacing: 0.02em;
+  color: #2b302a;
+}
+
+.prose p {
+  margin: 0 0 1.6em;
+}
+
+.prose h2 {
+  margin: 3.2em 0 1em;
+  font-family: var(--serif-cjk);
+  font-size: 19px;
+  font-weight: 400;
+  letter-spacing: 0.08em;
+  line-height: 1.7;
+}
+
+.prose h3 {
+  margin: 2.4em 0 0.8em;
+  font-size: 17px;
+  font-weight: 400;
+  letter-spacing: 0.06em;
+  color: var(--ink-soft);
+}
+
+.prose a {
+  border-bottom: 1px solid var(--accent);
+  padding-bottom: 1px;
+}
+
+.prose a:hover {
+  color: var(--accent);
+}
+
+.prose blockquote {
+  margin: 2.4em 0;
+  padding-left: 1.6em;
+  border-left: 1px solid var(--accent);
+  color: var(--ink-soft);
+  font-style: normal;
+}
+
+.prose hr {
+  height: 1px;
+  border: 0;
+  background: var(--rule);
+  margin: 3.2em 0;
+}
+
+.prose img {
+  margin: 2.4em 0;
+  width: 100%;
+}
+
+.prose em {
+  font-style: italic;
+}
+
+/* 正文里的西文数字和字母用 Karla，避免宋体的西文难看 */
+.prose :is(p, li) {
+  font-feature-settings: 'palt' 0;
+}
+
+@media (max-width: 640px) {
+  .prose {
+    font-size: 16px;
+    line-height: 1.95;
+  }
+}

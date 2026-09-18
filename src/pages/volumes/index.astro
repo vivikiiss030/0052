@@ -1,0 +1,156 @@
+---
+import { getCollection } from 'astro:content';
+import { Picture } from 'astro:assets';
+import Base from '../../layouts/Base.astro';
+
+const files = import.meta.glob('/src/assets/volumes/**/*.{jpg,jpeg,png,webp,avif,JPG,JPEG,PNG}');
+
+const volumes = (await getCollection('volumes', ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
+);
+
+const cards = [];
+for (const v of volumes) {
+  let cover = null;
+  if (v.data.photos.length) {
+    const key = `/src/assets/volumes/${v.id}/${v.data.photos[0].file}`;
+    if (files[key]) cover = (await files[key]()).default;
+  }
+  cards.push({ v, cover });
+}
+
+const fmt = (d) => `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0')}`;
+---
+
+<Base title="辑" description="照片，成辑存放">
+  <div class="index">
+    <header class="head">
+      <p class="label">辑 / Volumes</p>
+      <h1>影像</h1>
+      <p class="count label">共 {volumes.length} 辑</p>
+    </header>
+
+    <ul class="grid">
+      {
+        cards.map(({ v, cover }, i) => (
+          <li class={i % 3 === 0 ? 'card tall' : 'card'}>
+            <a href={`/volumes/${v.id}/`}>
+              {cover && (
+                <Picture
+                  src={cover}
+                  formats={['avif', 'webp']}
+                  widths={[400, 800, 1200]}
+                  sizes="(max-width: 700px) 100vw, (max-width: 1100px) 46vw, 30vw"
+                  alt={v.data.photos[0].alt}
+                  loading={i < 3 ? 'eager' : 'lazy'}
+                  decoding="async"
+                />
+              )}
+              <div class="card-meta">
+                <h2>{v.data.title}</h2>
+                <p class="sub">
+                  {v.data.place && <span>{v.data.place}</span>}
+                  <span>{fmt(v.data.date)}</span>
+                </p>
+              </div>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+
+    {volumes.length === 0 && <p class="empty">还没有辑。往 src/content/volumes/ 放一个 .md，照片放进 src/assets/volumes/ 同名文件夹。</p>}
+  </div>
+</Base>
+
+<style>
+  .index {
+    padding-top: 40px;
+  }
+
+  .head {
+    margin-bottom: 72px;
+  }
+
+  .head h1 {
+    margin: 16px 0 12px;
+    font-family: var(--serif-cjk);
+    font-size: clamp(30px, 4.4vw, 46px);
+    font-weight: 400;
+    letter-spacing: 0.14em;
+  }
+
+  .count {
+    margin: 0;
+  }
+
+  .grid {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: clamp(28px, 4vw, 64px) clamp(20px, 3vw, 40px);
+    align-items: start;
+  }
+
+  /* 错落：每三张里有一张更高，避免整齐网格的呆板 */
+  .card img {
+    width: 100%;
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+  }
+
+  .card.tall img {
+    aspect-ratio: 3 / 4;
+  }
+
+  .card:nth-child(3n + 2) {
+    margin-top: clamp(24px, 4vw, 72px);
+  }
+
+  .card-meta {
+    margin-top: 16px;
+  }
+
+  .card h2 {
+    margin: 0 0 6px;
+    font-family: var(--serif-cjk);
+    font-size: 18px;
+    font-weight: 400;
+    letter-spacing: 0.08em;
+  }
+
+  .sub {
+    display: flex;
+    gap: 14px;
+    margin: 0;
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    color: var(--ink-soft);
+  }
+
+  .card a:hover h2 {
+    color: var(--accent);
+  }
+
+  .empty {
+    font-family: var(--serif-cjk);
+    color: var(--ink-soft);
+  }
+
+  @media (max-width: 1100px) {
+    .grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 700px) {
+    .grid {
+      grid-template-columns: 1fr;
+    }
+    .card:nth-child(3n + 2) {
+      margin-top: 0;
+    }
+  }
+</style>

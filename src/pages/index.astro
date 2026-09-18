@@ -1,0 +1,312 @@
+---
+import { getCollection } from 'astro:content';
+import { Picture } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+
+const covers = import.meta.glob('/src/assets/volumes/**/*.{jpg,jpeg,png,webp,avif,JPG,JPEG,PNG}');
+
+const volumes = (await getCollection('volumes', ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
+);
+
+const essays = (await getCollection('essays', ({ data }) => !data.draft))
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+  .slice(0, 4);
+
+const latest = volumes[0];
+let latestCover = null;
+if (latest && latest.data.photos.length) {
+  const key = `/src/assets/volumes/${latest.id}/${latest.data.photos[0].file}`;
+  if (covers[key]) latestCover = (await covers[key]()).default;
+}
+
+const fmt = (d) =>
+  `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0')}`;
+---
+
+<Base bare title={null}>
+  <!-- ── 第一屏：态度 ───────────────────────── -->
+  <section class="hero">
+    <div class="hero-top wrap">
+      <span class="label">V.</span>
+      <span class="label">Archive</span>
+      <span class="label">2026</span>
+    </div>
+
+    <div class="hero-mid">
+      <h1 class="mark">00:52</h1>
+      <span class="tick"></span>
+      <p class="tagline">night istill young</p>
+      <p class="tagline-cjk">影像与文字的存档</p>
+    </div>
+
+    <nav class="hero-nav" aria-label="主导航">
+      <a href="/volumes/"><span class="cjk">辑</span> Volumes</a>
+      <span class="sep">/</span>
+      <a href="/essays/"><span class="cjk">文</span> Essays</a>
+      <span class="sep">/</span>
+      <a href="/about/"><span class="cjk">我</span> About</a>
+    </nav>
+  </section>
+
+  <!-- ── 最新一辑 ───────────────────────────── -->
+  {
+    latest && (
+      <section class="wrap block">
+        <div class="block-head">
+          <span class="label">最新一辑 / Latest volume</span>
+          <span class="label">{fmt(latest.data.date)}</span>
+        </div>
+        <hr class="rule" />
+        <a href={`/volumes/${latest.id}/`} class="latest">
+          {latestCover && (
+            <Picture
+              src={latestCover}
+              formats={['avif', 'webp']}
+              widths={[480, 960, 1440, 1920]}
+              sizes="(max-width: 780px) 100vw, 62vw"
+              alt={latest.data.photos[0].alt}
+              loading="eager"
+            />
+          )}
+          <div class="latest-meta">
+            <h2>{latest.data.title}</h2>
+            {latest.data.place && <p class="place">{latest.data.place}</p>}
+            <p class="count label">{latest.data.photos.length} 张</p>
+          </div>
+        </a>
+      </section>
+    )
+  }
+
+  <!-- ── 近期文字 ───────────────────────────── -->
+  {
+    essays.length > 0 && (
+      <section class="wrap block">
+        <div class="block-head">
+          <span class="label">近期文字 / Recent essays</span>
+          <a href="/essays/" class="label more">
+            全部 →
+          </a>
+        </div>
+        <hr class="rule" />
+        <ul class="essay-list">
+          {essays.map((e) => (
+            <li>
+              <a href={`/essays/${e.id}/`}>
+                <time class="label" datetime={e.data.date.toISOString()}>
+                  {fmt(e.data.date)}
+                </time>
+                <h3>{e.data.title}</h3>
+                {e.data.summary && <p class="summary">{e.data.summary}</p>}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </section>
+    )
+  }
+</Base>
+
+<style>
+  /* 第一屏 */
+  .hero {
+    min-height: 100svh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-block: 40px 48px;
+  }
+
+  .hero-top {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .hero-mid {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 28px;
+    text-align: center;
+    padding-inline: var(--gutter);
+  }
+
+  .mark {
+    margin: 0;
+    font-family: var(--display);
+    font-size: clamp(88px, 21vw, 300px);
+    font-weight: 400;
+    line-height: 0.84;
+    letter-spacing: 0.005em;
+  }
+
+  .tick {
+    display: block;
+    width: 76px;
+    height: 1px;
+    background: var(--accent);
+  }
+
+  .tagline {
+    margin: 0;
+    font-size: clamp(11px, 1.1vw, 13px);
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: #3c4038;
+  }
+
+  .tagline-cjk {
+    margin: 0;
+    font-family: var(--serif-cjk);
+    font-size: 14px;
+    font-weight: 300;
+    letter-spacing: 0.2em;
+    color: var(--ink-soft);
+  }
+
+  .hero-nav {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+    font-size: 12px;
+    letter-spacing: 0.26em;
+    text-transform: uppercase;
+  }
+
+  .hero-nav .cjk {
+    font-family: var(--serif-cjk);
+    letter-spacing: 0.1em;
+    margin-right: 6px;
+  }
+
+  .hero-nav a {
+    padding-block: 10px;
+  }
+
+  .hero-nav a:hover {
+    color: var(--accent);
+  }
+
+  .hero-nav .sep {
+    color: var(--accent);
+  }
+
+  /* 区块 */
+  .block {
+    margin-top: 120px;
+  }
+
+  .block-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 18px;
+  }
+
+  .more:hover {
+    color: var(--accent);
+  }
+
+  /* 最新一辑 */
+  .latest {
+    display: block;
+    margin-top: 36px;
+  }
+
+  .latest img {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+  }
+
+  .latest-meta {
+    display: flex;
+    align-items: baseline;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-top: 20px;
+  }
+
+  .latest-meta h2 {
+    margin: 0;
+    font-family: var(--serif-cjk);
+    font-size: 21px;
+    font-weight: 400;
+    letter-spacing: 0.08em;
+  }
+
+  .place {
+    margin: 0;
+    font-size: 13px;
+    color: var(--ink-soft);
+    letter-spacing: 0.08em;
+  }
+
+  .count {
+    margin: 0;
+    margin-left: auto;
+  }
+
+  .latest:hover h2 {
+    color: var(--accent);
+  }
+
+  /* 文章列表 */
+  .essay-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .essay-list li {
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .essay-list a {
+    display: grid;
+    grid-template-columns: 96px minmax(0, 1fr);
+    gap: 24px;
+    align-items: baseline;
+    padding-block: 26px;
+  }
+
+  .essay-list h3 {
+    margin: 0;
+    font-family: var(--serif-cjk);
+    font-size: 19px;
+    font-weight: 400;
+    letter-spacing: 0.06em;
+  }
+
+  .essay-list .summary {
+    grid-column: 2;
+    margin: 8px 0 0;
+    font-family: var(--serif-cjk);
+    font-size: 14px;
+    font-weight: 300;
+    line-height: 1.9;
+    color: var(--ink-soft);
+    max-width: 44em;
+  }
+
+  .essay-list a:hover h3 {
+    color: var(--accent);
+  }
+
+  @media (max-width: 640px) {
+    .block {
+      margin-top: 80px;
+    }
+    .essay-list a {
+      grid-template-columns: 1fr;
+      gap: 6px;
+    }
+    .essay-list .summary {
+      grid-column: 1;
+    }
+  }
+</style>

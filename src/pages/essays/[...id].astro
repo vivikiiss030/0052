@@ -1,0 +1,66 @@
+---
+import { getCollection, render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+
+export async function getStaticPaths() {
+  const essays = await getCollection('essays', ({ data }) => !data.draft);
+  return essays.map((e) => ({ params: { id: e.id }, props: { essay: e } }));
+}
+
+const { essay } = Astro.props;
+const { Content } = await render(essay);
+
+const fmt = (d) => `${d.getFullYear()} 年 ${d.getMonth() + 1} 月 ${d.getDate()} 日`;
+---
+
+<Base title={essay.data.title} description={essay.data.summary ?? essay.data.title}>
+  <article class="essay">
+    <header class="head">
+      <p class="label">文 / Essay</p>
+      <h1>{essay.data.title}</h1>
+      <time class="date" datetime={essay.data.date.toISOString()}>{fmt(essay.data.date)}</time>
+    </header>
+
+    <div class="prose"><Content /></div>
+
+    <p class="back"><a href="/essays/">← 全部文字</a></p>
+  </article>
+</Base>
+
+<style>
+  .essay {
+    padding-top: 40px;
+  }
+
+  .head {
+    max-width: var(--measure);
+    margin-bottom: 64px;
+  }
+
+  .head h1 {
+    margin: 16px 0 18px;
+    font-family: var(--serif-cjk);
+    font-size: clamp(26px, 3.6vw, 36px);
+    font-weight: 400;
+    letter-spacing: 0.06em;
+    line-height: 1.55;
+  }
+
+  .date {
+    font-size: 13px;
+    letter-spacing: 0.1em;
+    color: var(--ink-soft);
+  }
+
+  .back {
+    margin-top: 120px;
+    font-size: 12px;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+  }
+
+  .back a:hover {
+    color: var(--accent);
+  }
+</style>

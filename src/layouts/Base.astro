@@ -1,0 +1,132 @@
+---
+import '../styles/global.css';
+
+const { title, description = '影像与文字的存档', wide = false, bare = false } = Astro.props;
+const site = '00:52';
+const pageTitle = title ? `${title} — ${site}` : `${site} · night istill young`;
+const path = Astro.url.pathname;
+
+const nav = [
+  { href: '/volumes/', cjk: '辑', en: 'Volumes' },
+  { href: '/essays/', cjk: '文', en: 'Essays' },
+  { href: '/about/', cjk: '我', en: 'About' },
+];
+---
+
+<!doctype html>
+<html lang="zh-Hans">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{pageTitle}</title>
+    <meta name="description" content={description} />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <link rel="alternate" type="application/rss+xml" title={site} href="/rss.xml" />
+  </head>
+
+  <body>
+    {
+      !bare && (
+        <header class="wrap site-head">
+          <a href="/" class="mark" aria-label="00:52 首页">
+            00:52
+          </a>
+          <nav aria-label="主导航">
+            {nav.map((item) => (
+              <a href={item.href} aria-current={path.startsWith(item.href) ? 'page' : undefined}>
+                <span class="cjk">{item.cjk}</span>
+                <span class="en">{item.en}</span>
+              </a>
+            ))}
+          </nav>
+        </header>
+      )
+    }
+
+    <main class={wide ? '' : 'wrap'}>
+      <slot />
+    </main>
+
+    <footer class="wrap site-foot">
+      <hr class="rule" />
+      <div class="foot-row">
+        <span class="label">night istill young</span>
+        <span class="label">V. &nbsp;/&nbsp; 2026</span>
+      </div>
+    </footer>
+
+    <style>
+      .site-head {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 24px;
+        padding-top: 28px;
+        padding-bottom: 28px;
+      }
+
+      .mark {
+        font-family: var(--display);
+        font-size: 22px;
+        font-weight: 400;
+        letter-spacing: 0.02em;
+      }
+
+      .site-head nav {
+        display: flex;
+        gap: 32px;
+      }
+
+      .site-head nav a {
+        display: flex;
+        align-items: baseline;
+        gap: 8px;
+        font-size: 11px;
+        letter-spacing: 0.26em;
+        text-transform: uppercase;
+        color: var(--ink-soft);
+        padding-block: 12px;
+      }
+
+      .site-head nav a:hover,
+      .site-head nav a[aria-current='page'] {
+        color: var(--ink);
+      }
+
+      .site-head nav .cjk {
+        font-family: var(--serif-cjk);
+        font-size: 15px;
+        letter-spacing: 0.1em;
+        text-transform: none;
+      }
+
+      .site-foot {
+        margin-top: 120px;
+        padding-bottom: 48px;
+      }
+
+      .foot-row {
+        display: flex;
+        justify-content: space-between;
+        padding-top: 20px;
+      }
+
+      @media (max-width: 640px) {
+        .site-head nav {
+          gap: 20px;
+        }
+        .site-head nav .en {
+          display: none;
+        }
+        .site-head nav .cjk {
+          font-size: 17px;
+        }
+      }
+    </style>
+  </body>
+</html>

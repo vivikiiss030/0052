@@ -1,0 +1,159 @@
+---
+import { getCollection, render } from 'astro:content';
+import { Picture } from 'astro:assets';
+import Base from '../../layouts/Base.astro';
+
+export async function getStaticPaths() {
+  const volumes = await getCollection('volumes', ({ data }) => !data.draft);
+  return volumes.map((v) => ({ params: { id: v.id }, props: { volume: v } }));
+}
+
+const { volume } = Astro.props;
+const { Content } = await render(volume);
+
+const files = import.meta.glob('/src/assets/volumes/**/*.{jpg,jpeg,png,webp,avif,JPG,JPEG,PNG}');
+
+const photos = [];
+for (const p of volume.data.photos) {
+  const key = `/src/assets/volumes/${volume.id}/${p.file}`;
+  if (files[key]) {
+    photos.push({ ...p, image: (await files[key]()).default });
+  }
+}
+
+const fmt = (d) => `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0')}`;
+---
+
+<Base title={volume.data.title} description={volume.data.place ?? volume.data.title}>
+  <article class="volume">
+    <header class="head">
+      <p class="label">辑 / Volume</p>
+      <h1>{volume.data.title}</h1>
+      <p class="meta">
+        {volume.data.place && <span>{volume.data.place}</span>}
+        <time datetime={volume.data.date.toISOString()}>{fmt(volume.data.date)}</time>
+        <span>{photos.length} 张</span>
+      </p>
+    </header>
+
+    <div class="note prose"><Content /></div>
+
+    <div class="plates">
+      {
+        photos.map((p, i) => (
+          <figure class={p.wide ? 'plate wide' : 'plate'}>
+            <Picture
+              src={p.image}
+              formats={['avif', 'webp']}
+              widths={[480, 960, 1440, 2000]}
+              sizes={p.wide ? '(max-width: 780px) 100vw, 88vw' : '(max-width: 780px) 100vw, 60vw'}
+              alt={p.alt}
+              loading={i < 2 ? 'eager' : 'lazy'}
+              decoding="async"
+            />
+            {p.caption && <figcaption>{p.caption}</figcaption>}
+          </figure>
+        ))
+      }
+    </div>
+
+    <p class="back"><a href="/volumes/">← 全部的辑</a></p>
+  </article>
+</Base>
+
+<style>
+  .volume {
+    padding-top: 40px;
+  }
+
+  .head {
+    max-width: 44em;
+    margin-bottom: 56px;
+  }
+
+  .head h1 {
+    margin: 16px 0 14px;
+    font-family: var(--serif-cjk);
+    font-size: clamp(28px, 4vw, 40px);
+    font-weight: 400;
+    letter-spacing: 0.08em;
+    line-height: 1.4;
+  }
+
+  .meta {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin: 0;
+    font-size: 13px;
+    letter-spacing: 0.1em;
+    color: var(--ink-soft);
+  }
+
+  .note {
+    margin-bottom: 72px;
+  }
+
+  /* 图版：默认居中偏窄，标 wide 的满幅。
+     交错的留白让一组照片有呼吸和节奏。 */
+  .plates {
+    display: flex;
+    flex-direction: column;
+    gap: clamp(60px, 9vw, 140px);
+  }
+
+  .plate {
+    margin: 0;
+    width: min(100%, 860px);
+    margin-inline: auto;
+  }
+
+  .plate.wide {
+    width: 100%;
+    max-width: none;
+  }
+
+  .plate:nth-child(4n + 2) {
+    margin-inline: 0 auto;
+  }
+
+  .plate:nth-child(4n + 4) {
+    margin-inline: auto 0;
+  }
+
+  .plate img {
+    width: 100%;
+    /* 竖图不能高过屏幕，否则一眼看不完整张 */
+    max-height: 84svh;
+    width: auto;
+    max-width: 100%;
+  }
+
+  .plate.wide img {
+    width: 100%;
+    max-height: none;
+  }
+
+  figcaption {
+    margin-top: 14px;
+    font-family: var(--serif-cjk);
+    font-size: 13px;
+    font-weight: 300;
+    line-height: 1.9;
+    letter-spacing: 0.06em;
+    color: var(--ink-soft);
+    max-width: 32em;
+  }
+
+  .back {
+    margin-top: 120px;
+    font-size: 12px;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+  }
+
+  .back a:hover {
+    color: var(--accent);
+  }
+</style>

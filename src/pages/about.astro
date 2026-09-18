@@ -1,0 +1,183 @@
+---
+import Base from '../layouts/Base.astro';
+
+// 履历页刻意比其他页克制：会看这一页的是合作方和 HR，
+// 他们需要三十秒内确认你做过什么，不需要氛围。
+const cv = {
+  name: '[你的名字]',
+  role: '[一句话：你是做什么的]',
+  email: '[你的邮箱]',
+  links: [
+    { label: 'Instagram', href: '#' },
+    { label: '公众号 night istill young', href: '#' },
+  ],
+  sections: [
+    {
+      title: '经历 / Experience',
+      items: [
+        { when: '[年份—年份]', what: '[职位]', where: '[机构]', note: '[一行说明]' },
+        { when: '[年份—年份]', what: '[职位]', where: '[机构]', note: '[一行说明]' },
+      ],
+    },
+    {
+      title: '教育 / Education',
+      items: [{ when: '[年份]', what: '[学位与专业]', where: 'London School of Economics', note: '' }],
+    },
+    {
+      title: '其他 / Selected',
+      items: [{ when: '[年份]', what: '[展览、发表、项目]', where: '[在哪里]', note: '' }],
+    },
+  ],
+};
+---
+
+<Base title="我" description={cv.role}>
+  <div class="cv">
+    <header class="head">
+      <p class="label">我 / About</p>
+      <h1>{cv.name}</h1>
+      <p class="role">{cv.role}</p>
+      <p class="contact">
+        <a href={`mailto:${cv.email}`}>{cv.email}</a>
+        {cv.links.map((l) => <a href={l.href}>{l.label}</a>)}
+        <a href="/cv.pdf" class="pdf">下载 PDF ↓</a>
+      </p>
+    </header>
+
+    {
+      cv.sections.map((s) => (
+        <section class="sec">
+          <h2 class="label">{s.title}</h2>
+          <hr class="rule" />
+          <ul>
+            {s.items.map((it) => (
+              <li>
+                <span class="when">{it.when}</span>
+                <span class="what">
+                  <strong>{it.what}</strong>
+                  {it.where && <span class="where">{it.where}</span>}
+                  {it.note && <span class="note">{it.note}</span>}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ))
+    }
+  </div>
+</Base>
+
+<style>
+  .cv {
+    padding-top: 40px;
+    max-width: 62em;
+  }
+
+  .head {
+    margin-bottom: 80px;
+  }
+
+  .head h1 {
+    margin: 16px 0 10px;
+    font-family: var(--serif-cjk);
+    font-size: clamp(28px, 4vw, 40px);
+    font-weight: 400;
+    letter-spacing: 0.12em;
+  }
+
+  .role {
+    margin: 0 0 24px;
+    font-family: var(--serif-cjk);
+    font-size: 15px;
+    font-weight: 300;
+    line-height: 1.9;
+    color: var(--ink-soft);
+    max-width: 34em;
+  }
+
+  .contact {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px;
+    margin: 0;
+    font-size: 12px;
+    letter-spacing: 0.16em;
+  }
+
+  .contact a {
+    border-bottom: 1px solid var(--rule);
+    padding-bottom: 3px;
+  }
+
+  .contact a:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  .pdf {
+    color: var(--accent);
+  }
+
+  .sec {
+    margin-bottom: 64px;
+  }
+
+  .sec h2 {
+    margin: 0 0 14px;
+  }
+
+  .sec ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .sec li {
+    display: grid;
+    grid-template-columns: 140px minmax(0, 1fr);
+    gap: 24px;
+    padding-block: 22px;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .when {
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    color: var(--ink-soft);
+    padding-top: 4px;
+  }
+
+  .what {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    font-family: var(--serif-cjk);
+  }
+
+  .what strong {
+    font-size: 16px;
+    font-weight: 400;
+    letter-spacing: 0.06em;
+  }
+
+  .where {
+    font-size: 14px;
+    font-weight: 300;
+    color: var(--ink-soft);
+  }
+
+  .note {
+    font-size: 13px;
+    font-weight: 300;
+    line-height: 1.9;
+    color: var(--ink-faint);
+    max-width: 40em;
+  }
+
+  @media (max-width: 640px) {
+    .sec li {
+      grid-template-columns: 1fr;
+      gap: 8px;
+    }
+  }
+</style>

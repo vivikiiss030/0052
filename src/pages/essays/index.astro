@@ -1,0 +1,152 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+
+const essays = (await getCollection('essays', ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
+);
+
+const byYear = new Map();
+for (const e of essays) {
+  const y = e.data.date.getFullYear();
+  if (!byYear.has(y)) byYear.set(y, []);
+  byYear.get(y).push(e);
+}
+
+const fmt = (d) => `${String(d.getMonth() + 1).padStart(2, '0')}.${String(d.getDate()).padStart(2, '0')}`;
+---
+
+<Base title="文" description="文字与思考的存档">
+  <div class="index">
+    <header class="head">
+      <p class="label">文 / Essays</p>
+      <h1>文字</h1>
+      <p class="count label">共 {essays.length} 篇</p>
+    </header>
+
+    {
+      [...byYear.entries()].map(([year, items]) => (
+        <section class="year">
+          <div class="year-head">
+            <span class="year-num">{year}</span>
+            <hr class="rule" />
+          </div>
+          <ul>
+            {items.map((e) => (
+              <li>
+                <a href={`/essays/${e.id}/`}>
+                  <time class="label" datetime={e.data.date.toISOString()}>
+                    {fmt(e.data.date)}
+                  </time>
+                  <h2>{e.data.title}</h2>
+                  {e.data.summary && <p class="summary">{e.data.summary}</p>}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ))
+    }
+
+    {essays.length === 0 && <p class="empty">还没有文章。往 src/content/essays/ 里放一个 .md 文件就会出现在这里。</p>}
+  </div>
+</Base>
+
+<style>
+  .index {
+    padding-top: 40px;
+  }
+
+  .head {
+    margin-bottom: 72px;
+  }
+
+  .head h1 {
+    margin: 16px 0 12px;
+    font-family: var(--serif-cjk);
+    font-size: clamp(30px, 4.4vw, 46px);
+    font-weight: 400;
+    letter-spacing: 0.14em;
+  }
+
+  .count {
+    margin: 0;
+  }
+
+  .year {
+    margin-bottom: 72px;
+  }
+
+  .year-head {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .year-num {
+    font-family: var(--display);
+    font-size: 15px;
+    letter-spacing: 0.12em;
+    color: var(--ink-soft);
+  }
+
+  .year-head .rule {
+    flex-grow: 1;
+  }
+
+  .year ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .year li {
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .year a {
+    display: grid;
+    grid-template-columns: 96px minmax(0, 1fr);
+    gap: 24px;
+    align-items: baseline;
+    padding-block: 30px;
+  }
+
+  .year h2 {
+    margin: 0;
+    font-family: var(--serif-cjk);
+    font-size: 20px;
+    font-weight: 400;
+    letter-spacing: 0.06em;
+  }
+
+  .summary {
+    grid-column: 2;
+    margin: 10px 0 0;
+    font-family: var(--serif-cjk);
+    font-size: 14px;
+    font-weight: 300;
+    line-height: 1.9;
+    color: var(--ink-soft);
+    max-width: 44em;
+  }
+
+  .year a:hover h2 {
+    color: var(--accent);
+  }
+
+  .empty {
+    font-family: var(--serif-cjk);
+    color: var(--ink-soft);
+  }
+
+  @media (max-width: 640px) {
+    .year a {
+      grid-template-columns: 1fr;
+      gap: 6px;
+    }
+    .summary {
+      grid-column: 1;
+    }
+  }
+</style>
