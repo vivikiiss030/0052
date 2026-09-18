@@ -111,14 +111,18 @@ const fmt = (d) => `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0
       if (e.key === 'ArrowLeft') { e.preventDefault(); go(-1); }
     });
 
-    // 竖直滚轮也能推动长卷（触控板横向手势本来就可以）
+    // 竖直滚轮也能推动长卷 —— 但长卷到头就必须放行，
+    // 否则整个页面会被卡住滚不动。
     rail.addEventListener(
       'wheel',
       (e) => {
-        if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
-          rail.scrollLeft += e.deltaY;
-          e.preventDefault();
-        }
+        if (Math.abs(e.deltaY) <= Math.abs(e.deltaX)) return; // 横向手势交给浏览器
+        const max = rail.scrollWidth - rail.clientWidth;
+        const atStart = rail.scrollLeft <= 1;
+        const atEnd = rail.scrollLeft >= max - 1;
+        if ((e.deltaY > 0 && atEnd) || (e.deltaY < 0 && atStart)) return; // 到头，让页面滚
+        rail.scrollLeft += e.deltaY;
+        e.preventDefault();
       },
       { passive: false }
     );
@@ -163,7 +167,7 @@ const fmt = (d) => `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0
     overflow-x: auto;
     overflow-y: hidden;
     scroll-snap-type: x proximity;
-    scroll-behavior: smooth;
+    overscroll-behavior-x: contain;
     padding-inline: var(--gutter);
     padding-bottom: 8px;
     scrollbar-width: none;
