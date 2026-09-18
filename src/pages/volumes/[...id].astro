@@ -16,9 +16,7 @@ const files = import.meta.glob('/src/assets/volumes/**/*.{jpg,jpeg,png,webp,avif
 const photos = [];
 for (const p of volume.data.photos) {
   const key = `/src/assets/volumes/${volume.id}/${p.file}`;
-  if (files[key]) {
-    photos.push({ ...p, image: (await files[key]()).default });
-  }
+  if (files[key]) photos.push({ ...p, image: (await files[key]()).default });
 }
 
 const fmt = (d) => `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0')}`;
@@ -35,20 +33,21 @@ const fmt = (d) => `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0
         <span>{photos.length} 张</span>
       </p>
     </header>
+  </article>
 
-    <div class="note prose"><Content /></div>
-
-    <div class="plates">
+  <!-- 横向图廊：一条向右走的长卷，照片保持各自的比例 -->
+  <div class="gallery">
+    <div class="rail" id="rail" tabindex="0" role="region" aria-label={`${volume.data.title} 图廊，左右滚动浏览`}>
       {
         photos.map((p, i) => (
-          <figure class={p.wide ? 'plate wide' : 'plate'}>
+          <figure class="plate" data-i={i}>
             <Picture
               src={p.image}
               formats={['avif', 'webp']}
-              widths={[480, 960, 1440, 2000]}
-              sizes={p.wide ? '(max-width: 780px) 100vw, 88vw' : '(max-width: 780px) 100vw, 60vw'}
+              widths={[600, 1000, 1600]}
+              sizes="(max-width: 780px) 86vw, 60vw"
               alt={p.alt}
-              loading={i < 2 ? 'eager' : 'lazy'}
+              loading={i < 3 ? 'eager' : 'lazy'}
               decoding="async"
             />
             {p.caption && <figcaption>{p.caption}</figcaption>}
@@ -57,24 +56,85 @@ const fmt = (d) => `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0
       }
     </div>
 
-    <p class="back"><a href="/volumes/">← 全部的辑</a></p>
-  </article>
+    <div class="controls wrap">
+      <div class="arrows">
+        <button type="button" id="prev" aria-label="上一张">←</button>
+        <button type="button" id="next" aria-label="下一张">→</button>
+      </div>
+      <p class="counter label"><span id="cur">1</span> / {photos.length}</p>
+      <a href="/volumes/" class="back label">← 全部的辑</a>
+    </div>
+  </div>
+
+  <div class="wrap note prose"><Content /></div>
 </Base>
 
-<style>
-  .volume {
-    padding-top: 40px;
-  }
+<script>
+  const rail = document.getElementById('rail');
+  const cur = document.getElementById('cur');
+  const prev = document.getElementById('prev');
+  const next = document.getElementById('next');
 
-  .head {
-    max-width: 44em;
-    margin-bottom: 56px;
+  if (rail && cur) {
+    const plates = [...rail.querySelectorAll('.plate')];
+
+    // 当前看的是第几张：取离视窗中心最近的那一张
+    const update = () => {
+      const mid = rail.scrollLeft + rail.clientWidth / 2;
+      let best = 0;
+      let bestD = Infinity;
+      plates.forEach((el, i) => {
+        const c = el.offsetLeft + el.offsetWidth / 2;
+        const d = Math.abs(c - mid);
+        if (d < bestD) { bestD = d; best = i; }
+      });
+      cur.textContent = String(best + 1);
+      if (prev) prev.disabled = rail.scrollLeft <= 2;
+      if (next) next.disabled = rail.scrollLeft >= rail.scrollWidth - rail.clientWidth - 2;
+      return best;
+    };
+
+    const go = (dir) => {
+      const i = Math.min(Math.max(update() + dir, 0), plates.length - 1);
+      const el = plates[i];
+      rail.scrollTo({ left: el.offsetLeft - (rail.clientWidth - el.offsetWidth) / 2, behavior: 'smooth' });
+    };
+
+    prev?.addEventListener('click', () => go(-1));
+    next?.addEventListener('click', () => go(1));
+    rail.addEventListener('scroll', update, { passive: true });
+
+    // 键盘左右键
+    rail.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight') { e.preventDefault(); go(1); }
+      if (e.key === 'ArrowLeft') { e.preventDefault(); go(-1); }
+    });
+
+    // 竖直滚轮也能推动长卷（触控板横向手势本来就可以）
+    rail.addEventListener(
+      'wheel',
+      (e) => {
+        if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
+          rail.scrollLeft += e.deltaY;
+          e.preventDefault();
+        }
+      },
+      { passive: false }
+    );
+
+    update();
   }
+</script>
+
+<style>
+  .volume { padding-top: 20px; }
+
+  .head { max-width: 44em; }
 
   .head h1 {
-    margin: 16px 0 14px;
+    margin: 10px 0 10px;
     font-family: var(--serif-cjk);
-    font-size: clamp(28px, 4vw, 40px);
+    font-size: clamp(24px, 3.2vw, 34px);
     font-weight: 400;
     letter-spacing: 0.08em;
     line-height: 1.4;
@@ -90,70 +150,96 @@ const fmt = (d) => `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0
     color: var(--ink-soft);
   }
 
-  .note {
-    margin-bottom: 72px;
+  .note { margin-top: 64px; }
+
+  /* ── 长卷 ─────────────────────────────── */
+  .gallery { margin-top: 32px; }
+
+  .rail {
+    display: flex;
+    align-items: flex-start;
+    gap: clamp(28px, 4.5vw, 88px);
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-snap-type: x proximity;
+    scroll-behavior: smooth;
+    padding-inline: var(--gutter);
+    padding-bottom: 8px;
+    scrollbar-width: none;
+    outline: none;
   }
 
-  /* 图版：默认居中偏窄，标 wide 的满幅。
-     交错的留白让一组照片有呼吸和节奏。 */
-  .plates {
-    display: flex;
-    flex-direction: column;
-    gap: clamp(60px, 9vw, 140px);
+  .rail::-webkit-scrollbar { display: none; }
+
+  .rail:focus-visible {
+    outline: 1px solid var(--accent);
+    outline-offset: 6px;
   }
 
   .plate {
+    flex: 0 0 auto;
     margin: 0;
-    width: min(100%, 860px);
-    margin-inline: auto;
-  }
-
-  .plate.wide {
-    width: 100%;
-    max-width: none;
-  }
-
-  .plate:nth-child(4n + 2) {
-    margin-inline: 0 auto;
-  }
-
-  .plate:nth-child(4n + 4) {
-    margin-inline: auto 0;
+    scroll-snap-align: center;
   }
 
   .plate img {
-    width: 100%;
-    /* 竖图不能高过屏幕，否则一眼看不完整张 */
-    max-height: 84svh;
+    display: block;
+    height: clamp(300px, calc(100svh - 300px), 760px);
     width: auto;
-    max-width: 100%;
-  }
-
-  .plate.wide img {
-    width: 100%;
-    max-height: none;
+    max-width: 86vw;
+    object-fit: contain;
   }
 
   figcaption {
     margin-top: 14px;
+    max-width: 30em;
     font-family: var(--serif-cjk);
     font-size: 13px;
     font-weight: 300;
     line-height: 1.9;
     letter-spacing: 0.06em;
     color: var(--ink-soft);
-    max-width: 32em;
   }
 
-  .back {
-    margin-top: 120px;
-    font-size: 12px;
-    letter-spacing: 0.24em;
-    text-transform: uppercase;
+  /* ── 控制条 ───────────────────────────── */
+  .controls {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+    margin-top: 28px;
+  }
+
+  .arrows { display: flex; gap: 8px; }
+
+  .arrows button {
+    width: 44px;
+    height: 44px;
+    border: 1px solid var(--rule);
+    border-radius: 0;
+    background: transparent;
     color: var(--ink-soft);
+    font-size: 15px;
+    line-height: 1;
+    cursor: pointer;
+    transition: border-color 0.2s, color 0.2s;
   }
 
-  .back a:hover {
+  .arrows button:hover:not(:disabled) {
+    border-color: var(--accent);
     color: var(--accent);
+  }
+
+  .arrows button:disabled { opacity: 0.32; cursor: default; }
+
+  .counter { margin: 0; }
+
+  .back { margin-left: auto; }
+  .back:hover { color: var(--accent); }
+
+  @media (max-width: 780px) {
+    .gallery { margin-top: 36px; }
+    .plate img { height: clamp(280px, calc(100svh - 300px), 620px); max-width: 84vw; }
+    .controls { gap: 18px; margin-top: 22px; }
+    .back { font-size: 10px; }
   }
 </style>

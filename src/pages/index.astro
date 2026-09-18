@@ -115,9 +115,7 @@ const fmt = (d) => `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0
     </div>
 
     <div class="bottombar">
-      <nav class="feelings" aria-label="按感觉浏览">
-        {feelings.map((f) => <a href={`/volumes/#${f.id}`}>{f.cjk}</a>)}
-      </nav>
+      <p class="feelings">{feelings.map((f) => <span>{f.cjk}</span>)}</p>
       <span class="label sig">V. &nbsp;/&nbsp; 2026</span>
     </div>
   </section>
@@ -226,36 +224,36 @@ const fmt = (d) => `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0
   }
 
   /* 右上一堆，切出画面 */
-  .caladium { top: 6%; right: -4%; width: 18.5vw; transform: rotate(13deg); z-index: 4; }
-  .paleflower2 { top: 17%; left: 19%; width: 5.8vw; transform: rotate(12deg); z-index: 3; }
-  .paleflower { top: 18%; right: 11%; width: 8vw; transform: rotate(-8deg); z-index: 5; }
-  .uranus { top: 27%; right: 6%; width: 4.6vw; z-index: 4; }
-  .nautilus2 { top: 39%; right: 3%; width: 3.5vw; transform: rotate(-24deg); z-index: 4; }
+  .caladium { top: 6%; right: -4%; width: 29.6vmin; transform: rotate(13deg); z-index: 4; }
+  .paleflower2 { top: 17%; left: 19%; width: 9.3vmin; transform: rotate(12deg); z-index: 3; }
+  .paleflower { top: 18%; right: 11%; width: 12.8vmin; transform: rotate(-8deg); z-index: 5; }
+  .uranus { top: 27%; right: 6%; width: 7.4vmin; z-index: 4; }
+  .nautilus2 { top: 39%; right: 3%; width: 5.6vmin; transform: rotate(-24deg); z-index: 4; }
 
   /* 左上，月牙搭在第一个 0 的肩上 */
-  .star { top: 5%; left: 8%; width: 7.6vw; transform: rotate(-10deg); z-index: 3; }
-  .moon { top: 24%; left: 25%; width: 9vw; transform: rotate(-19deg); z-index: 5; }
-  .blueflower { top: 33%; left: 12%; width: 6.2vw; transform: rotate(16deg); z-index: 4; }
-  .nightflower { top: 45%; left: 4%; width: 5vw; transform: rotate(-14deg); z-index: 3; }
+  .star { top: 5%; left: 8%; width: 12.2vmin; transform: rotate(-10deg); z-index: 3; }
+  .moon { top: 24%; left: 25%; width: 14.4vmin; transform: rotate(-19deg); z-index: 5; }
+  .blueflower { top: 33%; left: 12%; width: 9.9vmin; transform: rotate(16deg); z-index: 4; }
+  .nightflower { top: 45%; left: 4%; width: 8.0vmin; transform: rotate(-14deg); z-index: 3; }
 
   /* 鹦鹉螺嵌进 5 里 */
-  .nautilus { top: 58%; left: 52%; width: 5vw; transform: rotate(18deg); z-index: 6; }
+  .nautilus { top: 58%; left: 52%; width: 8.0vmin; transform: rotate(18deg); z-index: 6; }
 
   /* 左下，压住数字下缘的一堆 */
-  .dagger { top: 3%; left: 41.7%; width: 16.5vw; transform: rotate(69deg); z-index: 5; }
-  .lilypad { top: 60%; left: 19%; width: 12.5vw; transform: rotate(9deg); z-index: 4; }
-  .lotus { top: 52%; left: 7%; width: 17.5vw; transform: rotate(-6deg); z-index: 5; }
-  .lilypad2 { top: 70%; left: 84%; width: 8.6vw; transform: rotate(-11deg); z-index: 3; }
-  .starfish { top: 78%; left: 2%; width: 7.5vw; transform: rotate(20deg); z-index: 4; }
-  .begonia { top: 75%; left: 28%; width: 8.5vw; transform: rotate(-16deg); z-index: 3; }
+  .dagger { top: 3%; left: 41.7%; width: 26.4vmin; transform: rotate(69deg); z-index: 5; }
+  .lilypad { top: 60%; left: 19%; width: 20.0vmin; transform: rotate(9deg); z-index: 4; }
+  .lotus { top: 52%; left: 7%; width: 28.0vmin; transform: rotate(-6deg); z-index: 5; }
+  .lilypad2 { top: 70%; left: 84%; width: 13.8vmin; transform: rotate(-11deg); z-index: 3; }
+  .starfish { top: 78%; left: 2%; width: 12.0vmin; transform: rotate(20deg); z-index: 4; }
+  .begonia { top: 75%; left: 28%; width: 13.6vmin; transform: rotate(-16deg); z-index: 3; }
 
   /* 右下，小天使守着 2 */
-  .cherub { top: 53%; left: 71%; width: 12.5vw; transform: rotate(-13deg); z-index: 5; }
-  .planet { top: 63%; left: 87%; width: 4vw; z-index: 4; }
-  .moon2 { top: 43%; left: 86%; width: 4.6vw; transform: rotate(26deg); z-index: 3; }
-  .orchid { top: 76%; left: 60%; width: 6.5vw; transform: rotate(10deg); z-index: 4; }
-  .nautilus3 { top: 82%; left: 93%; width: 3.2vw; transform: rotate(8deg); z-index: 3; }
-  .moonlet { top: 88%; left: 69%; width: 3vw; z-index: 3; }
+  .cherub { top: 53%; left: 71%; width: 20.0vmin; transform: rotate(-13deg); z-index: 5; }
+  .planet { top: 63%; left: 87%; width: 6.4vmin; z-index: 4; }
+  .moon2 { top: 43%; left: 86%; width: 7.4vmin; transform: rotate(26deg); z-index: 3; }
+  .orchid { top: 76%; left: 60%; width: 10.4vmin; transform: rotate(10deg); z-index: 4; }
+  .nautilus3 { top: 82%; left: 93%; width: 5.1vmin; transform: rotate(8deg); z-index: 3; }
+  .moonlet { top: 88%; left: 69%; width: 4.8vmin; z-index: 3; }
 
   /* 上下两条 */
   .topbar,
@@ -285,6 +283,7 @@ const fmt = (d) => `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0
   .topbar nav a:hover { color: var(--accent); }
 
   .feelings {
+    margin: 0;
     display: flex;
     flex-wrap: wrap;
     gap: clamp(12px, 1.8vw, 26px);
@@ -294,8 +293,6 @@ const fmt = (d) => `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0
     letter-spacing: 0.2em;
     color: #8a7370;
   }
-
-  .feelings a:hover { color: var(--accent); }
 
   .sig { color: #9c8983; }
 
