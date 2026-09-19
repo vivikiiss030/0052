@@ -55,7 +55,7 @@ const nav = [
     <footer class="wrap site-foot">
       <hr class="rule" />
       <div class="foot-row">
-        <span class="label">night istill young</span>
+        <a href="/0052/" class="label foot-link">night istill young</a>
         <span class="label">V. &nbsp;/&nbsp; 2026</span>
       </div>
     </footer>
@@ -111,6 +111,17 @@ const nav = [
         background: var(--ground);
         margin-top: 120px;
         padding-bottom: 48px;
+      }
+
+      .foot-link {
+        border-bottom: 1px solid transparent;
+        padding-bottom: 3px;
+        transition: color 0.3s, border-color 0.3s;
+      }
+
+      .foot-link:hover {
+        color: var(--accent);
+        border-bottom-color: var(--accent);
       }
 
       .foot-row {

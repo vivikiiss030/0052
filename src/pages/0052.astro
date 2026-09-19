@@ -1,0 +1,206 @@
+---
+import { Image, Picture } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+
+import satin from '../assets/collage/satin.jpg';
+import moon from '../assets/collage/moon.png';
+import butterflyEye from '../assets/collage/butterfly-eye.png';
+import nautilus from '../assets/collage/nautilus.png';
+import star from '../assets/collage/star.png';
+
+// ───────────────────────────────────────────────────────────
+//  这一页的正文全部在下面这个数组里，直接改字就行。
+//  每一项是一段。想加一段就复制一行，想删就删掉一行。
+//  写成 { quiet: '...' } 的那一段会用浅一点的颜色，
+//  适合放旁白式的、说给自己听的句子。
+// ───────────────────────────────────────────────────────────
+const paragraphs = [
+  { text: '欢迎来到我的空间。' },
+  {
+    text: '00:52 是我出生的时间。用它做这个网站的名字，是因为我想要一个不解释自己的标题 —— 它不说我是谁、做什么、想让你觉得我怎么样，它只是一个时刻，一个还没被填上意义的坐标。',
+  },
+  {
+    text: '这里不是一个发表的地方，是一个存放的地方。照片、文字、还有每年年底给自己列的那份清单，都堆在这儿。我大概一两个月来整理一次，像给房间换一次水。',
+  },
+  {
+    quiet:
+      '所以如果你是从某条链接掉进来的，不用客气 —— 随便翻，翻到哪儿算哪儿，不必按顺序。',
+  },
+  {
+    text: '「night istill young」是我公众号的 id。少一个 s 不是打错，是我一直没去改；后来发现我喜欢它歪掉的那一点点，就留下了。夜还年轻，这句话我说给自己听了很多年，现在它挂在这里，替我继续说。',
+  },
+  {
+    text: '琥珀、玻璃、烟雾、丝缎、纯净水、暮色、刀、暗夜 —— 首页底下那一排字不是分类，是我给自己的一组颜色。有的年份我更像其中一个，有的年份像另一个，但它们从来不是互相替换的关系，是一起在的。人总得把各个面向都整合起来才算完整。',
+  },
+  // ↓ 想再写点什么就加在这儿。比如：这个网站是怎么做出来的、
+  //   你希望别人在这儿待多久、你现在在做的事……
+];
+
+const signoff = { line: '先写到这里。', by: 'V.' };
+---
+
+<Base title="关于这里" description="00:52 —— 这个网站从哪来" wide>
+  <section class="top">
+    <Picture
+      src={satin}
+      formats={['avif', 'webp']}
+      widths={[800, 1400, 2000]}
+      sizes="100vw"
+      alt=""
+      loading="eager"
+      class="ground"
+    />
+
+    <Image src={star} alt="" format="webp" quality={80} class="el s-star" loading="eager" />
+    <Image src={moon} alt="" format="webp" quality={80} class="el s-moon" loading="eager" />
+    <Image src={butterflyEye} alt="" format="webp" quality={80} class="el s-bf" loading="eager" />
+    <Image src={nautilus} alt="" format="webp" quality={80} class="el s-shell" loading="eager" />
+
+    <div class="top-inner">
+      <p class="num">00:52</p>
+      <p class="tagline">night istill young</p>
+    </div>
+  </section>
+
+  <article class="body prose">
+    {
+      paragraphs.map((p) =>
+        p.quiet ? <p class="quiet">{p.quiet}</p> : <p>{p.text}</p>
+      )
+    }
+
+    <p class="sign">
+      <span>{signoff.line}</span>
+      <span class="by">{signoff.by}</span>
+    </p>
+
+    <nav class="onward">
+      <a href="/volumes/">如梦似幻 —— 照片</a>
+      <a href="/essays/">头脑的温水 —— 文字</a>
+      <a href="/about/">我由什么组成 —— 履历</a>
+    </nav>
+  </article>
+</Base>
+
+<style>
+  /* ── 上面那条丝缎 ─────────────────────────── */
+  .top {
+    position: relative;
+    height: 58svh;
+    min-height: 380px;
+    overflow: hidden;
+    background: #eadad4;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .ground {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transform: scale(1.02);
+  }
+
+  .el {
+    position: absolute;
+    height: auto;
+    filter: drop-shadow(0 1.2vmin 2.2vmin rgba(118, 94, 90, 0.24));
+  }
+
+  .s-star { top: 12%; left: 13%; width: 9vmin; transform: rotate(-10deg); }
+  .s-moon { top: 52%; left: 21%; width: 11vmin; transform: rotate(-19deg); }
+  .s-bf { top: 18%; right: 9%; width: 12vmin; transform: rotate(-14deg); }
+  .s-shell { bottom: 12%; right: 20%; width: 6.4vmin; transform: rotate(18deg); }
+
+  .top-inner {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+  }
+
+  .num {
+    margin: 0;
+    font-family: var(--display);
+    font-size: clamp(64px, 11vw, 148px);
+    font-weight: 400;
+    line-height: 1;
+    color: #665049;
+  }
+
+  .tagline {
+    margin: 14px 0 0;
+    font-size: 11px;
+    letter-spacing: 0.34em;
+    text-transform: uppercase;
+    color: #8a7370;
+  }
+
+  /* ── 正文 ─────────────────────────────────── */
+  .body {
+    max-width: 34em;
+    margin: 0 auto;
+    padding: clamp(56px, 8vw, 104px) var(--gutter) 0;
+  }
+
+  .body p { margin: 0 0 1.9em; }
+
+  .body p:first-child {
+    font-family: var(--display);
+    font-size: clamp(24px, 3vw, 34px);
+    line-height: 1.4;
+    color: var(--ink);
+    margin-bottom: 1.4em;
+  }
+
+  .quiet {
+    color: var(--ink-soft);
+    padding-left: 1.4em;
+    border-left: 1px solid var(--rule);
+  }
+
+  .sign {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-top: 3em;
+    padding-top: 1.6em;
+    border-top: 1px solid var(--rule);
+    color: var(--ink-soft);
+  }
+
+  .by {
+    font-family: var(--display);
+    font-size: 20px;
+    color: var(--ink);
+  }
+
+  .onward {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    margin-top: 4em;
+    font-family: var(--serif-cjk);
+    font-size: 15px;
+    letter-spacing: 0.08em;
+  }
+
+  .onward a {
+    color: var(--ink-soft);
+    border-bottom: 1px solid transparent;
+    padding-bottom: 4px;
+    width: fit-content;
+    transition: color 0.3s, border-color 0.3s;
+  }
+
+  .onward a:hover { color: var(--accent); border-bottom-color: var(--accent); }
+
+  @media (max-width: 780px) {
+    .top { height: 46svh; min-height: 300px; }
+    .s-star, .s-shell { display: none; }
+    .s-moon { top: 58%; left: 6%; width: 20vw; }
+    .s-bf { top: 14%; right: -4%; width: 26vw; }
+  }
+</style>
