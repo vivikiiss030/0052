@@ -246,17 +246,23 @@ const fmt = (d) => `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0
         }
 
         if (markWrap) {
-          // 呼吸：周期约 12.5 秒，幅度 0.6% —— 静止时画面也在起伏
-          const breath = Math.sin(t * 0.5) * 0.006;
-          markWrap.style.setProperty('--msc', (1 - ease * 0.2 + breath).toFixed(4));
-          markWrap.style.setProperty('--mop', (1 - ease * 0.72).toFixed(3));
+          // 呼吸：周期约 10 秒，幅度 1.7% —— 静止时数字自己也在起伏
+          const breath = Math.sin(t * 0.62) * 0.017;
+          markWrap.style.setProperty('--msc', (1 - ease * 0.24 + breath).toFixed(4));
+          // 透明度也跟着呼吸走一点，起伏才看得见而不只是「大小在变」
+          markWrap.style.setProperty('--mop', (1 - ease * 0.72 + (breath - 0.017) * 1.6).toFixed(3));
         }
-        if (mark) mark.style.setProperty('--mty', (-prog * 70).toFixed(2) + 'px');
+        if (mark) {
+          // 除了随滚动上移，再叠一层 5px 的缓慢浮动
+          const mb = Math.sin(t * 0.62 + 1.1) * 5;
+          mark.style.setProperty('--mty', (-prog * 70 + mb).toFixed(2) + 'px');
+        }
 
         if (ground) {
-          // 丝缎随滚动缓慢推近，并叠一层更慢的呼吸
-          const gb = Math.sin(t * 0.13) * 0.004;
-          ground.style.setProperty('--gsc', (1 + ease * 0.07 + gb).toFixed(4));
+          // 丝缎随滚动推近，并叠一层周期约 31 秒、幅度 1.3% 的极慢呼吸。
+          // 底数 1.022 是为了让呼吸缩到最小时仍然 > 1，不会露出边。
+          const gb = Math.sin(t * 0.2) * 0.013;
+          ground.style.setProperty('--gsc', (1.022 + ease * 0.11 + gb).toFixed(4));
         }
       }
       requestAnimationFrame(loop);
