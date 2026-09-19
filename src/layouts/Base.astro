@@ -50,6 +50,7 @@ const nav = [
     }
 
     {sheen && <canvas id="sheen" aria-hidden="true" />}
+    {sheen && <canvas id="glint" aria-hidden="true" />}
 
     <main class={wide ? '' : 'wrap'}>
       <slot />
@@ -76,6 +77,8 @@ const nav = [
 
       if (canvas && fine && !still) {
         const ctx = canvas.getContext('2d');
+        const gcv = document.getElementById('glint');
+        const gtx = gcv.getContext('2d');
         let w = 0;
         let h = 0;
 
@@ -83,9 +86,10 @@ const nav = [
           w = window.innerWidth;
           h = window.innerHeight;
           const dpr = Math.min(window.devicePixelRatio || 1, 2);
-          canvas.width = Math.floor(w * dpr);
-          canvas.height = Math.floor(h * dpr);
+          canvas.width = gcv.width = Math.floor(w * dpr);
+          canvas.height = gcv.height = Math.floor(h * dpr);
           ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+          gtx.setTransform(dpr, 0, 0, dpr, 0, 0);
         };
         resize();
         window.addEventListener('resize', resize);
@@ -101,10 +105,51 @@ const nav = [
         const STEP = 30;            // 走多远落一圈
         const LIFE = 1.15;          // 一圈活多久（秒）
 
+        // ── 星芒 ──────────────────────────────────────
+        // 四角星：把贝塞尔的控制点放在中心，曲线就会往中间收，
+        // 收出那种又尖又细的芒 —— 这是画星星最省事也最像的办法。
+        const glints = [];
+        const MAX_GLINTS = 44;
+
+        const addGlint = (x, y, size, warm) => {
+          if (glints.length >= MAX_GLINTS) glints.shift();
+          glints.push({
+            x, y,
+            r: size,
+            t: 0,
+            span: 0.6 + Math.random() * 0.55,
+            rot: Math.random() * Math.PI,
+            warm,                          // 0 = 白，1 = 香槟金
+            spin: (Math.random() - 0.5) * 0.9,
+          });
+        };
+
+        const star4 = (g, r, aspect) => {
+          g.beginPath();
+          g.moveTo(0, -r);
+          g.quadraticCurveTo(0, 0, r * aspect, 0);
+          g.quadraticCurveTo(0, 0, 0, r);
+          g.quadraticCurveTo(0, 0, -r * aspect, 0);
+          g.quadraticCurveTo(0, 0, 0, -r);
+          g.closePath();
+        };
+
         const drop = (x, y, power) => {
           if (rings.length >= MAX_RINGS) rings.shift();
           const reach = 54 + power * 34;
-          rings.push({ x, y, t: 0, reach });
+          // 这一圈上预约几颗星：等波扩到那儿，星就亮在波脊上
+          const seeds = [];
+          const n = 1 + (Math.random() < 0.7 ? 1 : 0) + (power > 0.8 ? 1 : 0);
+          for (let i = 0; i < n; i++) {
+            seeds.push({
+              at: 0.12 + Math.random() * 0.6,
+              ang: Math.random() * Math.PI * 2,
+              size: 9 + Math.random() * 16,
+              warm: Math.random(),
+              done: false,
+            });
+          }
+          rings.push({ x, y, t: 0, reach, seeds });
           // 告诉页面上的东西：这里落了一圈
           window.dispatchEvent(
             new CustomEvent('sheen:ripple', { detail: { x, y, reach, life: LIFE } })
@@ -138,7 +183,7 @@ const nav = [
           const now = window.scrollY < limit;
           if (now !== inHero) {
             inHero = now;
-            canvas.style.opacity = now ? '1' : '0';
+            canvas.style.opacity = gcv.style.opacity = now ? '1' : '0';
           }
         };
         checkZone();
@@ -151,7 +196,7 @@ const nav = [
           last = now;
           ctx.clearRect(0, 0, w, h);
 
-          if (!inHero) { rings.length = 0; requestAnimationFrame(frame); return; }
+          if (!inHero) { rings.length = 0; glints.length = 0; gtx.clearRect(0, 0, w, h); requestAnimationFrame(frame); return; }
 
           if (moved) {
             const px = gx, py = gy;
@@ -166,7 +211,17 @@ const nav = [
             const d = Math.hypot(gx - lx, gy - ly);
             if (d > STEP) {
               lx = gx; ly = gy;
-              drop(gx, gy, Math.min(speed / 700, 1));
+              const power = Math.min(speed / 700, 1);
+              drop(gx, gy, power);
+              // 鼠标自己也偶尔迸一颗，落点就在指针附近
+              if (Math.random() < 0.4 + power * 0.3) {
+                addGlint(
+                  gx + (Math.random() - 0.5) * 34,
+                  gy + (Math.random() - 0.5) * 34,
+                  8 + Math.random() * 14,
+                  0.35 + Math.random() * 0.65
+                );
+              }
             }
 
             // 光点：涟漪的出处
@@ -198,6 +253,13 @@ const nav = [
             const r = 8 + ring.reach * grow;
             const fade = Math.pow(1 - p, 1.5);
 
+            // 波脊扫到预约点，就在那儿亮一颗
+            for (const sd of ring.seeds) {
+              if (sd.done || p < sd.at) continue;
+              sd.done = true;
+              addGlint(ring.x + Math.cos(sd.ang) * r, ring.y + Math.sin(sd.ang) * r, sd.size, sd.warm);
+            }
+
             // 真实的水波是一道亮的脊 + 紧跟着一道暗的谷。
             // 只画亮的会像光圈，两道一起画才像水。
             ctx.globalCompositeOperation = 'source-over';
@@ -225,6 +287,50 @@ const nav = [
           }
           ctx.globalCompositeOperation = 'source-over';
 
+          // ── 星芒画在另一张画布上 ──────────────────────
+          gtx.clearRect(0, 0, w, h);
+          for (let i = glints.length - 1; i >= 0; i--) {
+            const gl = glints[i];
+            gl.t += dt;
+            const gp = gl.t / gl.span;
+            if (gp >= 1) { glints.splice(i, 1); continue; }
+
+            // 先涨后落：亮起来快，消下去慢
+            const pulse = Math.sin(Math.PI * Math.pow(gp, 0.78));
+            const a = Math.pow(pulse, 1.25);
+            const rr = gl.r * (0.45 + pulse * 0.75);
+
+            gtx.save();
+            gtx.translate(gl.x, gl.y);
+            gtx.rotate(gl.rot + gl.spin * gl.t);
+
+            // 底下垫一层暖光晕
+            const halo = gtx.createRadialGradient(0, 0, 0, 0, 0, rr * 1.5);
+            halo.addColorStop(0, `rgba(255, ${240 - gl.warm * 22}, ${218 - gl.warm * 44}, ${a * 0.5})`);
+            halo.addColorStop(1, 'rgba(255, 232, 200, 0)');
+            gtx.fillStyle = halo;
+            gtx.beginPath();
+            gtx.arc(0, 0, rr * 1.5, 0, Math.PI * 2);
+            gtx.fill();
+
+            // 主芒 + 转 45 度的小芒，合起来是八角
+            const core = gtx.createRadialGradient(0, 0, 0, 0, 0, rr);
+            core.addColorStop(0, `rgba(255, 255, 252, ${a})`);
+            core.addColorStop(0.35, `rgba(255, ${246 - gl.warm * 14}, ${230 - gl.warm * 40}, ${a * 0.9})`);
+            core.addColorStop(1, `rgba(255, ${238 - gl.warm * 20}, ${212 - gl.warm * 44}, 0)`);
+            gtx.fillStyle = core;
+            star4(gtx, rr, 0.12);
+            gtx.fill();
+
+            gtx.rotate(Math.PI / 4);
+            gtx.globalAlpha = 0.55;
+            star4(gtx, rr * 0.5, 0.16);
+            gtx.fill();
+            gtx.globalAlpha = 1;
+
+            gtx.restore();
+          }
+
           requestAnimationFrame(frame);
         };
         requestAnimationFrame(frame);
@@ -232,20 +338,26 @@ const nav = [
     </script>
 
     <style>
-      #sheen {
+      #sheen,
+      #glint {
         position: fixed;
         inset: 0;
         width: 100%;
         height: 100%;
         z-index: 40;
         pointer-events: none;
-        mix-blend-mode: soft-light;
         opacity: 1;
         transition: opacity 0.5s ease;
       }
 
+      /* 水波只改亮度，不盖住底下的东西 */
+      #sheen { mix-blend-mode: soft-light; }
+
+      /* 星芒要正常混合才闪得起来，所以放在水波上面一层 */
+      #glint { z-index: 41; }
+
       @media (prefers-reduced-motion: reduce) {
-        #sheen { display: none; }
+        #sheen, #glint { display: none; }
       }
 
       .site-head {
