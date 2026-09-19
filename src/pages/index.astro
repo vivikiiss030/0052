@@ -124,8 +124,8 @@ const fmt = (d) => `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0
       <span class="spacer"></span>
       <nav aria-label="主导航">
         <a href="/volumes/">如梦似幻</a>
-        <a href="/poems/">情诗</a>
         <a href="/essays/">头脑的温水</a>
+        <a href="/poems/">情诗</a>
         <a href="/about/">我由什么组成</a>
       </nav>
     </div>
@@ -211,7 +211,34 @@ const fmt = (d) => `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0
       el,
       d: parseFloat(el.dataset.d || '0.5'),
       ph: parseFloat(el.dataset.ph || '0'),
+      // 被涟漪推开之后的偏移、速度、以及一点点转动和缩放
+      ox: 0, oy: 0, vx: 0, vy: 0, rw: 0, rv: 0, pop: 0,
+      cx: 0, cy: 0, hw: 0,
     }));
+
+    // 元素在屏幕上的中心。第一屏是 sticky 的，钉住的时候它的顶就是屏幕的顶，
+    // 所以用 offsetLeft/offsetTop 就够了，不用每帧去问浏览器要位置（那会很卡）。
+    const measure = () => {
+      for (const o of els) {
+        o.cx = o.el.offsetLeft + o.el.offsetWidth / 2;
+        o.cy = o.el.offsetTop + o.el.offsetHeight / 2;
+        o.hw = Math.max(o.el.offsetWidth, o.el.offsetHeight) * 0.5;
+      }
+    };
+    measure();
+    window.addEventListener('resize', measure);
+    window.addEventListener('load', measure);
+
+    // ── 涟漪碰到元素 ─────────────────────────────────
+    // Base.astro 里每落下一圈涟漪就发一个事件。这里记下来，
+    // 每帧算这一圈现在扩到多大，扩到谁身上，就把谁往外推一下。
+    const waves = [];
+
+    window.addEventListener('sheen:ripple', (e) => {
+      const { x, y, reach, life } = e.detail;
+      if (waves.length > 14) waves.shift();
+      waves.push({ x, y, reach, life, t: 0, hit: new Set() });
+    });
 
     let sy = 0;
     let ticking = false;
@@ -223,8 +250,12 @@ const fmt = (d) => `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0
 
     const hero = document.querySelector('.hero');
 
+    let prev = performance.now();
+
     const loop = (now) => {
       const t = now * 0.001;
+      const dt = Math.min((now - prev) / 1000, 0.05);
+      prev = now;
       // 第一屏滚出视野之后就不再计算
       const heroH = hero ? hero.offsetHeight : window.innerHeight;
       const active = sy < heroH + 240;
@@ -234,6 +265,37 @@ const fmt = (d) => `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0
         // 缓入缓出，让退后的过程不是线性的，更像呼气
         const ease = prog * prog * (3 - 2 * prog);
 
+        // 先让每一圈涟漪长大，看它这一帧扫过了谁
+        const heroTop = hero ? Math.max(0, heroH - sy) : 0;   // 第一屏还剩多少在屏幕上
+        for (let i = waves.length - 1; i >= 0; i--) {
+          const wv = waves[i];
+          wv.t += dt;
+          const wp = wv.t / wv.life;
+          if (wp >= 1) { waves.splice(i, 1); continue; }
+          const wr = 8 + wv.reach * (1 - Math.pow(1 - wp, 2.4));
+          const strength = Math.pow(1 - wp, 1.4);
+          if (strength < 0.08) continue;
+
+          for (let j = 0; j < els.length; j++) {
+            const o = els[j];
+            if (wv.hit.has(j)) continue;
+            // 元素中心在屏幕上的位置：sticky 的时候等于 offset，滚出去之后跟着上移
+            const ex = o.cx;
+            const ey = o.cy - (heroH - heroTop);
+            const dx = ex - wv.x;
+            const dy = ey - wv.y;
+            const dist = Math.hypot(dx, dy) || 0.001;
+            // 圈边扫到元素的轮廓范围内，就算「碰到」
+            if (Math.abs(dist - wr) > o.hw * 0.72 + 26) continue;
+            wv.hit.add(j);
+            const push = (58 + 42 * o.d) * strength;
+            o.vx += (dx / dist) * push;
+            o.vy += (dy / dist) * push;
+            o.rv += (dx > 0 ? 1 : -1) * 26 * strength * o.d;
+            o.pop = Math.max(o.pop, 0.05 * strength);
+          }
+        }
+
         for (const o of els) {
           // 漂浮：周期约 20 秒，幅度 8–24px
           const amp = 8 + o.d * 16;
@@ -242,10 +304,21 @@ const fmt = (d) => `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0
           // 视差：越「近」的元素随滚动上移越多
           const py = -prog * 220 * o.d;
           const px = Math.sin(o.ph) * prog * 26 * o.d;
-          o.el.style.setProperty('--tx', (fx + px).toFixed(2) + 'px');
-          o.el.style.setProperty('--ty', (fy + py).toFixed(2) + 'px');
-          // 一起往后退一点，越近的退得越多
-          o.el.style.setProperty('--sc', (1 - ease * 0.09 * o.d).toFixed(4));
+
+          // 被推开之后往回弹：弹簧 + 阻尼，晃两下就停
+          o.vx += (-o.ox * 62 - o.vx * 8.4) * dt;
+          o.vy += (-o.oy * 62 - o.vy * 8.4) * dt;
+          o.ox += o.vx * dt;
+          o.oy += o.vy * dt;
+          o.rv += (-o.rw * 48 - o.rv * 7.2) * dt;
+          o.rw += o.rv * dt;
+          o.pop *= Math.pow(0.12, dt);
+
+          o.el.style.setProperty('--tx', (fx + px + o.ox).toFixed(2) + 'px');
+          o.el.style.setProperty('--ty', (fy + py + o.oy).toFixed(2) + 'px');
+          o.el.style.setProperty('--rw', o.rw.toFixed(2) + 'deg');
+          // 一起往后退一点，越近的退得越多；被碰到的瞬间还会鼓一下
+          o.el.style.setProperty('--sc', (1 - ease * 0.09 * o.d + o.pop).toFixed(4));
         }
 
         if (markWrap) {
@@ -361,8 +434,8 @@ const fmt = (d) => `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0
     position: absolute;
     height: auto;
     filter: drop-shadow(0 1.4vmin 2.4vmin rgba(118, 94, 90, 0.26));
-    transform: translate3d(var(--tx, 0px), var(--ty, 0px), 0) rotate(var(--rot, 0deg))
-      scale(var(--sc, 1));
+    transform: translate3d(var(--tx, 0px), var(--ty, 0px), 0)
+      rotate(calc(var(--rot, 0deg) + var(--rw, 0deg))) scale(var(--sc, 1));
     will-change: transform;
   }
 
