@@ -1,0 +1,120 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+
+const poems = (await getCollection('poems', ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
+);
+
+// 列表里带上每首诗的第一行，当作一句预告
+const firstLine = (body) =>
+  (body || '')
+    .split('\n')
+    .map((l) => l.trim())
+    .find((l) => l.length > 0) ?? '';
+
+const fmt = (d) => `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0')}`;
+---
+
+<Base title="情诗" description="诗">
+  <div class="index">
+    <header class="head">
+      <p class="label">诗 / Poems</p>
+      <h1>情诗</h1>
+      <p class="count label">共 {poems.length} 首</p>
+    </header>
+
+    <ul class="list">
+      {
+        poems.map((p) => (
+          <li>
+            <a href={`/poems/${p.id}/`}>
+              <h2>{p.data.title}</h2>
+              <p class="line">{firstLine(p.body)}</p>
+              <time class="label" datetime={p.data.date.toISOString()}>
+                {fmt(p.data.date)}
+              </time>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+
+    {
+      poems.length === 0 && (
+        <p class="empty">
+          还没有诗。
+          <br />
+          往 src/content/poems/ 里放一个 .md 文件，把开头的 draft 改成 false，它就会出现在这里。
+        </p>
+      )
+    }
+  </div>
+</Base>
+
+<style>
+  .index { padding-top: 40px; }
+
+  .head { margin-bottom: 72px; }
+
+  .head h1 {
+    margin: 16px 0 12px;
+    font-family: var(--serif-cjk);
+    font-size: clamp(30px, 4.4vw, 46px);
+    font-weight: 400;
+    letter-spacing: 0.14em;
+  }
+
+  .count { margin: 0; }
+
+  .list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    max-width: 46em;
+  }
+
+  .list li { border-top: 1px solid var(--rule); }
+  .list li:last-child { border-bottom: 1px solid var(--rule); }
+
+  .list a {
+    display: block;
+    padding-block: 34px;
+  }
+
+  .list h2 {
+    margin: 0;
+    font-family: var(--serif-cjk);
+    font-size: 21px;
+    font-weight: 400;
+    letter-spacing: 0.08em;
+    transition: color 0.3s;
+  }
+
+  /* 第一行诗：平时是灰的，鼠标过去才「亮起来」 */
+  .line {
+    margin: 12px 0 0;
+    font-family: var(--serif-cjk);
+    font-size: 15px;
+    font-weight: 300;
+    line-height: 1.9;
+    letter-spacing: 0.04em;
+    color: var(--ink-soft);
+    transition: color 0.4s;
+  }
+
+  .list time {
+    display: block;
+    margin-top: 14px;
+  }
+
+  .list a:hover h2 { color: var(--accent); }
+  .list a:hover .line { color: var(--ink); }
+
+  .empty {
+    font-family: var(--serif-cjk);
+    font-weight: 300;
+    line-height: 2;
+    color: var(--ink-soft);
+  }
+</style>

@@ -24,7 +24,7 @@ import orchid from '../assets/collage/orchid.png';
 import cherub from '../assets/collage/cherub.png';
 import planet from '../assets/collage/planet.png';
 import moonlet from '../assets/collage/moonlet.png';
-import butterflyEye from '../assets/collage/butterfly-eye.png';
+import nautilus2 from '../assets/collage/nautilus2.png';
 import butterflyGreen from '../assets/collage/butterfly-green.png';
 
 // 拼贴元素：位置是相对第一屏的百分比，尺寸用 vw，所以整幅构图
@@ -35,7 +35,7 @@ const pieces = [
   { k: 'paleflower2', src: paleflower2, alt: '淡蓝色花', d: 0.35, ph: 1.7 },
   { k: 'paleflower', src: paleflower, alt: '浅蓝色花', d: 0.55, ph: 0.4 },
   { k: 'uranus', src: uranus, alt: '天王星', d: 0.3, ph: 2.9 },
-  { k: 'butterflyEye', src: butterflyEye, alt: '孔雀蛱蝶', d: 0.45, ph: 1.1 },
+  { k: 'nautilus2', src: nautilus2, alt: '鹦鹉螺壳', d: 0.3, ph: 1.1 },
   { k: 'star', src: star, alt: '金色星芒', d: 0.85, ph: 2.2 },
   { k: 'moon', src: moon, alt: '金色月牙', d: 0.7, ph: 0.8 },
   { k: 'blueflower', src: blueflower, alt: '蓝色花', d: 0.55, ph: 3.4 },
@@ -101,9 +101,7 @@ const fmt = (d) => `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0
 
     <div class="stage">
       <div class="mark-wrap">
-        <a href="/0052/" class="mark" aria-label="00:52 —— 这个网站从哪来">
-          00:52<span class="mark-hint">关于这里 →</span>
-        </a>
+        <a href="/0052/" class="mark" aria-label="00:52 —— 这个网站从哪来">00:52</a>
       </div>
       {
         pieces.map((p, i) => (
@@ -126,6 +124,7 @@ const fmt = (d) => `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0
       <span class="spacer"></span>
       <nav aria-label="主导航">
         <a href="/volumes/">如梦似幻</a>
+        <a href="/poems/">情诗</a>
         <a href="/essays/">头脑的温水</a>
         <a href="/about/">我由什么组成</a>
       </nav>
@@ -347,35 +346,13 @@ const fmt = (d) => `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0
     z-index: 2;
     transform: translate3d(0, var(--mty, 0px), 0);
     will-change: transform;
-    transition: color 0.5s ease;
+    scale: 1;
+    transition: color 0.55s ease, scale 0.55s cubic-bezier(0.22, 0.61, 0.36, 1);
   }
 
-  .mark:hover { color: #7d6055; }
-
-  /* 数字底下的一行小字：平时不在，鼠标靠近才浮出来 ——
-     不想让它变成一个「按钮」，只想让人知道这里可以按 */
-  .mark-hint {
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: -2.2em;
-    font-family: var(--serif-cjk);
-    font-size: 13px;
-    font-weight: 300;
-    letter-spacing: 0.3em;
-    line-height: 1;
-    color: #8a7370;
-    opacity: 0;
-    transform: translateY(6px);
-    transition: opacity 0.5s ease, transform 0.5s cubic-bezier(0.22, 0.61, 0.36, 1);
-    pointer-events: none;
-  }
-
-  .mark:hover .mark-hint,
-  .mark:focus-visible .mark-hint {
-    opacity: 1;
-    transform: none;
-  }
+  /* 悬停：颜色变暖一点，同时整体放大 4% —— 用独立的 scale 属性，
+     这样不会和 JS 每帧改写的 transform（漂浮、视差）打架 */
+  .mark:hover { color: #85675a; scale: 1.04; }
 
   .mark:focus-visible { outline: 1px solid var(--accent); outline-offset: 14px; }
 
@@ -409,7 +386,7 @@ const fmt = (d) => `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0
   .paleflower2 { top: 17%; left: 19%; width: 9.3vmin; --rot: 12deg; z-index: 3; }
   .paleflower { top: 18%; right: 11%; width: 12.8vmin; --rot: -8deg; z-index: 5; }
   .uranus { top: 27%; right: 6%; width: 7.4vmin; z-index: 4; }
-  .butterflyEye { top: 34%; right: 1%; width: 13.6vmin; --rot: -14deg; z-index: 4; }
+  .nautilus2 { top: 39%; right: 3%; width: 5.6vmin; --rot: -24deg; z-index: 4; }
 
   /* 左上，月牙搭在第一个 0 的肩上 */
   .star { top: 10%; left: 14%; width: 12.2vmin; --rot: -10deg; z-index: 3; }
@@ -512,13 +489,12 @@ const fmt = (d) => `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0
 
     .el { filter: drop-shadow(0 3vw 5vw rgba(118, 94, 90, 0.24)); }
 
-    .paleflower2, .paleflower, .nightflower, .star,
+    .paleflower2, .paleflower, .nightflower, .star, .nautilus2,
     .lilypad2, .begonia, .orchid, .moon2,
     .moonlet, .planet {
       display: none;
     }
 
-    .butterflyEye { top: 38%; right: -6%; width: 26vw; }
     .butterflyGreen { top: 9%; left: 56%; width: 25vw; }
 
     .caladium { top: 4%; right: -24%; width: 44vw; }

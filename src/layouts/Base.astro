@@ -8,6 +8,7 @@ const path = Astro.url.pathname;
 
 const nav = [
   { href: '/volumes/', cjk: '辑', en: 'Volumes' },
+  { href: '/poems/', cjk: '诗', en: 'Poems' },
   { href: '/essays/', cjk: '文', en: 'Essays' },
   { href: '/about/', cjk: '我', en: 'About' },
 ];
@@ -48,6 +49,8 @@ const nav = [
       )
     }
 
+    <canvas id="sheen" aria-hidden="true"></canvas>
+
     <main class={wide ? '' : 'wrap'}>
       <slot />
     </main>
@@ -60,7 +63,164 @@ const nav = [
       </div>
     </footer>
 
+    <script>
+      // 鼠标拖尾：一道拖在鼠标后面的暖色光，头亮尾细，后面跟着几粒慢慢沉下去的尘。
+      // 全部画在一张画布上，混合模式是 soft-light —— 它只改亮度、不盖住文字，
+      // 所以在丝缎上和在米色纸上都成立。
+      const canvas = document.getElementById('sheen');
+      const fine = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+      const still = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      if (canvas && fine && !still) {
+        const ctx = canvas.getContext('2d');
+        let w = 0;
+        let h = 0;
+
+        const resize = () => {
+          w = window.innerWidth;
+          h = window.innerHeight;
+          const dpr = Math.min(window.devicePixelRatio || 1, 2);
+          canvas.width = Math.floor(w * dpr);
+          canvas.height = Math.floor(h * dpr);
+          ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        };
+        resize();
+        window.addEventListener('resize', resize);
+
+        let mx = -999, my = -999;      // 鼠标真实位置
+        let gx = -999, gy = -999;      // 光头位置，缓动追鼠标 —— 延迟就是「拖」的来源
+        let moved = false;
+        let idle = 999;
+
+        const TAIL = 26;               // 尾巴记多少个点
+        const trail = [];
+        const motes = [];
+        const MAX_MOTES = 30;
+
+        window.addEventListener(
+          'pointermove',
+          (e) => {
+            mx = e.clientX;
+            my = e.clientY;
+            if (!moved) { gx = mx; gy = my; moved = true; }
+            idle = 0;
+          },
+          { passive: true }
+        );
+        window.addEventListener('pointerleave', () => { idle = 999; }, { passive: true });
+
+        let last = performance.now();
+
+        const frame = (now) => {
+          const dt = Math.min((now - last) / 1000, 0.05);
+          last = now;
+          ctx.clearRect(0, 0, w, h);
+
+          if (moved) {
+            const px = gx, py = gy;
+            const k = 1 - Math.pow(0.02, dt);   // 越小越黏
+            gx += (mx - gx) * k;
+            gy += (my - gy) * k;
+
+            const vx = gx - px, vy = gy - py;
+            const speed = Math.hypot(vx, vy) / Math.max(dt, 0.001);
+
+            trail.push({ x: gx, y: gy });
+            if (trail.length > TAIL) trail.shift();
+
+            idle += dt;
+            const wake = Math.max(0, 1 - idle / 0.9);     // 停下来之后慢慢退掉
+            const heat = Math.min(speed / 800, 1);
+
+            if (wake > 0.01 && trail.length > 1) {
+              ctx.globalCompositeOperation = 'lighter';
+              ctx.lineCap = 'round';
+              ctx.lineJoin = 'round';
+
+              // 尾巴：越靠前越宽越亮
+              for (let i = 1; i < trail.length; i++) {
+                const t = i / (trail.length - 1);
+                const a = Math.pow(t, 2.1) * (0.10 + heat * 0.16) * wake;
+                if (a < 0.002) continue;
+                ctx.strokeStyle = `rgba(255, 236, 216, ${a})`;
+                ctx.lineWidth = 3 + Math.pow(t, 1.7) * (20 + heat * 16);
+                ctx.beginPath();
+                ctx.moveTo(trail[i - 1].x, trail[i - 1].y);
+                ctx.lineTo(trail[i].x, trail[i].y);
+                ctx.stroke();
+              }
+
+              // 头部那团柔光
+              const r = 108 + heat * 84;
+              const a = (0.12 + heat * 0.18) * wake;
+              const g1 = ctx.createRadialGradient(gx, gy, 0, gx, gy, r);
+              g1.addColorStop(0, `rgba(255, 240, 224, ${a})`);
+              g1.addColorStop(0.42, `rgba(255, 226, 206, ${a * 0.42})`);
+              g1.addColorStop(1, 'rgba(255, 224, 205, 0)');
+              ctx.fillStyle = g1;
+              ctx.beginPath();
+              ctx.arc(gx, gy, r, 0, Math.PI * 2);
+              ctx.fill();
+              ctx.globalCompositeOperation = 'source-over';
+            }
+
+            // 动得快才掉尘，慢慢走的时候画面是干净的
+            if (speed > 140 && motes.length < MAX_MOTES && Math.random() < 0.6) {
+              motes.push({
+                x: gx + (Math.random() - 0.5) * 30,
+                y: gy + (Math.random() - 0.5) * 30,
+                vx: vx * 7 + (Math.random() - 0.5) * 16,
+                vy: vy * 7 + (Math.random() - 0.5) * 16,
+                r: 1.2 + Math.random() * 2.6,
+                life: 0,
+                span: 1.5 + Math.random() * 1.7,
+              });
+            }
+          }
+
+          ctx.globalCompositeOperation = 'lighter';
+          for (let i = motes.length - 1; i >= 0; i--) {
+            const m = motes[i];
+            m.life += dt;
+            if (m.life >= m.span) { motes.splice(i, 1); continue; }
+            m.x += m.vx * dt;
+            m.y += m.vy * dt + 8 * dt;   // 一点点重力，像尘在沉
+            m.vx *= 0.955;
+            m.vy *= 0.955;
+            const prog = 1 - m.life / m.span;
+            const a = prog * prog * 0.8;
+            const rr = m.r * 5;
+            const g2 = ctx.createRadialGradient(m.x, m.y, 0, m.x, m.y, rr);
+            g2.addColorStop(0, `rgba(255, 248, 236, ${a})`);
+            g2.addColorStop(1, 'rgba(255, 242, 226, 0)');
+            ctx.fillStyle = g2;
+            ctx.beginPath();
+            ctx.arc(m.x, m.y, rr, 0, Math.PI * 2);
+            ctx.fill();
+          }
+          ctx.globalCompositeOperation = 'source-over';
+
+          requestAnimationFrame(frame);
+        };
+        requestAnimationFrame(frame);
+      }
+    </script>
+
     <style>
+      #sheen {
+        position: fixed;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 40;
+        pointer-events: none;
+        mix-blend-mode: soft-light;
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        #sheen { display: none; }
+      }
+
       .site-head {
         display: flex;
         align-items: baseline;

@@ -1,0 +1,96 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+
+export async function getStaticPaths() {
+  const poems = await getCollection('poems', ({ data }) => !data.draft);
+  return poems.map((p) => ({ params: { id: p.id }, props: { poem: p } }));
+}
+
+const { poem } = Astro.props;
+
+// 诗不走 Markdown：原样输出，断行和空行都算数。
+const text = (poem.body || '').replace(/\s+$/, '');
+
+const fmt = (d) => `${d.getFullYear()} 年 ${d.getMonth() + 1} 月`;
+---
+
+<Base title={poem.data.title} description={poem.data.note ?? poem.data.title}>
+  <article class="poem">
+    <header class="head">
+      <p class="label">诗 / Poem</p>
+      <h1>{poem.data.title}</h1>
+      {poem.data.note && <p class="note">{poem.data.note}</p>}
+      <time class="date" datetime={poem.data.date.toISOString()}>{fmt(poem.data.date)}</time>
+    </header>
+
+    <div class="text">{text}</div>
+
+    <p class="back"><a href="/poems/">← 全部的诗</a></p>
+  </article>
+</Base>
+
+<style>
+  .poem { padding-top: 40px; }
+
+  .head {
+    max-width: var(--measure);
+    margin-bottom: 68px;
+  }
+
+  .head h1 {
+    margin: 16px 0 0;
+    font-family: var(--serif-cjk);
+    font-size: clamp(26px, 3.6vw, 38px);
+    font-weight: 400;
+    letter-spacing: 0.12em;
+    line-height: 1.5;
+  }
+
+  .note {
+    margin: 14px 0 0;
+    font-family: var(--serif-cjk);
+    font-size: 14px;
+    font-weight: 300;
+    letter-spacing: 0.08em;
+    color: var(--ink-soft);
+  }
+
+  .date {
+    display: block;
+    margin-top: 18px;
+    font-size: 11px;
+    letter-spacing: 0.26em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+  }
+
+  /* 诗行：原样保留断行，行距比文章更松，字距略开 ——
+     让每一行自己站着，而不是连成一段 */
+  .text {
+    white-space: pre-wrap;
+    max-width: 30em;
+    font-family: var(--serif-cjk);
+    font-size: 17px;
+    font-weight: 300;
+    line-height: 2.25;
+    letter-spacing: 0.06em;
+    color: var(--ink);
+  }
+
+  .back {
+    margin-top: 96px;
+    padding-top: 22px;
+    border-top: 1px solid var(--rule);
+    font-size: 11px;
+    letter-spacing: 0.26em;
+    text-transform: uppercase;
+  }
+
+  .back a { color: var(--ink-soft); }
+  .back a:hover { color: var(--accent); }
+
+  @media (max-width: 640px) {
+    .text { font-size: 16px; line-height: 2.1; }
+  }
+</style>
