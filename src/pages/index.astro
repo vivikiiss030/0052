@@ -25,9 +25,7 @@ import cherub from '../assets/collage/cherub.png';
 import planet from '../assets/collage/planet.png';
 import moonlet from '../assets/collage/moonlet.png';
 import butterflyEye from '../assets/collage/butterfly-eye.png';
-import butterflyGold from '../assets/collage/butterfly-gold.png';
 import butterflyGreen from '../assets/collage/butterfly-green.png';
-import butterflyNight from '../assets/collage/butterfly-night.png';
 
 // 拼贴元素：位置是相对第一屏的百分比，尺寸用 vw，所以整幅构图
 // 会随窗口等比缩放，而不是散架。手机上另有一套（见下方 media query）。
@@ -54,9 +52,7 @@ const pieces = [
   { k: 'planet', src: planet, alt: '蓝色星球', d: 0.3, ph: 3.6 },
   { k: 'moon2', src: moon2, alt: '金色月牙', d: 0.35, ph: 1.2 },
   { k: 'moonlet', src: moonlet, alt: '月亮', d: 0.25, ph: 2.8 },
-  { k: 'butterflyGold', src: butterflyGold, alt: '金色蝴蝶', d: 0.4, ph: 0.5 },
   { k: 'butterflyGreen', src: butterflyGreen, alt: '绿色凤蝶', d: 0.75, ph: 2.3 },
-  { k: 'butterflyNight', src: butterflyNight, alt: '深蓝金纹蝴蝶', d: 0.5, ph: 1.6 },
 ];
 
 // 八个感觉是 moodboard，不是分区。已经有东西落地的做成链接，
@@ -439,10 +435,8 @@ const fmt = (d) => `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0
   .orchid { top: 76%; left: 60%; width: 10.4vmin; --rot: 10deg; z-index: 4; }
   .moonlet { top: 84%; left: 66%; width: 4.8vmin; z-index: 3; }
 
-  /* 蝴蝶：停在几处留白上，方向各不相同，像刚落下 */
-  .butterflyGold { top: 71%; left: 91%; width: 9.2vmin; --rot: 14deg; z-index: 4; }
-  .butterflyGreen { top: 72%; left: 40%; width: 13.2vmin; --rot: -9deg; z-index: 5; }
-  .butterflyNight { top: 6%; left: 31%; width: 9.0vmin; --rot: 19deg; z-index: 4; }
+  /* 蝴蝶：一只停在叶尖，一只从剑尖那头飞出去 */
+  .butterflyGreen { top: 8%; left: 69%; width: 13.2vmin; --rot: -16deg; z-index: 5; }
 
   /* 上下两条 */
   .topbar,
@@ -520,13 +514,12 @@ const fmt = (d) => `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0
 
     .paleflower2, .paleflower, .nightflower, .star,
     .lilypad2, .begonia, .orchid, .moon2,
-    .moonlet, .planet, .butterflyGold {
+    .moonlet, .planet {
       display: none;
     }
 
     .butterflyEye { top: 38%; right: -6%; width: 26vw; }
-    .butterflyGreen { top: 78%; left: 6%; width: 26vw; }
-    .butterflyNight { top: 8%; left: 8%; width: 20vw; }
+    .butterflyGreen { top: 9%; left: 56%; width: 25vw; }
 
     .caladium { top: 4%; right: -24%; width: 44vw; }
     .moon { top: 30%; left: 2%; width: 25vw; }
