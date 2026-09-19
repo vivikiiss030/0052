@@ -173,9 +173,9 @@ const nav = [
             x, y, vx, vy,
             star,
             warm,
-            r: star ? 7 + Math.random() * 13 : 1.6 + Math.random() * 3.2,
+            r: star ? 4 + Math.random() * 7 : 1.1 + Math.random() * 2.0,
             t: 0,
-            span: star ? 0.95 + Math.random() * 0.8 : 0.72 + Math.random() * 0.7,
+            span: star ? 0.5 + Math.random() * 0.42 : 0.38 + Math.random() * 0.34,
             rot: Math.random() * Math.PI,
             spin: (Math.random() - 0.5) * 1.6,
           });
@@ -250,8 +250,8 @@ const nav = [
               const carry = Math.min(speed, 950) * 0.16;   // 继承一点鼠标的速度
 
               // 细碎的尘：每 5px 一颗，慢下来的时候也还在掉
-              while (acc > 5) {
-                acc -= 5;
+              while (acc > 4) {
+                acc -= 4;
                 const sp = (Math.random() - 0.5) * 46;
                 spawn(
                   gx + (Math.random() - 0.5) * 16,
@@ -263,8 +263,8 @@ const nav = [
               }
 
               // 星芒：每 17px 一颗
-              while (accStar > 17) {
-                accStar -= 17;
+              while (accStar > 13) {
+                accStar -= 13;
                 const sp = (Math.random() - 0.5) * 34;
                 spawn(
                   gx + (Math.random() - 0.5) * 22,
@@ -302,13 +302,13 @@ const nav = [
 
             // 先涨后落：亮得快，灭得慢
             const pulse = Math.sin(Math.PI * Math.pow(p, 0.7));
-            const a = Math.pow(pulse, b.star ? 1.15 : 1.5) * (b.star ? 1 : 0.6);
+            const a = Math.pow(pulse, b.star ? 1.2 : 1.5) * (b.star ? 0.72 : 0.42);
             if (a < 0.01) continue;
 
             const img = b.star
               ? (b.warm ? STAR_WARM : STAR_COOL)
               : (b.warm ? DUST_WARM : DUST_COOL);
-            const size = b.r * (b.star ? 2 + pulse * 2.4 : 2.2);
+            const size = b.r * (b.star ? 1.6 + pulse * 1.6 : 1.9);
 
             ctx.globalAlpha = a;
             if (b.star) {
