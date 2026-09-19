@@ -206,28 +206,31 @@ const nav = [
           { passive: true }
         );
 
-        // 只在第一屏里有拖尾：滑下去之后淡出，滑回来再回来
+        // 只在第一屏里有拖尾。退场不是「到了某一行就关掉」，
+        // 而是跟着滚动连续变淡：滑到第一屏一半开始暗，滑到底就没了。
+        // 已经落下的星屑不会被抹掉，它们各自过完自己那零点几秒。
         const heroEl = document.querySelector('.hero');
-        let inHero = true;
-        const checkZone = () => {
-          const limit = heroEl ? heroEl.offsetHeight - 120 : h;
-          const now = window.scrollY < limit;
-          if (now !== inHero) {
-            inHero = now;
-            canvas.style.opacity = now ? '1' : '0';
-          }
+        let vis = 1;
+        const zone = () => {
+          const H = heroEl ? heroEl.offsetHeight : h;
+          const a0 = H * 0.42;
+          const a1 = H * 0.96;
+          const y = window.scrollY;
+          vis = y <= a0 ? 1 : y >= a1 ? 0 : 1 - (y - a0) / (a1 - a0);
         };
-        checkZone();
-        window.addEventListener('scroll', checkZone, { passive: true });
+        zone();
+        window.addEventListener('scroll', zone, { passive: true });
 
         let last = performance.now();
 
         const frame = (now) => {
           const dt = Math.min((now - last) / 1000, 0.05);
           last = now;
+          zone();
           ctx.clearRect(0, 0, w, h);
 
-          if (!inHero) { bits.length = 0; requestAnimationFrame(frame); return; }
+          // 已经离开第一屏、且屏幕上一颗都不剩：什么都不用画
+          if (vis <= 0.002 && bits.length === 0) { requestAnimationFrame(frame); return; }
 
           if (moved) {
             const px = gx, py = gy;
@@ -240,7 +243,8 @@ const nav = [
             const speed = step / Math.max(dt, 0.001);
             idle += dt;
 
-            if (idle < 0.5) {
+            // 正在淡出的时候只让旧的演完，不再落新的
+            if (idle < 0.5 && vis > 0.05) {
               acc += step;
               accStar += step;
               accPush += step;
@@ -302,7 +306,7 @@ const nav = [
 
             // 先涨后落：亮得快，灭得慢
             const pulse = Math.sin(Math.PI * Math.pow(p, 0.7));
-            const a = Math.pow(pulse, b.star ? 1.2 : 1.5) * (b.star ? 0.72 : 0.42);
+            const a = Math.pow(pulse, b.star ? 1.2 : 1.5) * (b.star ? 0.72 : 0.42) * vis;
             if (a < 0.01) continue;
 
             const img = b.star
@@ -338,7 +342,6 @@ const nav = [
         z-index: 40;
         pointer-events: none;
         opacity: 1;
-        transition: opacity 0.5s ease;
       }
 
 
