@@ -87,7 +87,7 @@ if (latest && latest.data.photos.length) {
 const fmt = (d) => `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0')}`;
 ---
 
-<Base bare wide title={null}>
+<Base bare wide sheen title={null}>
   <section class="hero">
     <Picture
       src={satin}
@@ -212,7 +212,7 @@ const fmt = (d) => `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0
       d: parseFloat(el.dataset.d || '0.5'),
       ph: parseFloat(el.dataset.ph || '0'),
       // 被涟漪推开之后的偏移、速度、以及一点点转动和缩放
-      ox: 0, oy: 0, vx: 0, vy: 0, rw: 0, rv: 0, pop: 0,
+      ox: 0, oy: 0, vx: 0, vy: 0, rw: 0, rv: 0, pop: 0, cool: 0,
       cx: 0, cy: 0, hw: 0,
     }));
 
@@ -278,7 +278,7 @@ const fmt = (d) => `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0
 
           for (let j = 0; j < els.length; j++) {
             const o = els[j];
-            if (wv.hit.has(j)) continue;
+            if (wv.hit.has(j) || o.cool > 0) continue;   // 刚被碰过就先歇一下，免得一串圈把它顶飞
             // 元素中心在屏幕上的位置：sticky 的时候等于 offset，滚出去之后跟着上移
             const ex = o.cx;
             const ey = o.cy - (heroH - heroTop);
@@ -288,15 +288,17 @@ const fmt = (d) => `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0
             // 圈边扫到元素的轮廓范围内，就算「碰到」
             if (Math.abs(dist - wr) > o.hw * 0.72 + 26) continue;
             wv.hit.add(j);
-            const push = (58 + 42 * o.d) * strength;
+            o.cool = 0.36;
+            const push = (36 + 26 * o.d) * strength;
             o.vx += (dx / dist) * push;
             o.vy += (dy / dist) * push;
-            o.rv += (dx > 0 ? 1 : -1) * 26 * strength * o.d;
-            o.pop = Math.max(o.pop, 0.05 * strength);
+            o.rv += (dx > 0 ? 1 : -1) * 11 * strength * o.d;
+            o.pop = Math.max(o.pop, 0.018 * strength);
           }
         }
 
         for (const o of els) {
+          if (o.cool > 0) o.cool -= dt;
           // 漂浮：周期约 20 秒，幅度 8–24px
           const amp = 8 + o.d * 16;
           const fx = Math.sin(t * 0.3 + o.ph) * amp;
@@ -306,13 +308,13 @@ const fmt = (d) => `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0
           const px = Math.sin(o.ph) * prog * 26 * o.d;
 
           // 被推开之后往回弹：弹簧 + 阻尼，晃两下就停
-          o.vx += (-o.ox * 62 - o.vx * 8.4) * dt;
-          o.vy += (-o.oy * 62 - o.vy * 8.4) * dt;
+          o.vx += (-o.ox * 26 - o.vx * 7.4) * dt;
+          o.vy += (-o.oy * 26 - o.vy * 7.4) * dt;
           o.ox += o.vx * dt;
           o.oy += o.vy * dt;
-          o.rv += (-o.rw * 48 - o.rv * 7.2) * dt;
+          o.rv += (-o.rw * 20 - o.rv * 6.2) * dt;
           o.rw += o.rv * dt;
-          o.pop *= Math.pow(0.12, dt);
+          o.pop *= Math.pow(0.3, dt);
 
           o.el.style.setProperty('--tx', (fx + px + o.ox).toFixed(2) + 'px');
           o.el.style.setProperty('--ty', (fy + py + o.oy).toFixed(2) + 'px');

@@ -1,7 +1,7 @@
 ---
 import '../styles/global.css';
 
-const { title, description = '影像与文字的存档', wide = false, bare = false } = Astro.props;
+const { title, description = '影像与文字的存档', wide = false, bare = false, sheen = false } = Astro.props;
 const site = '00:52';
 const pageTitle = title ? `${title} — ${site}` : `${site} · night istill young`;
 const path = Astro.url.pathname;
@@ -49,7 +49,7 @@ const nav = [
       )
     }
 
-    <canvas id="sheen" aria-hidden="true"></canvas>
+    {sheen && <canvas id="sheen" aria-hidden="true" />}
 
     <main class={wide ? '' : 'wrap'}>
       <slot />
@@ -98,12 +98,12 @@ const nav = [
 
         const rings = [];
         const MAX_RINGS = 16;
-        const STEP = 34;            // 走多远落一圈
-        const LIFE = 1.3;           // 一圈活多久（秒）
+        const STEP = 30;            // 走多远落一圈
+        const LIFE = 1.15;          // 一圈活多久（秒）
 
         const drop = (x, y, power) => {
           if (rings.length >= MAX_RINGS) rings.shift();
-          const reach = 96 + power * 68;
+          const reach = 54 + power * 34;
           rings.push({ x, y, t: 0, reach });
           // 告诉页面上的东西：这里落了一圈
           window.dispatchEvent(
@@ -130,12 +130,28 @@ const nav = [
           { passive: true }
         );
 
+        // 只在第一屏里有涟漪：滑下去之后淡出，滑回来再回来
+        const heroEl = document.querySelector('.hero');
+        let inHero = true;
+        const checkZone = () => {
+          const limit = heroEl ? heroEl.offsetHeight - 120 : h;
+          const now = window.scrollY < limit;
+          if (now !== inHero) {
+            inHero = now;
+            canvas.style.opacity = now ? '1' : '0';
+          }
+        };
+        checkZone();
+        window.addEventListener('scroll', checkZone, { passive: true });
+
         let last = performance.now();
 
         const frame = (now) => {
           const dt = Math.min((now - last) / 1000, 0.05);
           last = now;
           ctx.clearRect(0, 0, w, h);
+
+          if (!inHero) { rings.length = 0; requestAnimationFrame(frame); return; }
 
           if (moved) {
             const px = gx, py = gy;
@@ -156,8 +172,8 @@ const nav = [
             // 光点：涟漪的出处
             const wake = Math.max(0, 1 - idle / 0.9);
             if (wake > 0.01) {
-              const a = 0.2 * wake;
-              const r = 74;
+              const a = 0.11 * wake;
+              const r = 50;
               const g = ctx.createRadialGradient(gx, gy, 0, gx, gy, r);
               g.addColorStop(0, `rgba(255, 244, 230, ${a})`);
               g.addColorStop(1, 'rgba(255, 238, 220, 0)');
@@ -182,18 +198,28 @@ const nav = [
             const r = 8 + ring.reach * grow;
             const fade = Math.pow(1 - p, 1.5);
 
-            ctx.strokeStyle = `rgba(255, 251, 244, ${0.95 * fade})`;
-            ctx.lineWidth = 1.2 + 4.2 * fade;
+            // 真实的水波是一道亮的脊 + 紧跟着一道暗的谷。
+            // 只画亮的会像光圈，两道一起画才像水。
+            ctx.globalCompositeOperation = 'source-over';
+            ctx.strokeStyle = `rgba(92, 62, 52, ${0.19 * fade})`;
+            ctx.lineWidth = 1 + 2.6 * fade;
+            ctx.beginPath();
+            ctx.arc(ring.x, ring.y, r * 0.9, 0, Math.PI * 2);
+            ctx.stroke();
+
+            ctx.globalCompositeOperation = 'lighter';
+            ctx.strokeStyle = `rgba(255, 250, 242, ${0.62 * fade})`;
+            ctx.lineWidth = 1 + 2.2 * fade;
             ctx.beginPath();
             ctx.arc(ring.x, ring.y, r, 0, Math.PI * 2);
             ctx.stroke();
 
-            // 里面跟一圈更淡的，两圈之间的暗带就是「水」
-            if (r > 22) {
-              ctx.strokeStyle = `rgba(255, 246, 234, ${0.42 * fade})`;
-              ctx.lineWidth = 1 + 6 * fade;
+            // 再跟一圈更小更淡的次波
+            if (r > 20) {
+              ctx.strokeStyle = `rgba(255, 246, 236, ${0.21 * fade})`;
+              ctx.lineWidth = 1 + 3 * fade;
               ctx.beginPath();
-              ctx.arc(ring.x, ring.y, r * 0.66, 0, Math.PI * 2);
+              ctx.arc(ring.x, ring.y, r * 0.58, 0, Math.PI * 2);
               ctx.stroke();
             }
           }
@@ -214,6 +240,8 @@ const nav = [
         z-index: 40;
         pointer-events: none;
         mix-blend-mode: soft-light;
+        opacity: 1;
+        transition: opacity 0.5s ease;
       }
 
       @media (prefers-reduced-motion: reduce) {
