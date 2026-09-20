@@ -134,9 +134,12 @@ const fmt = (d) => `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0
 
     <div class="bottombar">
       <p class="feelings">
-        {feelings.map((f) => (f.href ? <a href={f.href}>{f.cjk}</a> : <span>{f.cjk}</span>))}
+        {[feelings.slice(0, 4), feelings.slice(4)].map((row, i) => (
+          <span class={`frow frow-${i + 1}`}>
+            {row.map((f) => (f.href ? <a href={f.href}>{f.cjk}</a> : <span>{f.cjk}</span>))}
+          </span>
+        ))}
       </p>
-      <span class="label sig">V. &nbsp;/&nbsp; 2026</span>
     </div>
   </section>
 
@@ -562,6 +565,10 @@ const fmt = (d) => `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0
     color: #8a7370;
   }
 
+  /* 桌面端 display: contents 让这两组「消失」，八个词直接成为一行；
+     手机上再把它们变回两行（见下面的 media query） */
+  .frow { display: contents; }
+
   .feelings a {
     border-bottom: 1px solid transparent;
     padding-bottom: 3px;
@@ -574,8 +581,6 @@ const fmt = (d) => `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0
   }
 
   .feelings span { opacity: 0.55; }
-
-  .sig { color: #9c8983; }
 
   /* 下方区块：进入视口时浮起 */
   .block {
@@ -618,8 +623,27 @@ const fmt = (d) => `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0
     .cherub { top: 61%; left: 57%; width: 34vw; }
 
     .topbar { top: 22px; flex-direction: column; align-items: flex-start; gap: 6px; }
-    .bottombar { bottom: 26px; flex-direction: column; align-items: flex-start; gap: 10px; }
-    .feelings { font-size: 13px; gap: 12px 16px; }
+    .bottombar { bottom: 26px; }
+
+    /* 八个词分成上四下四，第二行推到右边错开 ——
+       比挤成一行再吊下来一个「暗夜」好看得多 */
+    .feelings {
+      flex-direction: column;
+      align-items: stretch;
+      width: 100%;
+      gap: 12px;
+      font-size: 13px;
+    }
+
+    .frow {
+      display: flex;
+      gap: 18px;
+    }
+
+    .frow-2 {
+      justify-content: flex-end;
+      padding-right: 2px;
+    }
   }
 
   /* ── 第一屏之下：一块从下方升起、盖住第一屏的面板 ── */
