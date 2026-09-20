@@ -101,7 +101,9 @@ const fmt = (d) => `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0
 
     <div class="stage">
       <div class="mark-wrap">
-        <a href="/0052/" class="mark" aria-label="00:52 —— 这个网站从哪来">00:52</a>
+        <a href="/0052/" class="mark" aria-label="00:52 —— 这个网站从哪来"
+          >00:52<span class="mark-hint" aria-hidden="true">关于这里 →</span></a
+        >
       </div>
       {
         pieces.map((p, i) => (
@@ -431,6 +433,37 @@ const fmt = (d) => `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0
 
   .mark:focus-visible { outline: 1px solid var(--accent); outline-offset: 14px; }
 
+  /* 数字下面那行小字：桌面端不需要 —— 鼠标移上去会变色变大，已经说清楚了。
+     触屏没有 hover，这个入口就完全没人知道，所以在手机上让它
+     进来之后轻声说一句再消失：淡入、停三秒、淡出，之后画面回到干净。 */
+  .mark-hint {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -2.4em;
+    font-family: var(--serif-cjk);
+    font-size: 12px;
+    font-weight: 300;
+    letter-spacing: 0.3em;
+    line-height: 1;
+    color: #8a7370;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  @media (hover: none) and (prefers-reduced-motion: no-preference) {
+    .mark-hint {
+      animation: whisper 6.4s cubic-bezier(0.4, 0, 0.2, 1) 1.6s forwards;
+    }
+  }
+
+  @keyframes whisper {
+    0% { opacity: 0; transform: translateY(7px); }
+    14% { opacity: 1; transform: none; }
+    62% { opacity: 1; transform: none; }
+    100% { opacity: 0; transform: translateY(-5px); }
+  }
+
   /* 所有拼贴元素共用：真实投影，跟着裁剪的轮廓走 */
   .el {
     position: absolute;
@@ -578,9 +611,11 @@ const fmt = (d) => `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0
     .uranus { top: 49%; right: 6%; width: 13vw; }
     .nautilus { top: 51%; left: 57%; width: 16vw; }
     .dagger { top: 16%; left: 35%; width: 32vw; }
-    .lilypad { top: 70%; left: 34%; width: 30vw; }
-    .lotus { top: 63%; left: -10%; width: 57vw; }
-    .cherub { top: 68%; left: 55%; width: 38vw; }
+    /* 底下这一堆往上收一点、小一点 —— 给最下面那排感觉词留出干净的丝缎，
+       不然在窄屏上字会压在莲花和小天使身上，看不清 */
+    .lilypad { top: 64%; left: 34%; width: 27vw; }
+    .lotus { top: 57%; left: -12%; width: 52vw; }
+    .cherub { top: 61%; left: 57%; width: 34vw; }
 
     .topbar { top: 22px; flex-direction: column; align-items: flex-start; gap: 6px; }
     .bottombar { bottom: 26px; flex-direction: column; align-items: flex-start; gap: 10px; }
