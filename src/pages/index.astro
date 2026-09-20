@@ -560,17 +560,20 @@ const fmt = (d) => `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0
     gap: clamp(12px, 1.8vw, 26px);
     font-family: var(--serif-cjk);
     font-size: clamp(12px, 0.98vw, 14px);
-    font-weight: 300;
+    font-weight: 400;
     letter-spacing: 0.2em;
-    color: #8a7370;
+    color: #5e4b47;
   }
 
   /* 桌面端 display: contents 让这两组「消失」，八个词直接成为一行；
      手机上再把它们变回两行（见下面的 media query） */
   .frow { display: contents; }
 
+  /* 八个词现在和顶部导航一个颜色、一样实。能点进去的那两个不靠「更亮」
+     区分，靠脚下一道很淡的线 —— 不然八个字长得一模一样，
+     没人知道纯净水和暗夜是可以按的。 */
   .feelings a {
-    border-bottom: 1px solid transparent;
+    border-bottom: 1px solid rgba(169, 120, 79, 0.38);
     padding-bottom: 3px;
     transition: color 0.3s, border-color 0.3s;
   }
@@ -579,8 +582,6 @@ const fmt = (d) => `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0
     color: var(--accent);
     border-bottom-color: var(--accent);
   }
-
-  .feelings span { opacity: 0.55; }
 
   /* 下方区块：进入视口时浮起 */
   .block {
