@@ -6,11 +6,12 @@ const site = '00:52';
 const pageTitle = title ? `${title} — ${site}` : `${site} · night istill young`;
 const path = Astro.url.pathname;
 
+// 和首页那一排用同一套名字 —— 里页和首页不该是两个网站
 const nav = [
-  { href: '/volumes/', cjk: '辑', en: 'Volumes' },
-  { href: '/essays/', cjk: '文', en: 'Essays' },
-  { href: '/poems/', cjk: '诗', en: 'Poems' },
-  { href: '/about/', cjk: '我', en: 'About' },
+  { href: '/volumes/', cjk: '如梦似幻' },
+  { href: '/essays/', cjk: '头脑的温水' },
+  { href: '/poems/', cjk: '情诗' },
+  { href: '/about/', cjk: '我由什么组成' },
 ];
 ---
 
@@ -40,8 +41,7 @@ const nav = [
           <nav aria-label="主导航">
             {nav.map((item) => (
               <a href={item.href} aria-current={path.startsWith(item.href) ? 'page' : undefined}>
-                <span class="cjk">{item.cjk}</span>
-                <span class="en">{item.en}</span>
+                {item.cjk}
               </a>
             ))}
           </nav>
@@ -420,12 +420,9 @@ const nav = [
       }
 
       .site-head nav a {
-        display: flex;
-        align-items: baseline;
-        gap: 8px;
-        font-size: 11px;
-        letter-spacing: 0.26em;
-        text-transform: uppercase;
+        font-family: var(--serif-cjk);
+        font-size: clamp(13px, 1.05vw, 15px);
+        letter-spacing: 0.14em;
         color: var(--ink-soft);
         padding-block: 12px;
       }
@@ -433,13 +430,6 @@ const nav = [
       .site-head nav a:hover,
       .site-head nav a[aria-current='page'] {
         color: var(--ink);
-      }
-
-      .site-head nav .cjk {
-        font-family: var(--serif-cjk);
-        font-size: 15px;
-        letter-spacing: 0.1em;
-        text-transform: none;
       }
 
       .site-foot {
@@ -467,16 +457,18 @@ const nav = [
         padding-top: 20px;
       }
 
-      @media (max-width: 640px) {
+      @media (max-width: 720px) {
+        .site-head {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 10px;
+          padding-bottom: 20px;
+        }
         .site-head nav {
-          gap: 20px;
+          gap: 16px;
+          flex-wrap: wrap;
         }
-        .site-head nav .en {
-          display: none;
-        }
-        .site-head nav .cjk {
-          font-size: 17px;
-        }
+        .site-head nav a { font-size: 13px; padding-block: 4px; }
       }
     </style>
   </body>

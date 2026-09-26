@@ -1,152 +1,243 @@
 ---
 import { getCollection } from 'astro:content';
+import { Image } from 'astro:assets';
 import Base from '../../layouts/Base.astro';
 
+import moon from '../../assets/collage/moon.png';
+import star from '../../assets/collage/star.png';
+import nautilus from '../../assets/collage/nautilus.png';
+import butterfly from '../../assets/collage/butterfly-green.png';
+
+// 没有日期，按原稿里的先后排（n），最后写的排在最前
 const essays = (await getCollection('essays', ({ data }) => !data.draft)).sort(
-  (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
+  (a, b) => b.data.n - a.data.n
 );
 
-const byYear = new Map();
-for (const e of essays) {
-  const y = e.data.date.getFullYear();
-  if (!byYear.has(y)) byYear.set(y, []);
-  byYear.get(y).push(e);
-}
+const nn = (n) => String(n).padStart(2, '0');
 
-const fmt = (d) => `${String(d.getMonth() + 1).padStart(2, '0')}.${String(d.getDate()).padStart(2, '0')}`;
+// 这一段就是「头脑的温水到底是什么意思」。想改直接改这儿。
+const intro = {
+  cjk: '头脑的温水',
+  en: 'good for your brains',
+  lead: '不是文章，是想通了的事，和还没想通但先记下来的事。',
+  body: '这里没有日期。它们不按时间排队，也不等着被追更 —— 你碰巧打开哪一篇，哪一篇就是最新的。',
+};
 ---
 
-<Base title="文" description="文字与思考的存档">
-  <div class="index">
-    <header class="head">
-      <p class="label">文 / Essays</p>
-      <h1>文字</h1>
-      <p class="count label">共 {essays.length} 篇</p>
+<Base title={intro.cjk} description={intro.lead} wide>
+  <div class="page">
+    <!-- 报头 -->
+    <header class="masthead wrap">
+      <div class="mast-main">
+        <h1>{intro.cjk}</h1>
+        <p class="en">{intro.en}</p>
+      </div>
+      <Image src={moon} alt="" format="webp" quality={80} class="mast-mark" loading="eager" />
     </header>
 
-    {
-      [...byYear.entries()].map(([year, items]) => (
-        <section class="year">
-          <div class="year-head">
-            <span class="year-num">{year}</span>
-            <hr class="rule" />
-          </div>
-          <ul>
-            {items.map((e) => (
-              <li>
-                <a href={`/essays/${e.id}/`}>
-                  <time class="label" datetime={e.data.date.toISOString()}>
-                    {fmt(e.data.date)}
-                  </time>
-                  <h2>{e.data.title}</h2>
-                  {e.data.summary && <p class="summary">{e.data.summary}</p>}
-                </a>
-              </li>
-            ))}
-          </ul>
-        </section>
-      ))
-    }
+    <hr class="rule wrap thick" />
 
-    {essays.length === 0 && <p class="empty">还没有文章。往 src/content/essays/ 里放一个 .md 文件就会出现在这里。</p>}
+    <div class="standfirst wrap">
+      <p class="lead">{intro.lead}</p>
+      <p class="note">{intro.body}</p>
+      <p class="count label">共 {essays.length} 篇</p>
+    </div>
+
+    <hr class="rule wrap" />
+
+    <!-- 目录 -->
+    <ol class="toc wrap">
+      {
+        essays.map((e, i) => (
+          <li class={i === 0 ? 'lead-item' : ''}>
+            <a href={`/essays/${e.id}/`}>
+              <span class="n">{nn(e.data.n)}</span>
+              <span class="t">
+                <h2>{e.data.title}</h2>
+                {e.data.summary && <p class="s">{e.data.summary}</p>}
+              </span>
+              <span class="go">→</span>
+            </a>
+          </li>
+        ))
+      }
+    </ol>
+
+    {essays.length === 0 && <p class="empty wrap">还没有文章。</p>}
+
+    <div class="tail wrap">
+      <Image src={star} alt="" format="webp" quality={80} class="t1" loading="lazy" />
+      <Image src={nautilus} alt="" format="webp" quality={80} class="t2" loading="lazy" />
+      <Image src={butterfly} alt="" format="webp" quality={80} class="t3" loading="lazy" />
+    </div>
   </div>
 </Base>
 
 <style>
-  .index {
-    padding-top: 40px;
-  }
+  .page { padding-top: 12px; }
 
-  .head {
-    margin-bottom: 72px;
-  }
-
-  .head h1 {
-    margin: 16px 0 12px;
-    font-family: var(--serif-cjk);
-    font-size: clamp(30px, 4.4vw, 46px);
-    font-weight: 400;
-    letter-spacing: 0.14em;
-  }
-
-  .count {
-    margin: 0;
-  }
-
-  .year {
-    margin-bottom: 72px;
-  }
-
-  .year-head {
+  /* ── 报头：大字 + 一枚金月牙压在右边 ────────── */
+  .masthead {
+    position: relative;
     display: flex;
-    align-items: center;
-    gap: 20px;
-  }
-
-  .year-num {
-    font-family: var(--display);
-    font-size: 15px;
-    letter-spacing: 0.12em;
-    color: var(--ink-soft);
-  }
-
-  .year-head .rule {
-    flex-grow: 1;
-  }
-
-  .year ul {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-  }
-
-  .year li {
-    border-bottom: 1px solid var(--rule);
-  }
-
-  .year a {
-    display: grid;
-    grid-template-columns: 96px minmax(0, 1fr);
+    align-items: flex-end;
+    justify-content: space-between;
     gap: 24px;
-    align-items: baseline;
-    padding-block: 30px;
+    padding-top: 26px;
+    padding-bottom: 18px;
   }
 
-  .year h2 {
+  .mast-main h1 {
     margin: 0;
     font-family: var(--serif-cjk);
-    font-size: 20px;
+    font-size: clamp(40px, 8.4vw, 104px);
     font-weight: 400;
-    letter-spacing: 0.06em;
+    letter-spacing: 0.12em;
+    line-height: 1.05;
+    color: var(--ink);
   }
 
-  .summary {
-    grid-column: 2;
-    margin: 10px 0 0;
+  .mast-main .en {
+    margin: 14px 0 0;
+    font-family: var(--display);
+    font-style: italic;
+    font-size: clamp(16px, 2vw, 24px);
+    letter-spacing: 0.02em;
+    color: var(--accent);
+  }
+
+  .mast-mark {
+    width: clamp(56px, 8vw, 116px);
+    height: auto;
+    transform: rotate(-14deg);
+    filter: drop-shadow(0 8px 18px rgba(118, 94, 90, 0.2));
+    flex: 0 0 auto;
+  }
+
+  .thick { border-top-width: 2px; }
+
+  /* ── 引言：三栏，像杂志的 standfirst ────────── */
+  .standfirst {
+    display: grid;
+    grid-template-columns: minmax(0, 1.35fr) minmax(0, 1.1fr) auto;
+    gap: clamp(20px, 4vw, 64px);
+    align-items: start;
+    padding-block: 26px;
+  }
+
+  .lead {
+    margin: 0;
+    font-family: var(--serif-cjk);
+    font-size: clamp(17px, 1.6vw, 21px);
+    font-weight: 400;
+    line-height: 1.85;
+    letter-spacing: 0.04em;
+    color: var(--ink);
+  }
+
+  .note {
+    margin: 0;
     font-family: var(--serif-cjk);
     font-size: 14px;
     font-weight: 300;
-    line-height: 1.9;
+    line-height: 2;
+    letter-spacing: 0.04em;
     color: var(--ink-soft);
-    max-width: 44em;
   }
 
-  .year a:hover h2 {
-    color: var(--accent);
+  .count { margin: 0; white-space: nowrap; }
+
+  /* ── 目录 ─────────────────────────────────── */
+  .toc {
+    list-style: none;
+    margin: 0;
+    padding-top: 6px;
+    padding-bottom: 40px;
   }
+
+  .toc li { border-bottom: 1px solid var(--rule); }
+
+  .toc a {
+    display: grid;
+    grid-template-columns: clamp(58px, 7vw, 104px) minmax(0, 1fr) 36px;
+    gap: clamp(16px, 3vw, 44px);
+    align-items: baseline;
+    padding-block: clamp(22px, 2.6vw, 34px);
+  }
+
+  .n {
+    font-family: var(--display);
+    font-size: clamp(26px, 3.6vw, 46px);
+    line-height: 1;
+    color: var(--rule);
+    transition: color 0.35s;
+  }
+
+  .toc h2 {
+    margin: 0;
+    font-family: var(--serif-cjk);
+    font-size: clamp(19px, 1.9vw, 26px);
+    font-weight: 400;
+    letter-spacing: 0.06em;
+    line-height: 1.5;
+    transition: color 0.35s;
+  }
+
+  .s {
+    margin: 10px 0 0;
+    max-width: 44em;
+    font-family: var(--serif-cjk);
+    font-size: 14px;
+    font-weight: 300;
+    line-height: 1.95;
+    letter-spacing: 0.03em;
+    color: var(--ink-soft);
+  }
+
+  .go {
+    justify-self: end;
+    font-size: 15px;
+    color: var(--rule);
+    opacity: 0;
+    transform: translateX(-8px);
+    transition: opacity 0.35s, transform 0.35s, color 0.35s;
+  }
+
+  .toc a:hover .n { color: var(--accent); }
+  .toc a:hover h2 { color: var(--accent); }
+  .toc a:hover .go { opacity: 1; transform: none; color: var(--accent); }
+
+  /* 第一条更重一些 —— 目录也该有主次 */
+  .lead-item h2 { font-size: clamp(23px, 2.7vw, 36px); }
+  .lead-item .n { color: var(--accent); }
+
+  /* ── 页尾散落的三枚小元素 ──────────────────── */
+  .tail {
+    position: relative;
+    height: 150px;
+    opacity: 0.55;
+  }
+
+  .tail img { position: absolute; height: auto; }
+  .t1 { width: 54px; left: 4%; top: 26px; transform: rotate(-8deg); }
+  .t2 { width: 34px; left: 46%; top: 72px; transform: rotate(16deg); }
+  .t3 { width: 62px; right: 8%; top: 18px; transform: rotate(-20deg); }
 
   .empty {
     font-family: var(--serif-cjk);
     color: var(--ink-soft);
   }
 
-  @media (max-width: 640px) {
-    .year a {
+  @media (max-width: 860px) {
+    .standfirst {
       grid-template-columns: 1fr;
-      gap: 6px;
+      gap: 14px;
     }
-    .summary {
-      grid-column: 1;
+    .toc a {
+      grid-template-columns: 42px minmax(0, 1fr);
+      gap: 14px;
     }
+    .go { display: none; }
+    .tail { height: 110px; }
   }
 </style>

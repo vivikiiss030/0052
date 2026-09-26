@@ -1,66 +1,270 @@
 ---
 import { getCollection, render } from 'astro:content';
+import { Image } from 'astro:assets';
 import Base from '../../layouts/Base.astro';
 
+import moon from '../../assets/collage/moon.png';
+import star from '../../assets/collage/star.png';
+import nautilus from '../../assets/collage/nautilus.png';
+import butterfly from '../../assets/collage/butterfly-green.png';
+import lilypad from '../../assets/collage/lilypad2.png';
+import moonlet from '../../assets/collage/moonlet.png';
+import planet from '../../assets/collage/planet.png';
+import starfish from '../../assets/collage/starfish.png';
+
 export async function getStaticPaths() {
-  const essays = await getCollection('essays', ({ data }) => !data.draft);
-  return essays.map((e) => ({ params: { id: e.id }, props: { essay: e } }));
+  const all = (await getCollection('essays', ({ data }) => !data.draft)).sort(
+    (a, b) => b.data.n - a.data.n
+  );
+  return all.map((e, i) => ({
+    params: { id: e.id },
+    props: { essay: e, prev: all[i - 1] ?? null, next: all[i + 1] ?? null },
+  }));
 }
 
-const { essay } = Astro.props;
+const { essay, prev, next } = Astro.props;
 const { Content } = await render(essay);
 
-const fmt = (d) => `${d.getFullYear()} 年 ${d.getMonth() + 1} 月 ${d.getDate()} 日`;
+// 每篇配一枚小元素，按编号轮着来 —— 每篇都有自己的记号
+const MARKS = [moon, star, nautilus, butterfly, lilypad, moonlet, planet, starfish];
+const mark = MARKS[essay.data.n % MARKS.length];
+
+const nn = String(essay.data.n).padStart(2, '0');
 ---
 
-<Base title={essay.data.title} description={essay.data.summary ?? essay.data.title}>
-  <article class="essay">
-    <header class="head">
-      <p class="label">文 / Essay</p>
+<Base title={essay.data.title} description={essay.data.summary ?? essay.data.title} wide>
+  <article class="piece">
+    <!-- 书眉 -->
+    <div class="runner wrap">
+      <span class="label">头脑的温水 &nbsp;/&nbsp; good for your brains</span>
+      <span class="label folio">{nn}</span>
+    </div>
+    <hr class="rule wrap" />
+
+    <!-- 标题区：编号压在左边，标题横过去 -->
+    <header class="head wrap">
+      <p class="bignum">{nn}</p>
       <h1>{essay.data.title}</h1>
-      <time class="date" datetime={essay.data.date.toISOString()}>{fmt(essay.data.date)}</time>
     </header>
 
-    <div class="prose"><Content /></div>
+    <hr class="rule wrap thick" />
 
-    <p class="back"><a href="/essays/">← 全部文字</a></p>
+    <!-- 正文：左边一条窄栏放引文和小元素，右边正文分两栏 -->
+    <div class="body wrap">
+      <aside class="rail">
+        {essay.data.summary && <p class="pull">{essay.data.summary}</p>}
+        <Image src={mark} alt="" format="webp" quality={80} class="mark" loading="lazy" />
+      </aside>
+
+      <div class="cols prose">
+        <Content />
+      </div>
+    </div>
+
+    <!-- 上一篇 / 全部 / 下一篇 -->
+    <nav class="jump wrap">
+      <a href="/essays/" class="all label">← 头脑的温水</a>
+      <div class="sides">
+        {prev && (
+          <a href={`/essays/${prev.id}/`} class="side">
+            <span class="label">上一篇</span>
+            <span class="st">{prev.data.title}</span>
+          </a>
+        )}
+        {next && (
+          <a href={`/essays/${next.id}/`} class="side right">
+            <span class="label">下一篇</span>
+            <span class="st">{next.data.title}</span>
+          </a>
+        )}
+      </div>
+    </nav>
   </article>
 </Base>
 
 <style>
-  .essay {
-    padding-top: 40px;
+  .piece { padding-top: 10px; }
+
+  /* ── 书眉 ─────────────────────────────────── */
+  .runner {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 20px;
+    padding-bottom: 12px;
   }
 
+  .folio {
+    font-family: var(--display);
+    font-size: 14px;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+  }
+
+  .thick { border-top-width: 2px; }
+
+  /* ── 标题 ─────────────────────────────────── */
   .head {
-    max-width: var(--measure);
-    margin-bottom: 64px;
+    display: grid;
+    grid-template-columns: clamp(80px, 12vw, 190px) minmax(0, 1fr);
+    gap: clamp(18px, 3vw, 48px);
+    align-items: start;
+    padding-block: clamp(30px, 4vw, 58px);
+  }
+
+  .bignum {
+    margin: 0;
+    font-family: var(--display);
+    font-size: clamp(54px, 11vw, 150px);
+    line-height: 0.82;
+    color: var(--rule);
   }
 
   .head h1 {
-    margin: 16px 0 18px;
+    margin: 0;
+    align-self: end;
     font-family: var(--serif-cjk);
-    font-size: clamp(26px, 3.6vw, 36px);
+    font-size: clamp(26px, 4.2vw, 54px);
     font-weight: 400;
-    letter-spacing: 0.06em;
-    line-height: 1.55;
+    letter-spacing: 0.08em;
+    line-height: 1.35;
+    text-wrap: balance;
   }
 
-  .date {
-    font-size: 13px;
-    letter-spacing: 0.1em;
+  /* ── 正文 ─────────────────────────────────── */
+  .body {
+    display: grid;
+    grid-template-columns: clamp(150px, 20vw, 260px) minmax(0, 1fr);
+    gap: clamp(24px, 4vw, 66px);
+    align-items: start;
+    padding-top: clamp(28px, 3.4vw, 46px);
+    padding-bottom: 20px;
+  }
+
+  .rail {
+    position: sticky;
+    top: 28px;
+  }
+
+  /* 引文：就是列表页上那句摘要，挪到这儿当题记 */
+  .pull {
+    margin: 0;
+    padding-left: 16px;
+    border-left: 2px solid var(--accent);
+    font-family: var(--serif-cjk);
+    font-size: 15px;
+    font-weight: 300;
+    line-height: 2;
+    letter-spacing: 0.04em;
     color: var(--ink-soft);
   }
 
-  .back {
-    margin-top: 120px;
-    font-size: 12px;
-    letter-spacing: 0.24em;
-    text-transform: uppercase;
-    color: var(--ink-soft);
+  .mark {
+    display: block;
+    width: clamp(48px, 6vw, 86px);
+    height: auto;
+    margin-top: clamp(28px, 4vw, 54px);
+    opacity: 0.72;
+    transform: rotate(-10deg);
+    filter: drop-shadow(0 8px 16px rgba(118, 94, 90, 0.16));
   }
 
-  .back a:hover {
+  /* 正文分两栏 —— 右边那片空白就是被这一步填上的 */
+  .cols {
+    max-width: none;
+    column-count: 2;
+    column-gap: clamp(28px, 3.4vw, 58px);
+    column-rule: 1px solid var(--rule);
+  }
+
+  .cols :global(p) {
+    margin: 0 0 1.5em;
+    break-inside: avoid-column;
+  }
+
+  /* 第一段首字下沉 */
+  .cols :global(p:first-child::first-letter) {
+    float: left;
+    font-family: var(--serif-cjk);
+    font-size: 3.1em;
+    line-height: 0.88;
+    padding: 0.06em 0.1em 0 0;
     color: var(--accent);
+  }
+
+  .cols :global(ul),
+  .cols :global(ol) {
+    break-inside: avoid-column;
+  }
+
+  /* ── 前后篇 ───────────────────────────────── */
+  .jump {
+    margin-top: clamp(50px, 6vw, 92px);
+    padding-top: 22px;
+    border-top: 1px solid var(--rule);
+    padding-bottom: 20px;
+  }
+
+  .all { display: inline-block; color: var(--ink-soft); }
+  .all:hover { color: var(--accent); }
+
+  .sides {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(20px, 4vw, 60px);
+    margin-top: 26px;
+  }
+
+  .side {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding-top: 16px;
+    border-top: 1px solid var(--rule);
+  }
+
+  .side.right {
+    text-align: right;
+    grid-column: 2;
+  }
+
+  .st {
+    font-family: var(--serif-cjk);
+    font-size: clamp(15px, 1.4vw, 18px);
+    font-weight: 400;
+    letter-spacing: 0.05em;
+    line-height: 1.6;
+    color: var(--ink);
+    transition: color 0.3s;
+  }
+
+  .side:hover .st { color: var(--accent); }
+
+  @media (max-width: 1000px) {
+    .cols { column-count: 1; column-rule: none; }
+    .body {
+      grid-template-columns: 1fr;
+      gap: 26px;
+    }
+    .rail {
+      position: static;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 20px;
+    }
+    .pull { flex: 1 1 auto; }
+    .mark { margin-top: 0; flex: 0 0 auto; }
+    .cols { max-width: var(--measure); }
+  }
+
+  @media (max-width: 640px) {
+    .head {
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+    .bignum { font-size: 46px; }
+    .sides { grid-template-columns: 1fr; gap: 18px; }
+    .side.right { grid-column: 1; text-align: left; }
   }
 </style>
