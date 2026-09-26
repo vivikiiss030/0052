@@ -3,14 +3,22 @@ import { getCollection, render } from 'astro:content';
 import { Image } from 'astro:assets';
 import Base from '../../layouts/Base.astro';
 
-import moon from '../../assets/collage/moon.png';
-import star from '../../assets/collage/star.png';
-import nautilus from '../../assets/collage/nautilus.png';
-import butterfly from '../../assets/collage/butterfly-green.png';
-import lilypad from '../../assets/collage/lilypad2.png';
-import moonlet from '../../assets/collage/moonlet.png';
-import planet from '../../assets/collage/planet.png';
-import starfish from '../../assets/collage/starfish.png';
+import illumCorner from '../../assets/collage/illum-corner.png';
+
+// 每篇一枚记号。刻意挑得杂一点：金的、墨的、虫的、刀的、眼睛 ——
+// 全用同一类小圆点的话，十八篇看起来还是一篇
+import moonInk from '../../assets/collage/moon-ink.png';
+import sunNavy from '../../assets/collage/sun-navy.png';
+import wings from '../../assets/collage/wings.png';
+import starFace from '../../assets/collage/star-face.png';
+import heartEye from '../../assets/collage/heart-eye.png';
+import star8 from '../../assets/collage/star8.png';
+import moth2 from '../../assets/collage/moth2.png';
+import moonEngraved from '../../assets/collage/moon-engraved.png';
+import key from '../../assets/collage/key.png';
+import blade from '../../assets/collage/blade.png';
+import mothLantern from '../../assets/collage/moth-lantern.png';
+import eyePainted from '../../assets/collage/eye-painted.png';
 
 export async function getStaticPaths() {
   const all = (await getCollection('essays', ({ data }) => !data.draft)).sort(
@@ -26,7 +34,10 @@ const { essay, prev, next } = Astro.props;
 const { Content } = await render(essay);
 
 // 每篇配一枚小元素，按编号轮着来 —— 每篇都有自己的记号
-const MARKS = [moon, star, nautilus, butterfly, lilypad, moonlet, planet, starfish];
+const MARKS = [
+  moonInk, sunNavy, wings, starFace, heartEye, star8,
+  moth2, moonEngraved, key, blade, mothLantern, eyePainted,
+];
 const mark = MARKS[essay.data.n % MARKS.length];
 
 const nn = String(essay.data.n).padStart(2, '0');
@@ -34,6 +45,8 @@ const nn = String(essay.data.n).padStart(2, '0');
 
 <Base title={essay.data.title} description={essay.data.summary ?? essay.data.title} wide>
   <article class="piece">
+    <Image src={illumCorner} alt="" format="webp" quality={80} class="corner" loading="lazy" />
+
     <!-- 书眉 -->
     <div class="runner wrap">
       <span class="label">头脑的温水 &nbsp;/&nbsp; good for your brains</span>
@@ -83,7 +96,23 @@ const nn = String(essay.data.n).padStart(2, '0');
 </Base>
 
 <style>
-  .piece { padding-top: 10px; }
+  .piece { position: relative; padding-top: 10px; }
+
+  /* 手抄本的花饰边角，压在右上角、切出画面 —— 
+     页面的「纸感」由它来给，正文保持干净 */
+  .corner {
+    position: absolute;
+    top: 54px;
+    right: -3.5vw;
+    width: clamp(90px, 13vw, 205px);
+    height: auto;
+    opacity: 0.45;
+    transform: rotate(92deg);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .runner, .head, .body, .jump { position: relative; z-index: 1; }
 
   /* ── 书眉 ─────────────────────────────────── */
   .runner {
@@ -161,7 +190,7 @@ const nn = String(essay.data.n).padStart(2, '0');
 
   .mark {
     display: block;
-    width: clamp(48px, 6vw, 86px);
+    width: clamp(54px, 7vw, 104px);
     height: auto;
     margin-top: clamp(28px, 4vw, 54px);
     opacity: 0.72;

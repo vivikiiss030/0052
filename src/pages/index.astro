@@ -11,7 +11,6 @@ import uranus from '../assets/collage/uranus.png';
 import nautilus from '../assets/collage/nautilus.png';
 import star from '../assets/collage/star.png';
 import moon from '../assets/collage/moon.png';
-import moon2 from '../assets/collage/moon2.png';
 import blueflower from '../assets/collage/blueflower.png';
 import nightflower from '../assets/collage/nightflower.png';
 import dagger from '../assets/collage/dagger.png';
@@ -22,10 +21,13 @@ import begonia from '../assets/collage/begonia.png';
 import starfish from '../assets/collage/starfish.png';
 import orchid from '../assets/collage/orchid.png';
 import cherub from '../assets/collage/cherub.png';
-import planet from '../assets/collage/planet.png';
-import moonlet from '../assets/collage/moonlet.png';
 import nautilus2 from '../assets/collage/nautilus2.png';
 import butterflyGreen from '../assets/collage/butterfly-green.png';
+import moonFaceBig from '../assets/collage/moon-face-big.png';
+import illumCorner from '../assets/collage/illum-corner.png';
+import mothLantern from '../assets/collage/moth-lantern.png';
+import sunGold from '../assets/collage/sun-gold.png';
+import eyePainted from '../assets/collage/eye-painted.png';
 
 // 拼贴元素：位置是相对第一屏的百分比，尺寸用 vw，所以整幅构图
 // 会随窗口等比缩放，而不是散架。手机上另有一套（见下方 media query）。
@@ -49,10 +51,15 @@ const pieces = [
   { k: 'starfish', src: starfish, alt: '海星', d: 0.6, ph: 1.3 },
   { k: 'orchid', src: orchid, alt: '绿色兰花', d: 0.5, ph: 0.9 },
   { k: 'cherub', src: cherub, alt: '金色小天使', d: 0.9, ph: 2.0 },
-  { k: 'planet', src: planet, alt: '蓝色星球', d: 0.3, ph: 3.6 },
-  { k: 'moon2', src: moon2, alt: '金色月牙', d: 0.35, ph: 1.2 },
-  { k: 'moonlet', src: moonlet, alt: '月亮', d: 0.25, ph: 2.8 },
   { k: 'butterflyGreen', src: butterflyGreen, alt: '绿色凤蝶', d: 0.75, ph: 2.3 },
+  // 后面这几件是为了打破「什么都是小的、都浮着」：
+  // 一张大的月亮脸沉在数字后面，一角手抄本从左下角压出画面，
+  // 再加两三件金的和一只眼睛提亮
+  { k: 'moonFaceBig', src: moonFaceBig, alt: '石头般的月亮脸', d: 0.18, ph: 0.9 },
+  { k: 'illumCorner', src: illumCorner, alt: '手抄本的花饰边角', d: 0.5, ph: 2.7 },
+  { k: 'mothLantern', src: mothLantern, alt: '提灯蛾', d: 0.65, ph: 1.4 },
+  { k: 'sunGold', src: sunGold, alt: '金色太阳脸', d: 0.45, ph: 3.2 },
+  { k: 'eyePainted', src: eyePainted, alt: '画出来的眼睛', d: 0.7, ph: 0.2 },
 ];
 
 // 八个感觉是 moodboard，不是分区。已经有东西落地的做成链接，
@@ -519,7 +526,16 @@ const fmt = (d) => `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0
   .planet { top: 63%; left: 87%; width: 6.4vmin; z-index: 4; }
   .moon2 { top: 43%; left: 86%; width: 7.4vmin; --rot: 26deg; z-index: 3; }
   .orchid { top: 76%; left: 60%; width: 10.4vmin; --rot: 10deg; z-index: 4; }
-  .moonlet { top: 84%; left: 66%; width: 4.8vmin; z-index: 3; }
+  /* 大月亮脸：沉在数字后面（z-index 1，比 .mark 的 2 低），
+     尺度比别的元素大一个量级 —— 这是打破单调最管用的一招 */
+  .moonFaceBig { top: 29%; left: 11%; width: 33vmin; --rot: -6deg; z-index: 1; opacity: 0.74; }
+
+  /* 手抄本边角：从左上角压出画面。原本放左下，会压住最下面那排感觉词 */
+  .illumCorner { top: -5%; left: -5%; width: 25vmin; --rot: 178deg; z-index: 6; }
+
+  .mothLantern { top: 19%; left: 66%; width: 11.5vmin; --rot: -12deg; z-index: 5; }
+  .sunGold { top: 80%; left: 50%; width: 10.6vmin; --rot: 8deg; z-index: 4; }
+  .eyePainted { top: 38%; left: 81%; width: 9vmin; --rot: -16deg; z-index: 5; }
 
   /* 蝴蝶：一只停在叶尖，一只从剑尖那头飞出去 */
   .butterflyGreen { top: 8%; left: 69%; width: 13.2vmin; --rot: -16deg; z-index: 5; }
@@ -602,10 +618,13 @@ const fmt = (d) => `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0
     .el { filter: drop-shadow(0 3vw 5vw rgba(118, 94, 90, 0.24)); }
 
     .paleflower2, .paleflower, .nightflower, .star, .nautilus2,
-    .lilypad2, .begonia, .orchid, .moon2,
-    .moonlet, .planet {
+    .lilypad2, .begonia, .orchid, .sunGold, .eyePainted {
       display: none;
     }
+
+    .moonFaceBig { top: 28%; left: 8%; width: 62vw; }
+    .illumCorner { top: -5%; left: -14%; width: 46vw; }
+    .mothLantern { top: 12%; left: 58%; width: 20vw; }
 
     .butterflyGreen { top: 9%; left: 56%; width: 25vw; }
 
