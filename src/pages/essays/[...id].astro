@@ -1,6 +1,6 @@
 ---
 import { getCollection, render } from 'astro:content';
-import { Image } from 'astro:assets';
+import { Image, getImage } from 'astro:assets';
 import Base from '../../layouts/Base.astro';
 
 import illumCorner from '../../assets/collage/illum-corner.png';
@@ -8,6 +8,8 @@ import goldCorner from '../../assets/collage/gold-corner.png';
 import rosary from '../../assets/collage/rosary.png';
 import cloudEngraved from '../../assets/collage/cloud-engraved.png';
 import ladybug from '../../assets/collage/ladybug.png';
+import medallion from '../../assets/collage/medallion.png';
+import sunLine from '../../assets/collage/sun-line.png';
 
 // 每篇一枚记号。刻意挑得杂一点：金的、墨的、虫的、刀的、眼睛 ——
 // 全用同一类小圆点的话，十八篇看起来还是一篇
@@ -35,7 +37,7 @@ export async function getStaticPaths() {
 }
 
 const { essay, prev, next } = Astro.props;
-const { Content } = await render(essay);
+await render(essay);
 
 // 每篇配一枚小元素，按编号轮着来 —— 每篇都有自己的记号
 const MARKS = [
@@ -49,6 +51,42 @@ const mark2 = MARKS[(n + 5) % MARKS.length];
 const mark3 = MARKS[(n + 9) % MARKS.length];
 
 const nn = String(essay.data.n).padStart(2, '0');
+
+// ── 侵入正文的拼贴 ──────────────────────────────────────
+// 不是摆在页边，是真的插进段落里。用 CSS 的 shape-outside 把
+// 图片自己的轮廓当作绕排的边界 —— 所以文字是顺着这枚元素的
+// 形状让开的，不是绕一个方框。段落因此长出不规矩的形状，
+// 但每一行还是从左读到右，读起来不受影响。
+const INTRUDE = [
+  wings, star8, heartEye, moonInk, sunNavy, key,
+  mothLantern, cloudEngraved, starFace, eyePainted, medallion, sunLine,
+];
+const L = INTRUDE.length;
+const picks = [INTRUDE[n % L], INTRUDE[(n + 4) % L], INTRUDE[(n + 8) % L]];
+const shaped = await Promise.all(
+  picks.map((src) => getImage({ src, format: 'webp', width: 520, quality: 82 }))
+);
+
+let html = essay.rendered?.html ?? '';
+const total = (html.match(/<p>/g) || []).length;
+// 短文只放一枚，长文最多三枚 —— 密度跟着篇幅走
+// 不往最后一段放 —— 末段通常很短，大图会在那儿撑出一个洞
+const slots = (total >= 6 ? [2, 4, 6] : total >= 4 ? [2, 4] : total >= 2 ? [2] : [1]).filter(
+  (i) => total <= 1 || i < total
+);
+
+let seen = 0;
+html = html.replace(/<p>/g, (m) => {
+  seen += 1;
+  const i = slots.indexOf(seen);
+  if (i === -1 || !shaped[i]) return m;
+  const side = i % 2 === 0 ? 'right' : 'left';
+  const tilt = 0;   // 见下方 CSS 注释：这里不能转
+  return (
+    `<p><span class="intrude ${side}" style="--shape:url('${shaped[i].src}');--tilt:${tilt}deg">` +
+    `<img src="${shaped[i].src}" alt="" loading="lazy" decoding="async" /></span>`
+  );
+});
 ---
 
 <Base title={essay.data.title} description={essay.data.summary ?? essay.data.title} wide>
@@ -85,9 +123,7 @@ const nn = String(essay.data.n).padStart(2, '0');
         </div>
       </aside>
 
-      <div class="cols prose">
-        <Content />
-      </div>
+      <div class="cols prose" set:html={html} />
     </div>
 
     <!-- 上一篇 / 全部 / 下一篇 -->
@@ -277,6 +313,43 @@ const nn = String(essay.data.n).padStart(2, '0');
     break-inside: avoid-column;
   }
 
+  /* 侵入正文的那几枚：float + shape-outside，
+     文字顺着图片本身的轮廓让开 */
+  .cols :global(.intrude) {
+    display: block;
+    width: clamp(104px, 14.5vw, 196px);
+    shape-margin: 17px;
+    shape-image-threshold: 0.3;
+  }
+
+  /* 第二枚（在段落中段）大一些、侵得更深，整页才有主次 */
+  .cols :global(.intrude.left) { width: clamp(120px, 17vw, 238px); }
+
+  .cols :global(.intrude.right) {
+    float: right;
+    shape-outside: var(--shape);
+    margin: 2px -14px 10px 18px;
+  }
+
+  .cols :global(.intrude.left) {
+    float: left;
+    shape-outside: var(--shape);
+    margin: 2px 18px 10px -30px;
+  }
+
+  /* 这几枚不能加 rotate：shape-outside 算的是原图的轮廓，
+     不跟着 transform 转，一转图就会压到文字上 */
+  /* margin 必须归零：全局的 .prose img 带着 2.4em 的上下边距，
+     会把这个 float 的盒子撑高 80 多像素 —— 而 shape-outside 是
+     按盒子来缩放轮廓的，盒子一高，轮廓就被拉长，文字就会绕错位置 */
+  .cols :global(.intrude img) {
+    display: block;
+    width: 100%;
+    height: auto;
+    margin: 0;
+    filter: drop-shadow(0 10px 20px rgba(118, 94, 90, 0.18));
+  }
+
   /* ── 前后篇 ───────────────────────────────── */
   .jump {
     margin-top: clamp(50px, 6vw, 92px);
@@ -322,6 +395,9 @@ const nn = String(essay.data.n).padStart(2, '0');
 
   @media (max-width: 1000px) {
     .drift, .chain, .bug { display: none; }
+    .cols :global(.intrude) { width: 42%; shape-margin: 13px; }
+    .cols :global(.intrude.right) { margin: 2px -6px 8px 14px; }
+    .cols :global(.intrude.left) { margin: 2px 14px 8px -6px; }
     .marks { display: flex; align-items: flex-start; gap: 16px; margin-top: 0; }
     .m2, .m3 { margin: 0; }
     .cols { column-count: 1; column-rule: none; }
