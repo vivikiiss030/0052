@@ -168,7 +168,7 @@ const nav = [
         let accPush = 0;
 
         const bits = [];
-        const MAX_BITS = 320;
+        const MAX_BITS = 560;
 
         const spawn = (x, y, vx, vy, star) => {
           if (bits.length >= MAX_BITS) bits.shift();
@@ -177,9 +177,9 @@ const nav = [
             x, y, vx, vy,
             star,
             warm,
-            r: star ? 4 + Math.random() * 7 : 1.1 + Math.random() * 2.0,
+            r: star ? 2.8 + Math.random() * 4.6 : 1.0 + Math.random() * 1.8,
             t: 0,
-            span: star ? 0.5 + Math.random() * 0.42 : 0.38 + Math.random() * 0.34,
+            span: star ? 0.34 + Math.random() * 0.3 : 0.26 + Math.random() * 0.26,
             rot: Math.random() * Math.PI,
             spin: (Math.random() - 0.5) * 1.6,
           });
@@ -271,7 +271,7 @@ const nav = [
 
           if (moved) {
             const px = gx, py = gy;
-            const k = 1 - Math.pow(0.004, dt);
+            const k = 1 - Math.pow(0.0008, dt);
             gx += (mx - gx) * k;
             gy += (my - gy) * k;
 
@@ -282,41 +282,52 @@ const nav = [
 
             // 正在淡出的时候只让旧的演完，不再落新的
             if (idle < 0.5 && vis > 0.05) {
-              acc += step;
-              accStar += step;
-              accPush += step;
-
               const ux = step > 0.01 ? dx / step : 0;
               const uy = step > 0.01 ? dy / step : 0;
-              const carry = Math.min(speed, 950) * 0.16;   // 继承一点鼠标的速度
+              const carry = Math.min(speed, 950) * 0.085;  // 继承一点鼠标的速度（越小尾巴越收）
 
-              // 细碎的尘：每 5px 一颗，慢下来的时候也还在掉
-              while (acc > 4) {
-                acc -= 4;
-                const sp = (Math.random() - 0.5) * 46;
+              // 关键：星屑不是全都落在「鼠标现在这一点」，而是**沿着这一帧走过的
+              // 那一小段路均匀铺开**。不然鼠标快的时候每帧一簇，尾巴会变成一串珠子；
+              // 铺开之后才是一条连续的细线。
+              const DUST = 1.8;   // 每 1.8px 一颗碎尘
+              const STAR = 7;     // 每 7px 一颗星芒
+
+              let need = DUST - acc;
+              while (need <= step) {
+                const f = need / step;
+                const ex = px + dx * f;
+                const ey = py + dy * f;
+                const sp = (Math.random() - 0.5) * 24;
                 spawn(
-                  gx + (Math.random() - 0.5) * 16,
-                  gy + (Math.random() - 0.5) * 16,
+                  ex + (Math.random() - 0.5) * 7,
+                  ey + (Math.random() - 0.5) * 7,
                   ux * carry * (0.3 + Math.random() * 0.7) - uy * sp,
                   uy * carry * (0.3 + Math.random() * 0.7) + ux * sp,
                   false
                 );
+                need += DUST;
               }
+              acc = step - (need - DUST);
 
-              // 星芒：每 17px 一颗
-              while (accStar > 13) {
-                accStar -= 13;
-                const sp = (Math.random() - 0.5) * 34;
+              need = STAR - accStar;
+              while (need <= step) {
+                const f = need / step;
+                const ex = px + dx * f;
+                const ey = py + dy * f;
+                const sp = (Math.random() - 0.5) * 18;
                 spawn(
-                  gx + (Math.random() - 0.5) * 22,
-                  gy + (Math.random() - 0.5) * 22,
+                  ex + (Math.random() - 0.5) * 9,
+                  ey + (Math.random() - 0.5) * 9,
                   ux * carry * 0.5 - uy * sp,
                   uy * carry * 0.5 + ux * sp,
                   true
                 );
+                need += STAR;
               }
+              accStar = step - (need - STAR);
 
               // 拼贴元素还是会被鼠标经过时轻轻带一下（首页在听这个事件）
+              accPush += step;
               while (accPush > 30) {
                 accPush -= 30;
                 window.dispatchEvent(
@@ -343,13 +354,13 @@ const nav = [
 
             // 先涨后落：亮得快，灭得慢
             const pulse = Math.sin(Math.PI * Math.pow(p, 0.7));
-            const a = Math.pow(pulse, b.star ? 1.2 : 1.5) * (b.star ? 0.72 : 0.42) * vis;
+            const a = Math.pow(pulse, b.star ? 1.2 : 1.5) * (b.star ? 0.72 : 0.5) * vis;
             if (a < 0.01) continue;
 
             const img = b.star
               ? (b.warm ? STAR_WARM : STAR_COOL)
               : (b.warm ? DUST_WARM : DUST_COOL);
-            const size = b.r * (b.star ? 1.6 + pulse * 1.6 : 1.9);
+            const size = b.r * (b.star ? 1.6 + pulse * 1.6 : 2.1);
 
             ctx.globalAlpha = a;
             if (b.star) {
