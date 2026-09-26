@@ -5,8 +5,43 @@ import Base from '../../layouts/Base.astro';
 
 import moon from '../../assets/collage/moon.png';
 import letterCandle from '../../assets/collage/letter-candle.png';
+import goldCorner from '../../assets/collage/gold-corner.png';
+
+// 页边上散落的一层。全部绝对定位、用百分比，所以文章越多页面越长，
+// 它们也跟着摊开，不会挤在一起
 import star8 from '../../assets/collage/star8.png';
 import moth2 from '../../assets/collage/moth2.png';
+import mothLantern from '../../assets/collage/moth-lantern.png';
+import moonInk from '../../assets/collage/moon-ink.png';
+import moonEngraved from '../../assets/collage/moon-engraved.png';
+import wings from '../../assets/collage/wings.png';
+import starCry from '../../assets/collage/star-cry.png';
+import heartEye from '../../assets/collage/heart-eye.png';
+import medallion from '../../assets/collage/medallion.png';
+import cloudEngraved from '../../assets/collage/cloud-engraved.png';
+import key from '../../assets/collage/key.png';
+import blade from '../../assets/collage/blade.png';
+import ladybug from '../../assets/collage/ladybug.png';
+import rosary from '../../assets/collage/rosary.png';
+import sunLine from '../../assets/collage/sun-line.png';
+
+const scatter = [
+  { src: cloudEngraved, k: 'c1', alt: '' },
+  { src: star8, k: 'c2', alt: '' },
+  { src: moonInk, k: 'c3', alt: '' },
+  { src: key, k: 'c4', alt: '' },
+  { src: wings, k: 'c5', alt: '' },
+  { src: mothLantern, k: 'c6', alt: '' },
+  { src: starCry, k: 'c7', alt: '' },
+  { src: rosary, k: 'c8', alt: '' },
+  { src: blade, k: 'c9', alt: '' },
+  { src: heartEye, k: 'c10', alt: '' },
+  { src: ladybug, k: 'c11', alt: '' },
+  { src: moonEngraved, k: 'c12', alt: '' },
+  { src: medallion, k: 'c13', alt: '' },
+  { src: moth2, k: 'c14', alt: '' },
+  { src: sunLine, k: 'c15', alt: '' },
+];
 
 // 没有日期，按原稿里的先后排（n），最后写的排在最前
 const essays = (await getCollection('essays', ({ data }) => !data.draft)).sort(
@@ -26,6 +61,12 @@ const intro = {
 
 <Base title={intro.cjk} description={intro.lead} wide>
   <div class="page">
+    <div class="scatter" aria-hidden="true">
+      {scatter.map((o) => (
+        <Image src={o.src} alt="" format="webp" quality={80} class={`s ${o.k}`} loading="lazy" />
+      ))}
+    </div>
+
     <!-- 报头 -->
     <header class="masthead wrap">
       <div class="mast-main">
@@ -67,14 +108,44 @@ const intro = {
 
     <div class="tail wrap">
       <Image src={letterCandle} alt="" format="webp" quality={80} class="t-letter" loading="lazy" />
-      <Image src={star8} alt="" format="webp" quality={80} class="t1" loading="lazy" />
-      <Image src={moth2} alt="" format="webp" quality={80} class="t2" loading="lazy" />
+      <Image src={goldCorner} alt="" format="webp" quality={80} class="t-gold" loading="lazy" />
     </div>
   </div>
 </Base>
 
 <style>
-  .page { padding-top: 12px; }
+  .page { position: relative; padding-top: 12px; overflow: hidden; }
+
+  /* ── 页边散落的一层 ──────────────────────────
+     压在内容下面（z-index 0），只在两侧的空白里出现，
+     不碰正文。尺寸、角度、浓淡都各不相同 —— 
+     一模一样地排开，加再多也还是单调。 */
+  .scatter {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  .scatter .s { position: absolute; height: auto; }
+
+  .c1  { top: 6%;  left: -2%;  width: 84px;  opacity: 0.42; transform: rotate(-8deg); }
+  .c2  { top: 13%; right: 2%;  width: 54px;  opacity: 0.72; transform: rotate(12deg); }
+  .c3  { top: 21%; left: 0.5%; width: 46px;  opacity: 0.6;  transform: rotate(-16deg); }
+  .c4  { top: 27%; right: 8%;  width: 38px;  opacity: 0.66; transform: rotate(24deg); }
+  .c5  { top: 34%; left: 2%;   width: 52px;  opacity: 0.6;  transform: rotate(-22deg); }
+  .c6  { top: 40%; right: 3%;  width: 50px;  opacity: 0.75; transform: rotate(9deg); }
+  .c7  { top: 47%; left: 1%;   width: 44px;  opacity: 0.7;  transform: rotate(14deg); }
+  .c8  { top: 53%; right: 6%;  width: 66px;  opacity: 0.5;  transform: rotate(-10deg); }
+  .c9  { top: 60%; left: 2.5%; width: 26px;  opacity: 0.62; transform: rotate(6deg); }
+  .c10 { top: 66%; right: 2%;  width: 48px;  opacity: 0.68; transform: rotate(-14deg); }
+  .c11 { top: 73%; left: 1.5%; width: 24px;  opacity: 0.8;  transform: rotate(28deg); }
+  .c12 { top: 78%; right: 9%;  width: 42px;  opacity: 0.55; transform: rotate(18deg); }
+  .c13 { top: 85%; left: 0%;   width: 46px;  opacity: 0.6;  transform: rotate(-6deg); }
+  .c14 { top: 90%; right: 4%;  width: 32px;  opacity: 0.7;  transform: rotate(-20deg); }
+  .c15 { top: 95%; left: 3%;   width: 50px;  opacity: 0.5;  transform: rotate(10deg); }
+
+  .masthead, .standfirst, .toc, .tail, .page > .rule { position: relative; z-index: 1; }
 
   /* ── 报头：大字 + 一枚金月牙压在右边 ────────── */
   .masthead {
@@ -231,8 +302,14 @@ const intro = {
     filter: drop-shadow(0 14px 30px rgba(118, 94, 90, 0.16));
   }
 
-  .t1 { width: clamp(40px, 5vw, 72px); left: 5%; top: 52px; transform: rotate(-8deg); opacity: 0.7; }
-  .t2 { width: clamp(30px, 3.4vw, 46px); left: 34%; top: 118px; transform: rotate(14deg); opacity: 0.75; }
+  /* 左下角压一块烫金花饰，和右边那封信形成一对 */
+  .t-gold {
+    width: clamp(90px, 13vw, 200px);
+    left: -4%;
+    bottom: -30px;
+    transform: rotate(-6deg);
+    opacity: 0.62;
+  }
 
   .empty {
     font-family: var(--serif-cjk);
@@ -249,6 +326,9 @@ const intro = {
       gap: 14px;
     }
     .go { display: none; }
-    .tail { height: 110px; }
+    .tail { height: 150px; }
+    /* 手机上两侧没有空白可言，散落那层会压到字 —— 只留几件小的 */
+    .c1, .c3, .c5, .c7, .c9, .c11, .c13, .c15, .c8 { display: none; }
+    .scatter .s { opacity: 0.4; }
   }
 </style>

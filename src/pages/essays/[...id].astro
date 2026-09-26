@@ -4,6 +4,10 @@ import { Image } from 'astro:assets';
 import Base from '../../layouts/Base.astro';
 
 import illumCorner from '../../assets/collage/illum-corner.png';
+import goldCorner from '../../assets/collage/gold-corner.png';
+import rosary from '../../assets/collage/rosary.png';
+import cloudEngraved from '../../assets/collage/cloud-engraved.png';
+import ladybug from '../../assets/collage/ladybug.png';
 
 // 每篇一枚记号。刻意挑得杂一点：金的、墨的、虫的、刀的、眼睛 ——
 // 全用同一类小圆点的话，十八篇看起来还是一篇
@@ -38,7 +42,11 @@ const MARKS = [
   moonInk, sunNavy, wings, starFace, heartEye, star8,
   moth2, moonEngraved, key, blade, mothLantern, eyePainted,
 ];
-const mark = MARKS[essay.data.n % MARKS.length];
+// 每篇在左栏叠三件，按编号错开 —— 十八篇转下来没有两篇是同一组
+const n = essay.data.n;
+const mark = MARKS[n % MARKS.length];
+const mark2 = MARKS[(n + 5) % MARKS.length];
+const mark3 = MARKS[(n + 9) % MARKS.length];
 
 const nn = String(essay.data.n).padStart(2, '0');
 ---
@@ -46,6 +54,10 @@ const nn = String(essay.data.n).padStart(2, '0');
 <Base title={essay.data.title} description={essay.data.summary ?? essay.data.title} wide>
   <article class="piece">
     <Image src={illumCorner} alt="" format="webp" quality={80} class="corner" loading="lazy" />
+    <Image src={cloudEngraved} alt="" format="webp" quality={80} class="drift" loading="lazy" />
+    <Image src={rosary} alt="" format="webp" quality={80} class="chain" loading="lazy" />
+    <Image src={ladybug} alt="" format="webp" quality={80} class="bug" loading="lazy" />
+    <Image src={goldCorner} alt="" format="webp" quality={80} class="foot-gold" loading="lazy" />
 
     <!-- 书眉 -->
     <div class="runner wrap">
@@ -66,7 +78,11 @@ const nn = String(essay.data.n).padStart(2, '0');
     <div class="body wrap">
       <aside class="rail">
         {essay.data.summary && <p class="pull">{essay.data.summary}</p>}
-        <Image src={mark} alt="" format="webp" quality={80} class="mark" loading="lazy" />
+        <div class="marks">
+          <Image src={mark} alt="" format="webp" quality={80} class="mark m1" loading="lazy" />
+          <Image src={mark2} alt="" format="webp" quality={80} class="mark m2" loading="lazy" />
+          <Image src={mark3} alt="" format="webp" quality={80} class="mark m3" loading="lazy" />
+        </div>
       </aside>
 
       <div class="cols prose">
@@ -96,7 +112,7 @@ const nn = String(essay.data.n).padStart(2, '0');
 </Base>
 
 <style>
-  .piece { position: relative; padding-top: 10px; }
+  .piece { position: relative; padding-top: 10px; overflow: hidden; }
 
   /* 手抄本的花饰边角，压在右上角、切出画面 —— 
      页面的「纸感」由它来给，正文保持干净 */
@@ -188,14 +204,49 @@ const nn = String(essay.data.n).padStart(2, '0');
     color: var(--ink-soft);
   }
 
+  /* 左栏下面叠三件记号，大小、角度、浓淡依次递减 —— 
+     像页边上随手贴的一列，而不是一个居中的图标 */
+  .marks { margin-top: clamp(26px, 3.6vw, 48px); }
+
   .mark {
     display: block;
-    width: clamp(54px, 7vw, 104px);
     height: auto;
-    margin-top: clamp(28px, 4vw, 54px);
-    opacity: 0.72;
-    transform: rotate(-10deg);
     filter: drop-shadow(0 8px 16px rgba(118, 94, 90, 0.16));
+  }
+
+  .m1 { width: clamp(54px, 7vw, 100px); opacity: 0.78; transform: rotate(-10deg); }
+  .m2 {
+    width: clamp(36px, 4.6vw, 66px);
+    opacity: 0.58;
+    transform: rotate(16deg);
+    margin: clamp(18px, 2.4vw, 34px) 0 0 auto;
+    margin-right: 6%;
+  }
+  .m3 {
+    width: clamp(26px, 3.2vw, 46px);
+    opacity: 0.45;
+    transform: rotate(-24deg);
+    margin: clamp(14px, 2vw, 26px) 0 0 14%;
+  }
+
+  /* 散在页面四周的几件：云飘在标题旁，珠链挂在正文左侧，
+     瓢虫停在页脚，烫金花饰从左下角压出画面 */
+  .drift, .chain, .bug, .foot-gold {
+    position: absolute;
+    height: auto;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .drift { top: 192px; left: 76%; width: clamp(52px, 6.6vw, 104px); opacity: 0.38; transform: rotate(-6deg); }
+  .chain { top: 47%; right: -2.5vw; width: clamp(52px, 7vw, 108px); opacity: 0.5; transform: rotate(22deg); }
+  .bug { bottom: 168px; left: 44%; width: clamp(18px, 2.2vw, 30px); opacity: 0.75; transform: rotate(26deg); }
+  .foot-gold {
+    bottom: -26px;
+    left: -5%;
+    width: clamp(90px, 13vw, 190px);
+    opacity: 0.5;
+    transform: rotate(-4deg);
   }
 
   /* 正文分两栏 —— 右边那片空白就是被这一步填上的 */
@@ -270,6 +321,9 @@ const nn = String(essay.data.n).padStart(2, '0');
   .side:hover .st { color: var(--accent); }
 
   @media (max-width: 1000px) {
+    .drift, .chain, .bug { display: none; }
+    .marks { display: flex; align-items: flex-start; gap: 16px; margin-top: 0; }
+    .m2, .m3 { margin: 0; }
     .cols { column-count: 1; column-rule: none; }
     .body {
       grid-template-columns: 1fr;
