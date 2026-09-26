@@ -177,9 +177,9 @@ const nav = [
             x, y, vx, vy,
             star,
             warm,
-            r: star ? 2.8 + Math.random() * 4.6 : 1.0 + Math.random() * 1.8,
+            r: star ? 4.2 + Math.random() * 5.4 : 1.7 + Math.random() * 2.3,
             t: 0,
-            span: star ? 0.34 + Math.random() * 0.3 : 0.26 + Math.random() * 0.26,
+            span: star ? 0.22 + Math.random() * 0.2 : 0.18 + Math.random() * 0.16,
             rot: Math.random() * Math.PI,
             spin: (Math.random() - 0.5) * 1.6,
           });
@@ -289,8 +289,8 @@ const nav = [
               // 关键：星屑不是全都落在「鼠标现在这一点」，而是**沿着这一帧走过的
               // 那一小段路均匀铺开**。不然鼠标快的时候每帧一簇，尾巴会变成一串珠子；
               // 铺开之后才是一条连续的细线。
-              const DUST = 1.8;   // 每 1.8px 一颗碎尘
-              const STAR = 7;     // 每 7px 一颗星芒
+              const DUST = 1.5;   // 每 1.5px 一颗碎尘
+              const STAR = 6;     // 每 6px 一颗星芒
 
               let need = DUST - acc;
               while (need <= step) {
@@ -299,8 +299,8 @@ const nav = [
                 const ey = py + dy * f;
                 const sp = (Math.random() - 0.5) * 24;
                 spawn(
-                  ex + (Math.random() - 0.5) * 7,
-                  ey + (Math.random() - 0.5) * 7,
+                  ex + (Math.random() - 0.5) * 10,
+                  ey + (Math.random() - 0.5) * 10,
                   ux * carry * (0.3 + Math.random() * 0.7) - uy * sp,
                   uy * carry * (0.3 + Math.random() * 0.7) + ux * sp,
                   false
@@ -316,8 +316,8 @@ const nav = [
                 const ey = py + dy * f;
                 const sp = (Math.random() - 0.5) * 18;
                 spawn(
-                  ex + (Math.random() - 0.5) * 9,
-                  ey + (Math.random() - 0.5) * 9,
+                  ex + (Math.random() - 0.5) * 13,
+                  ey + (Math.random() - 0.5) * 13,
                   ux * carry * 0.5 - uy * sp,
                   uy * carry * 0.5 + ux * sp,
                   true
@@ -360,7 +360,7 @@ const nav = [
             const img = b.star
               ? (b.warm ? STAR_WARM : STAR_COOL)
               : (b.warm ? DUST_WARM : DUST_COOL);
-            const size = b.r * (b.star ? 1.6 + pulse * 1.6 : 2.1);
+            const size = b.r * (b.star ? 1.6 + pulse * 1.6 : 2.3);
 
             ctx.globalAlpha = a;
             if (b.star) {
