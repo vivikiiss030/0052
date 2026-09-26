@@ -28,6 +28,22 @@ import illumCorner from '../assets/collage/illum-corner.png';
 import mothLantern from '../assets/collage/moth-lantern.png';
 import sunGold from '../assets/collage/sun-gold.png';
 import eyePainted from '../assets/collage/eye-painted.png';
+import cloudEngraved from '../assets/collage/cloud-engraved.png';
+import cloudEngraved2 from '../assets/collage/cloud-engraved2.png';
+import heartGold from '../assets/collage/heart-gold.png';
+import heartEye from '../assets/collage/heart-eye.png';
+import medallion from '../assets/collage/medallion.png';
+import moonSepia from '../assets/collage/moon-sepia.png';
+import sunLine from '../assets/collage/sun-line.png';
+import starsRed from '../assets/collage/stars-red.png';
+import starCry from '../assets/collage/star-cry.png';
+import ladybug from '../assets/collage/ladybug.png';
+import swordCloud from '../assets/collage/sword-cloud.png';
+import paleLeaf from '../assets/collage/pale-leaf.png';
+import moonPale from '../assets/collage/moon-pale.png';
+import rosary from '../assets/collage/rosary.png';
+import keyGold from '../assets/collage/key.png';
+import wingsFairy from '../assets/collage/wings.png';
 
 // 拼贴元素：位置是相对第一屏的百分比，尺寸用 vw，所以整幅构图
 // 会随窗口等比缩放，而不是散架。手机上另有一套（见下方 media query）。
@@ -60,6 +76,25 @@ const pieces = [
   { k: 'mothLantern', src: mothLantern, alt: '提灯蛾', d: 0.65, ph: 1.4 },
   { k: 'sunGold', src: sunGold, alt: '金色太阳脸', d: 0.45, ph: 3.2 },
   { k: 'eyePainted', src: eyePainted, alt: '画出来的眼睛', d: 0.7, ph: 0.2 },
+
+  // 第二批：把画面铺满。深度（d）故意拉开 —— 有的几乎不动，
+  // 有的动得比谁都凶，滚动的时候层次才出得来
+  { k: 'cloudEngraved', src: cloudEngraved, alt: '铜版画的云', d: 0.22, ph: 1.8 },
+  { k: 'cloudEngraved2', src: cloudEngraved2, alt: '铜版画的云', d: 0.28, ph: 3.4 },
+  { k: 'wingsFairy', src: wingsFairy, alt: '蝶翼', d: 0.62, ph: 0.7 },
+  { k: 'heartGold', src: heartGold, alt: '金色心脏', d: 0.8, ph: 2.1 },
+  { k: 'heartEye', src: heartEye, alt: '嵌着眼睛的绿心', d: 0.72, ph: 1.15 },
+  { k: 'medallion', src: medallion, alt: '日月纹章', d: 0.34, ph: 2.6 },
+  { k: 'moonSepia', src: moonSepia, alt: '褐色的满月', d: 0.26, ph: 0.45 },
+  { k: 'sunLine', src: sunLine, alt: '线描的太阳脸', d: 0.55, ph: 3.05 },
+  { k: 'starsRed', src: starsRed, alt: '两颗暗红的星', d: 0.42, ph: 1.55 },
+  { k: 'starCry', src: starCry, alt: '流泪的星星', d: 0.66, ph: 2.35 },
+  { k: 'ladybug', src: ladybug, alt: '瓢虫', d: 0.5, ph: 0.15 },
+  { k: 'swordCloud', src: swordCloud, alt: '剑与云的版画', d: 0.6, ph: 2.85 },
+  { k: 'paleLeaf', src: paleLeaf, alt: '浅色的火鹤叶', d: 0.7, ph: 1.05 },
+  { k: 'moonPale', src: moonPale, alt: '灰白的小月亮', d: 0.24, ph: 3.5 },
+  { k: 'rosary', src: rosary, alt: '珠链', d: 0.45, ph: 0.85 },
+  { k: 'keyGold', src: keyGold, alt: '黄铜钥匙', d: 0.58, ph: 1.95 },
 ];
 
 // 八个感觉是 moodboard，不是分区。已经有东西落地的做成链接，
@@ -537,6 +572,25 @@ const fmt = (d) => `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0
   .sunGold { top: 80%; left: 50%; width: 10.6vmin; --rot: 8deg; z-index: 4; }
   .eyePainted { top: 38%; left: 81%; width: 9vmin; --rot: -16deg; z-index: 5; }
 
+  /* 第二批：专挑原来的空当填 —— 画面中段、四角、和边缘 */
+  .cloudEngraved { top: 21%; left: -1%; width: 12.5vmin; --rot: -6deg; z-index: 1; opacity: 0.78; }
+  .cloudEngraved2 { top: 76%; left: 93%; width: 8.5vmin; --rot: 14deg; z-index: 2; opacity: 0.8; }
+  .wingsFairy { top: 33%; left: 60%; width: 9vmin; --rot: 18deg; z-index: 4; }
+  .heartGold { top: 67%; left: 40%; width: 7.6vmin; --rot: -10deg; z-index: 5; }
+  .heartEye { top: 84%; left: 64%; width: 8vmin; --rot: 12deg; z-index: 5; }
+  .medallion { top: 52%; left: 90%; width: 8vmin; --rot: -8deg; z-index: 4; }
+  .moonSepia { top: 4%; left: 28%; width: 7.6vmin; z-index: 3; }
+  .sunLine { top: 81%; left: 12%; width: 9.4vmin; --rot: 6deg; z-index: 4; }
+  .starsRed { top: 7%; left: 47%; width: 5.2vmin; --rot: -14deg; z-index: 4; }
+  .starCry { top: 26%; left: 53%; width: 6vmin; --rot: 10deg; z-index: 6; }
+  .ladybug { top: 46%; left: 26%; width: 3.6vmin; --rot: 24deg; z-index: 4; }
+  /* 从右边切出画面，和左上角的手抄本边角呼应 */
+  .swordCloud { top: 30%; left: 90%; width: 14vmin; --rot: -8deg; z-index: 3; }
+  .paleLeaf { top: 87%; left: 44%; width: 11vmin; --rot: -12deg; z-index: 3; }
+  .moonPale { top: 11%; left: 41%; width: 6.4vmin; z-index: 2; }
+  .rosary { top: 57%; left: 85%; width: 11vmin; --rot: 16deg; z-index: 4; }
+  .keyGold { top: 61%; left: 55%; width: 7vmin; --rot: -22deg; z-index: 5; }
+
   /* 蝴蝶：一只停在叶尖，一只从剑尖那头飞出去 */
   .butterflyGreen { top: 8%; left: 69%; width: 13.2vmin; --rot: -16deg; z-index: 5; }
 
@@ -617,16 +671,20 @@ const fmt = (d) => `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0
 
     .el { filter: drop-shadow(0 3vw 5vw rgba(118, 94, 90, 0.24)); }
 
+    /* 手机上元素必须大幅减少 —— 窄屏塞四十件只会把字全盖住 */
     .paleflower2, .paleflower, .nightflower, .star, .nautilus2,
-    .lilypad2, .begonia, .orchid, .sunGold, .eyePainted {
+    .lilypad2, .begonia, .orchid, .sunGold, .eyePainted,
+    .cloudEngraved2, .medallion, .starsRed, .starCry, .ladybug,
+    .paleLeaf, .moonPale, .rosary, .keyGold, .heartGold,
+    .heartEye, .sunLine, .swordCloud, .wingsFairy, .illumCorner {
       display: none;
     }
 
-    .moonFaceBig { top: 28%; left: 8%; width: 62vw; }
-    .illumCorner { top: -5%; left: -14%; width: 46vw; }
-    .mothLantern { top: 12%; left: 58%; width: 20vw; }
-
-    .butterflyGreen { top: 9%; left: 56%; width: 25vw; }
+    /* 大月亮脸留着，但要小、要淡，不然数字读不出来 */
+    .moonFaceBig { top: 36%; left: -8%; width: 46vw; opacity: 0.5; }
+    .cloudEngraved { top: 60%; left: 62%; width: 26vw; }
+    .mothLantern { top: 10%; left: 58%; width: 20vw; }
+    .moonSepia { top: 5%; left: 6%; width: 17vw; }
 
     .caladium { top: 4%; right: -24%; width: 44vw; }
     .moon { top: 30%; left: 2%; width: 25vw; }
