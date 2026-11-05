@@ -66,9 +66,13 @@ const T = {
       cjk: '自留地',
       sub: 'tarot with Vicky',
       tagline: 'Tarot readings · online · in English & 中文',
+      // 左上角：一句话让人知道这里是干什么的
+      intro: 'A space for tarot & self-healing',
+      // 手机上没有鼠标悬停，进场时轻轻提示一句「名字可以点」
+      hint: 'step inside',
     },
     nav: [
-      { href: '#name', label: 'The name' },
+      { href: '#about', label: 'About me' },
       { href: '#how', label: 'How I read' },
       { href: '#readings', label: 'Readings' },
       { href: '#book', label: 'Book' },
@@ -80,6 +84,15 @@ const T = {
         'In Chinese, 自留地 is the small private plot a household was allowed to keep for itself, back when all the other land was farmed in common. Nobody set a quota for it. Nothing grown on it had to be handed in.',
         'That is what I want an hour with me to be. Not a forecast you then have to live up to — a piece of ground that is yours, where you are allowed to say the thing you have not said out loud yet.',
         'The Open Space is its English name: the same plot, with the gate left open.',
+      ],
+    },
+    // 自我介绍：〔〕里的换成你自己的话
+    about: {
+      kicker: 'About me',
+      title: 'Vicky',
+      body: [
+        '〔A few lines about you: who you are, how you came to tarot, and what it is like to sit across the table from you.〕',
+        '〔One more paragraph if you want it — or delete this line.〕',
       ],
     },
     how: {
@@ -124,9 +137,11 @@ const T = {
       cjk: '自留地',
       sub: 'Vicky 的塔罗',
       tagline: '线上塔罗解读 · 中文 / English',
+      intro: '一个关于塔罗与自我疗愈的空间',
+      hint: '由此进入',
     },
     nav: [
-      { href: '#name', label: '名字' },
+      { href: '#about', label: '关于我' },
       { href: '#how', label: '怎么读牌' },
       { href: '#readings', label: '解读项目' },
       { href: '#book', label: '预约' },
@@ -138,6 +153,14 @@ const T = {
         '自留地，是过去集体耕作的年代里，每户人家被允许留给自己的那一小块地。没有指标，不用上交，种什么、怎么种，自己说了算。',
         '我希望和我在一起的这一个小时，就是这样一块地。不是一个你得去兑现的预言，而是一块属于你的地方——在这里，你可以把那句还没对任何人说出口的话说出来。',
         '英文名叫 The Open Space：还是那块地，只是门开着。',
+      ],
+    },
+    about: {
+      kicker: '关于我',
+      title: 'Vicky',
+      body: [
+        '〔写几句关于你自己：你是谁，怎么开始读牌的，坐在你对面是什么感觉。〕',
+        '〔想多写就再来一段，不需要就删掉这一行。〕',
       ],
     },
     how: {
@@ -178,7 +201,7 @@ const T = {
   },
 };
 
-const { site, nav, nameStory, how, readingsKicker, readings, readingsNote, saysKicker, says, notesKicker, notes, book } = T[lang];
+const { site, nav, nameStory, about, how, readingsKicker, readings, readingsNote, saysKicker, says, notesKicker, notes, book } = T[lang];
 const other = lang === 'en' ? { href: '/zh/', label: '中文' } : { href: '/', label: 'EN' };
 ---
 
@@ -197,10 +220,14 @@ const other = lang === 'en' ? { href: '/zh/', label: '中文' } : { href: '/', l
     <div class="stage">
       <div class="mark-wrap">
         <h1 class="mark">
-          <span class="ml">The </span>
-          <span class="ml ml-open">Open </span>
-          <span class="ml">Space </span>
-          <span class="mark-sub"><span class="cjk-name">{site.cjk}</span> <span class="vicky">with Vicky</span></span>
+          <!-- 店名本身就是入口：点一下滑到下面「名字的来历」 -->
+          <a class="mark-link" href="#name">
+            <span class="ml">The </span>
+            <span class="ml ml-open">Open </span>
+            <span class="ml">Space </span>
+            <span class="mark-sub"><span class="cjk-name">{site.cjk}</span> <span class="vicky">with Vicky</span></span>
+          </a>
+          <span class="mark-hint" aria-hidden="true">{site.hint}</span>
         </h1>
       </div>
       {
@@ -221,7 +248,7 @@ const other = lang === 'en' ? { href: '/zh/', label: '中文' } : { href: '/', l
     </div>
 
     <div class="topbar">
-      <span class="brand label">The Open Space</span>
+      <p class="intro">{site.intro}</p>
       <nav aria-label="Sections">
         {nav.map((item) => <a href={item.href}>{item.label}</a>)}
       </nav>
@@ -230,6 +257,7 @@ const other = lang === 'en' ? { href: '/zh/', label: '中文' } : { href: '/', l
     <div class="bottombar">
       <span class="spacer"></span>
       <p class="tagline">{site.tagline}</p>
+      <p class="intro intro-m">{site.intro}</p>
     </div>
   </section>
 
@@ -242,6 +270,20 @@ const other = lang === 'en' ? { href: '/zh/', label: '中文' } : { href: '/', l
         <h2 class="cjk-title">{nameStory.title}</h2>
         <div class="prose-t">
           {nameStory.body.map((t) => (
+            <p>{t}</p>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- 关于我 -->
+    <section class="wrap block" id="about">
+      <p class="kicker label">{about.kicker}</p>
+      <hr class="rule" />
+      <div class="two">
+        <h2 class="cjk-title about-title">{about.title}</h2>
+        <div class="prose-t">
+          {about.body.map((t) => (
             <p>{t}</p>
           ))}
         </div>
@@ -572,6 +614,7 @@ const other = lang === 'en' ? { href: '/zh/', label: '中文' } : { href: '/', l
     flex-direction: column;
     align-items: center;
     text-align: center;
+    pointer-events: none;
     font-family: var(--didot);
     font-size: clamp(64px, min(9.6vw, 15.5vh), 168px);
     font-weight: 450;
@@ -619,7 +662,7 @@ const other = lang === 'en' ? { href: '/zh/', label: '中文' } : { href: '/', l
   .cjk-name {
     font-family: 'PingFang SC', -apple-system, 'Noto Sans SC Subset', 'Microsoft YaHei', sans-serif;
     font-weight: 600;
-    letter-spacing: 0.12em;
+    letter-spacing: 0.05em;
     color: #5a423c;
   }
 
@@ -638,7 +681,22 @@ const other = lang === 'en' ? { href: '/zh/', label: '中文' } : { href: '/', l
     pointer-events: none;
   }
 
-  .mark:focus-visible { outline: 1px solid var(--accent); outline-offset: 14px; }
+  /* 整个店名是一个链接。外层 h1 铺满整行，不接点击；只有字本身能点 */
+  .mark-link {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    color: inherit;
+    pointer-events: auto;
+    cursor: pointer;
+    transition: color 0.55s ease, transform 0.55s cubic-bezier(0.22, 0.61, 0.36, 1);
+  }
+
+  @media (hover: hover) {
+    .mark-link:hover { color: #7a5246; transform: scale(1.025); }
+  }
+
+  .mark-link:focus-visible { outline: 1px solid var(--accent); outline-offset: 14px; }
 
   /* 数字下面那行小字：桌面端不需要 —— 鼠标移上去会变色变大，已经说清楚了。
      触屏没有 hover，这个入口就完全没人知道，所以在手机上让它
@@ -647,11 +705,12 @@ const other = lang === 'en' ? { href: '/zh/', label: '中文' } : { href: '/', l
     position: absolute;
     left: 0;
     right: 0;
-    bottom: -2.4em;
-    font-family: var(--cjk);
-    font-size: 12px;
-    font-weight: 300;
-    letter-spacing: 0.3em;
+    bottom: -2.2em;
+    font-family: var(--hero-serif);
+    font-style: italic;
+    font-size: 13px;
+    font-weight: 400;
+    letter-spacing: 0.12em;
     line-height: 1;
     color: #8a7370;
     opacity: 0;
@@ -749,9 +808,9 @@ const other = lang === 'en' ? { href: '/zh/', label: '中文' } : { href: '/', l
   .topbar nav {
     display: flex;
     gap: clamp(16px, 2.4vw, 34px);
-    font-family: var(--cjk);
-    font-size: clamp(13px, 1.05vw, 15px);
-    letter-spacing: 0.14em;
+    font-family: var(--hero-serif);
+    font-size: clamp(14px, 1.15vw, 17px);
+    letter-spacing: 0.06em;
     color: #5e4b47;
   }
 
@@ -760,18 +819,32 @@ const other = lang === 'en' ? { href: '/zh/', label: '中文' } : { href: '/', l
   /* 底栏：一句话说清这是什么。从 IG 点进来的人只看这一眼 */
   .tagline {
     margin: 0;
-    font-family: var(--display);
+    font-family: var(--hero-serif);
     font-size: clamp(12px, 1.05vw, 15px);
     font-style: italic;
     letter-spacing: 0.08em;
     color: #5e4b47;
   }
 
-  .brand {
-    font-family: var(--display);
-    letter-spacing: 0.28em;
-    text-transform: uppercase;
-    color: #6b554e;
+  /* 左上角：这里是干什么的 */
+  .intro {
+    margin: 0;
+    font-family: var(--hero-serif);
+    font-size: clamp(14px, 1.15vw, 17px);
+    font-style: italic;
+    letter-spacing: 0.04em;
+    color: #5e4b47;
+  }
+
+  .intro-m { display: none; }
+
+  /* 点店名 / 导航跳下来时，标题上方留一点空，不要贴着屏幕顶 */
+  .below section[id] { scroll-margin-top: 48px; }
+
+  .intro:lang(zh),
+  .mark-hint:lang(zh) {
+    font-style: normal;
+    letter-spacing: 0.14em;
   }
 
   .tagline { text-align: right; }
@@ -822,11 +895,15 @@ const other = lang === 'en' ? { href: '/zh/', label: '中文' } : { href: '/', l
     .lotus { top: 63%; left: -12%; width: 48vw; }
     .cherub { top: 67%; left: 60%; width: 31vw; }
 
-    .topbar { top: 22px; flex-direction: column; align-items: flex-start; gap: 6px; }
+    .topbar { top: 20px; flex-direction: column-reverse; align-items: flex-start; gap: 8px; }
+    /* 手机：左上角让给导航（剑也在那儿），这句话挪到右下角，
+       顶替底栏那行 tagline —— 位置一样醒目，不和拼贴打架 */
+    .topbar .intro, .tagline { display: none; }
+    .intro-m { display: block; font-size: 13px; line-height: 1.5; text-align: right; max-width: 16.5em; }
+    .intro-m:lang(zh) { letter-spacing: 0.06em; }
     .bottombar { bottom: 26px; }
 
     .tagline { font-size: 12px; line-height: 1.7; text-align: right; }
-    .brand { display: none; }
   }
 
   /* ── 第一屏之下：一块从下方升起、盖住第一屏的面板 ── */
@@ -1173,9 +1250,9 @@ const other = lang === 'en' ? { href: '/zh/', label: '中文' } : { href: '/', l
     background: rgba(239, 234, 225, 0.66);
     backdrop-filter: blur(10px) saturate(1.2);
     -webkit-backdrop-filter: blur(10px) saturate(1.2);
-    font-family: var(--sans);
-    font-size: 12px;
-    letter-spacing: 0.14em;
+    font-family: var(--hero-serif);
+    font-size: 13px;
+    letter-spacing: 0.1em;
     color: var(--ink-soft);
   }
 
