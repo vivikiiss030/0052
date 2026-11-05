@@ -1,7 +1,7 @@
 ---
 import '../styles/global.css';
 
-const { title, description = 'Tarot readings with Vicky', wide = false, bare = false, sheen = false } = Astro.props;
+const { title, description = 'Tarot readings with Vicky', wide = false, bare = false, sheen = false, lang = 'en' } = Astro.props;
 const site = 'The Open Space';
 const pageTitle = title ?? `${site} · 自留地`;
 const path = Astro.url.pathname;
@@ -16,12 +16,14 @@ const nav = [
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang={lang === 'zh' ? 'zh-Hans' : 'en'}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{pageTitle}</title>
     <meta name="description" content={description} />
+    <link rel="alternate" hreflang="en" href="/" />
+    <link rel="alternate" hreflang="zh-Hans" href="/zh/" />
 
     <meta property="og:type" content="website" />
     <meta property="og:title" content={pageTitle} />
@@ -436,7 +438,7 @@ const nav = [
         z-index: 5;
         background: var(--ground);
         margin-top: 120px;
-        padding-bottom: 48px;
+        padding-bottom: 96px;
       }
 
       .foot-link {
