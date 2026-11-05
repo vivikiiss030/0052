@@ -197,8 +197,10 @@ const other = lang === 'en' ? { href: '/zh/', label: '中文' } : { href: '/', l
     <div class="stage">
       <div class="mark-wrap">
         <h1 class="mark">
-          {site.latin.map((l) => <span class="mark-line">{l} </span>)}
-          <span class="mark-sub">{site.cjk}<span class="dot">·</span><i>{site.sub}</i></span>
+          <span class="ml">The </span>
+          <span class="ml ml-open">Open </span>
+          <span class="ml">Space </span>
+          <span class="mark-sub"><span class="cjk-name">{site.cjk}</span> <span class="vicky">with Vicky</span></span>
         </h1>
       </div>
       {
@@ -564,16 +566,19 @@ const other = lang === 'en' ? { href: '/zh/', label: '中文' } : { href: '/', l
     position: absolute;
     left: 0;
     right: 0;
-    top: 33%;
+    top: 19%;
     margin: 0;
-    display: block;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     text-align: center;
-    font-family: var(--display);
-    font-size: clamp(60px, 12.6vw, 196px);
-    font-weight: 400;
-    line-height: 0.92;
-    letter-spacing: -0.012em;
-    color: #604a43;
+    font-family: var(--didot);
+    font-size: clamp(64px, min(9.6vw, 15.5vh), 168px);
+    font-weight: 450;
+    font-variation-settings: 'opsz' 96;
+    line-height: 0.84;
+    letter-spacing: -0.025em;
+    color: #4e3933;
     z-index: 2;
     transform: translate3d(0, var(--mty, 0px), 0);
     will-change: transform;
@@ -581,23 +586,57 @@ const other = lang === 'en' ? { href: '/zh/', label: '中文' } : { href: '/', l
     transition: color 0.55s ease, scale 0.55s cubic-bezier(0.22, 0.61, 0.36, 1);
   }
 
-  /* 桌面端一行；手机上拆成 The Open / Space 两行，字可以更大 */
-  .mark-line { white-space: nowrap; }
-
-  /* 店名下面那一行：小小的「自留地」+ 斜体的一句 */
-  .mark-sub {
+  /* Bodoni 的发丝线在大字号下几乎看不见 —— 描一圈极细的同色边，
+     只把细线托起来一点，粗笔画看不出变化 */
+  .ml {
     display: block;
-    margin-top: clamp(16px, 2vw, 30px);
-    font-family: var(--display);
-    font-size: clamp(14px, 1.45vw, 21px);
-    line-height: 1.4;
-    letter-spacing: 0.22em;
-    color: #7c6058;
+    white-space: nowrap;
+    -webkit-text-stroke: 0.35px currentColor;
   }
 
-  .mark-sub .dot { margin: 0 0.9em; opacity: 0.6; }
-  .mark-sub i { letter-spacing: 0.06em; }
-  .mark-sub:lang(zh) i { font-style: normal; letter-spacing: 0.16em; }
+  /* 中间压着的花体 Open */
+  .ml-open {
+    position: relative;
+    z-index: 2;
+    margin: 0 0 0.06em 0.55em;
+    font-family: 'Ballet', cursive;
+    font-weight: 400;
+    font-variation-settings: normal;
+    line-height: 0.55;
+    letter-spacing: 0;
+    -webkit-text-stroke: 0;
+  }
+
+  /* 下面：苹方的「自留地」，金色手写 with Vicky 斜着压在上面 */
+  .mark-sub {
+    position: relative;
+    display: block;
+    margin-top: 0.5em;
+    font-size: clamp(30px, min(3.9vw, 6.4vh), 66px);
+    line-height: 1;
+  }
+
+  .cjk-name {
+    font-family: 'PingFang SC', -apple-system, 'Noto Sans SC Subset', 'Microsoft YaHei', sans-serif;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    color: #5a423c;
+  }
+
+  .vicky {
+    position: absolute;
+    left: 50%;
+    top: 58%;
+    font-family: 'Monsieur La Doulaise', cursive;
+    font-size: 1.55em;
+    line-height: 1;
+    letter-spacing: 0;
+    white-space: nowrap;
+    color: #c4923c;
+    text-shadow: 0 1px 1px rgba(110, 70, 30, 0.18), 0 2px 14px rgba(255, 246, 230, 0.6);
+    transform: translate(-22%, -50%) rotate(-7deg);
+    pointer-events: none;
+  }
 
   .mark:focus-visible { outline: 1px solid var(--accent); outline-offset: 14px; }
 
@@ -609,7 +648,7 @@ const other = lang === 'en' ? { href: '/zh/', label: '中文' } : { href: '/', l
     left: 0;
     right: 0;
     bottom: -2.4em;
-    font-family: var(--serif-cjk);
+    font-family: var(--cjk);
     font-size: 12px;
     font-weight: 300;
     letter-spacing: 0.3em;
@@ -671,10 +710,10 @@ const other = lang === 'en' ? { href: '/zh/', label: '中文' } : { href: '/', l
   .nightflower { top: 45%; left: 4%; width: 8.0vmin; --rot: -14deg; z-index: 3; }
 
   /* 鹦鹉螺嵌进 5 里 */
-  .nautilus { top: 66%; left: 55%; width: 8.0vmin; --rot: 18deg; z-index: 6; }
+  .nautilus { top: 75%; left: 45%; width: 8.0vmin; --rot: 18deg; z-index: 6; }
 
   /* 左下，压住数字下缘的一堆 */
-  .dagger { top: 3%; left: 41.7%; width: 26.4vmin; --rot: 69deg; z-index: 5; }
+  .dagger { top: 19%; left: 68%; width: 26.4vmin; --rot: 104deg; z-index: 5; }
   .lilypad { top: 60%; left: 19%; width: 20.0vmin; --rot: 9deg; z-index: 4; }
   .lotus { top: 52%; left: 7%; width: 28.0vmin; --rot: -6deg; z-index: 5; }
   .lilypad2 { top: 70%; left: 84%; width: 13.8vmin; --rot: -11deg; z-index: 3; }
@@ -682,14 +721,14 @@ const other = lang === 'en' ? { href: '/zh/', label: '中文' } : { href: '/', l
   .begonia { top: 75%; left: 28%; width: 13.6vmin; --rot: -16deg; z-index: 3; }
 
   /* 右下，小天使守着 2 */
-  .cherub { top: 53%; left: 71%; width: 20.0vmin; --rot: -13deg; z-index: 5; }
+  .cherub { top: 60%; left: 74%; width: 20.0vmin; --rot: -13deg; z-index: 5; }
   .planet { top: 63%; left: 87%; width: 6.4vmin; z-index: 4; }
   .moon2 { top: 43%; left: 86%; width: 7.4vmin; --rot: 26deg; z-index: 3; }
   .orchid { top: 76%; left: 60%; width: 10.4vmin; --rot: 10deg; z-index: 4; }
   .moonlet { top: 84%; left: 66%; width: 4.8vmin; z-index: 3; }
 
   /* 蝴蝶：一只停在叶尖，一只从剑尖那头飞出去 */
-  .butterflyGreen { top: 8%; left: 69%; width: 13.2vmin; --rot: -16deg; z-index: 5; }
+  .butterflyGreen { top: 10%; left: 71%; width: 13.2vmin; --rot: -16deg; z-index: 5; }
 
   /* 上下两条 */
   .topbar,
@@ -710,7 +749,7 @@ const other = lang === 'en' ? { href: '/zh/', label: '中文' } : { href: '/', l
   .topbar nav {
     display: flex;
     gap: clamp(16px, 2.4vw, 34px);
-    font-family: var(--serif-cjk);
+    font-family: var(--cjk);
     font-size: clamp(13px, 1.05vw, 15px);
     letter-spacing: 0.14em;
     color: #5e4b47;
@@ -737,7 +776,7 @@ const other = lang === 'en' ? { href: '/zh/', label: '中文' } : { href: '/', l
 
   .tagline { text-align: right; }
   .tagline:lang(zh) {
-    font-family: var(--serif-cjk);
+    font-family: var(--cjk);
     font-style: normal;
     letter-spacing: 0.16em;
   }
@@ -758,9 +797,8 @@ const other = lang === 'en' ? { href: '/zh/', label: '中文' } : { href: '/', l
 
   /* ── 手机：只留八个元素，重新摆位 ───────────── */
   @media (max-width: 780px) {
-    .mark { top: 29%; font-size: 22vw; line-height: 0.88; }
-    .mark-line { display: block; }
-    .mark-sub { font-size: 13px; margin-top: 18px; }
+    .mark { top: 23%; font-size: 21vw; }
+    .mark-sub { font-size: 9.6vw; }
 
     .el { filter: drop-shadow(0 3vw 5vw rgba(118, 94, 90, 0.24)); }
 
@@ -776,13 +814,13 @@ const other = lang === 'en' ? { href: '/zh/', label: '中文' } : { href: '/', l
     .moon { top: 37%; left: -6%; width: 22vw; }
     .blueflower { top: 51%; left: 3%; width: 19vw; }
     .uranus { top: 49%; right: 6%; width: 13vw; }
-    .nautilus { top: 60%; left: 58%; width: 16vw; }
-    .dagger { top: 8%; left: 3%; width: 31vw; }
+    .nautilus { top: 36%; left: 79%; width: 14vw; }
+    .dagger { top: 0%; left: -3%; width: 25vw; }
     /* 底下这一堆往上收一点、小一点 —— 给最下面那排感觉词留出干净的丝缎，
        不然在窄屏上字会压在莲花和小天使身上，看不清 */
-    .lilypad { top: 64%; left: 34%; width: 27vw; }
-    .lotus { top: 57%; left: -12%; width: 52vw; }
-    .cherub { top: 61%; left: 57%; width: 34vw; }
+    .lilypad { top: 69%; left: 34%; width: 25vw; }
+    .lotus { top: 63%; left: -12%; width: 48vw; }
+    .cherub { top: 67%; left: 60%; width: 31vw; }
 
     .topbar { top: 22px; flex-direction: column; align-items: flex-start; gap: 6px; }
     .bottombar { bottom: 26px; }
@@ -832,7 +870,7 @@ const other = lang === 'en' ? { href: '/zh/', label: '中文' } : { href: '/', l
 
   .latest-meta h2 {
     margin: 0;
-    font-family: var(--serif-cjk);
+    font-family: var(--cjk);
     font-size: 21px;
     font-weight: 400;
     letter-spacing: 0.08em;
@@ -855,7 +893,7 @@ const other = lang === 'en' ? { href: '/zh/', label: '中文' } : { href: '/', l
 
   .essay-list h3 {
     margin: 0;
-    font-family: var(--serif-cjk);
+    font-family: var(--cjk);
     font-size: 19px;
     font-weight: 400;
     letter-spacing: 0.06em;
@@ -864,7 +902,7 @@ const other = lang === 'en' ? { href: '/zh/', label: '中文' } : { href: '/', l
   .essay-list .summary {
     grid-column: 2;
     margin: 8px 0 0;
-    font-family: var(--serif-cjk);
+    font-family: var(--cjk);
     font-size: 14px;
     font-weight: 300;
     line-height: 1.9;
@@ -898,7 +936,7 @@ const other = lang === 'en' ? { href: '/zh/', label: '中文' } : { href: '/', l
 
   .cjk-title {
     margin: 0;
-    font-family: var(--serif-cjk);
+    font-family: var(--cjk);
     font-size: clamp(34px, 5.6vw, 76px);
     font-weight: 400;
     letter-spacing: 0.1em;
@@ -1097,7 +1135,7 @@ const other = lang === 'en' ? { href: '/zh/', label: '中文' } : { href: '/', l
   .rnote:lang(zh),
   .menu-note:lang(zh),
   .notes p:lang(zh) {
-    font-family: var(--serif-cjk);
+    font-family: var(--cjk);
     font-size: 15px;
     line-height: 2;
     letter-spacing: 0.04em;
@@ -1112,7 +1150,7 @@ const other = lang === 'en' ? { href: '/zh/', label: '中文' } : { href: '/', l
   .menu h3:lang(zh),
   .notes h3:lang(zh),
   .says blockquote:lang(zh) {
-    font-family: var(--serif-cjk);
+    font-family: var(--cjk);
     letter-spacing: 0.06em;
   }
 
@@ -1161,5 +1199,5 @@ const other = lang === 'en' ? { href: '/zh/', label: '中文' } : { href: '/', l
     font-size: clamp(16px, 1.5vw, 19px);
   }
 
-  .cta:lang(zh) { font-family: var(--serif-cjk); letter-spacing: 0.08em; }
+  .cta:lang(zh) { font-family: var(--cjk); letter-spacing: 0.08em; }
 </style>

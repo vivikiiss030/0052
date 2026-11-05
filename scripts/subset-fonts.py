@@ -36,8 +36,9 @@ SCAN_EXTS = {".md", ".astro", ".mdx", ".html", ".js", ".mjs", ".ts", ".json"}
 
 # 要裁的字体：源文件 → 输出名
 FONTS = [
-    ("@fontsource/noto-serif-sc/files/noto-serif-sc-chinese-simplified-300-normal.woff2", "noto-serif-sc-300.woff2"),
-    ("@fontsource/noto-serif-sc/files/noto-serif-sc-chinese-simplified-400-normal.woff2", "noto-serif-sc-400.woff2"),
+    # 正文：思源黑体（不用宋体了）
+    ("node_modules/@fontsource/noto-sans-sc/files/noto-sans-sc-chinese-simplified-300-normal.woff2", "noto-sans-sc-300.woff2"),
+    ("node_modules/@fontsource/noto-sans-sc/files/noto-sans-sc-chinese-simplified-400-normal.woff2", "noto-sans-sc-400.woff2"),
 ]
 
 # 无论内容里有没有出现，都保留的字符：
@@ -77,7 +78,7 @@ def collect_chars() -> set:
 
 
 def resolve(rel: str) -> Path:
-    return ROOT / "node_modules" / rel
+    return ROOT / rel
 
 
 def main() -> int:
@@ -89,7 +90,7 @@ def main() -> int:
     OUT.mkdir(parents=True, exist_ok=True)
     total_before = total_after = 0
 
-    for rel, out_name in FONTS:
+    for rel, out_name, *only in FONTS:
         src = resolve(rel)
         if not src.exists():
             print(f"  ! 找不到 {src}，跳过", file=sys.stderr)
@@ -106,7 +107,7 @@ def main() -> int:
         options.notdef_outline = True
 
         subsetter = Subsetter(options=options)
-        subsetter.populate(text="".join(sorted(chars)))
+        subsetter.populate(text=only[0] if only else "".join(sorted(chars)))
         subsetter.subset(font)
 
         dest = OUT / out_name
