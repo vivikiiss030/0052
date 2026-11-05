@@ -1,9 +1,9 @@
 ---
 import '../styles/global.css';
 
-const { title, description = '影像与文字的存档', wide = false, bare = false, sheen = false } = Astro.props;
-const site = '00:52';
-const pageTitle = title ? `${title} — ${site}` : `${site} · night istill young`;
+const { title, description = 'Tarot readings with Vicky', wide = false, bare = false, sheen = false } = Astro.props;
+const site = 'The Open Space';
+const pageTitle = title ?? `${site} · 自留地`;
 const path = Astro.url.pathname;
 
 // 和首页那一排用同一套名字 —— 里页和首页不该是两个网站
@@ -16,7 +16,7 @@ const nav = [
 ---
 
 <!doctype html>
-<html lang="zh-Hans">
+<html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -28,7 +28,6 @@ const nav = [
     <meta property="og:description" content={description} />
     <meta name="twitter:card" content="summary_large_image" />
 
-    <link rel="alternate" type="application/rss+xml" title={site} href="/rss.xml" />
   </head>
 
   <body>
@@ -58,8 +57,8 @@ const nav = [
     <footer class="wrap site-foot">
       <hr class="rule" />
       <div class="foot-row">
-        <a href="/0052/" class="label foot-link">night istill young</a>
-        <span class="label">V. &nbsp;/&nbsp; 2026</span>
+        <span class="label">The Open Space &nbsp;/&nbsp; 自留地</span>
+        <span class="label">Vicky &nbsp;/&nbsp; 2026</span>
       </div>
     </footer>
 

@@ -1,5 +1,4 @@
 ---
-import { getCollection } from 'astro:content';
 import { Image, Picture } from 'astro:assets';
 import Base from '../layouts/Base.astro';
 
@@ -27,10 +26,10 @@ import moonlet from '../assets/collage/moonlet.png';
 import nautilus2 from '../assets/collage/nautilus2.png';
 import butterflyGreen from '../assets/collage/butterfly-green.png';
 
-// 拼贴元素：位置是相对第一屏的百分比，尺寸用 vw，所以整幅构图
-// 会随窗口等比缩放，而不是散架。手机上另有一套（见下方 media query）。
-// depth 决定视差幅度（越"近"动得越多），ph 是漂浮的相位差
+// 首屏的拼贴元素。位置在下面的 CSS 里，这里只定义层次：
+// depth 决定视差幅度（越「近」动得越多），ph 是漂浮的相位差
 const pieces = [
+
   { k: 'caladium', src: caladium, alt: '粉脉彩叶芋', d: 1.0, ph: 0.0 },
   { k: 'paleflower2', src: paleflower2, alt: '淡蓝色花', d: 0.35, ph: 1.7 },
   { k: 'paleflower', src: paleflower, alt: '浅蓝色花', d: 0.55, ph: 0.4 },
@@ -55,39 +54,96 @@ const pieces = [
   { k: 'butterflyGreen', src: butterflyGreen, alt: '绿色凤蝶', d: 0.75, ph: 2.3 },
 ];
 
-// 八个感觉是 moodboard，不是分区。已经有东西落地的做成链接，
-// 其余先留白 —— 等它们各自长出内容或设计元素再接上。
-const feelings = [
-  { cjk: '琥珀' },
-  { cjk: '玻璃' },
-  { cjk: '烟雾' },
-  { cjk: '丝缎' },
-  { cjk: '纯净水', href: '/volumes/chun-jing-shui/' },
-  { cjk: '暮色' },
-  { cjk: '刀' },
-  { cjk: '暗夜', href: '/volumes/an-ye/' },
+// ── 全站文案都在这里 ───────────────────────────────────────────
+// 改字不用碰别的地方。〔方括号〕里的是待填，填完连括号一起删。
+const site = {
+  cjk: '自留地',
+  latin: 'The Open Space',
+  tagline: 'Tarot readings · online · in English & 中文',
+  by: 'with Vicky',
+  instagram: '〔your_handle〕',
+};
+
+const nav = [
+  { href: '#name', label: 'The name' },
+  { href: '#how', label: 'How I read' },
+  { href: '#readings', label: 'Readings' },
+  { href: '#book', label: 'Book' },
 ];
 
-const covers = import.meta.glob('/src/assets/volumes/**/*.{jpg,jpeg,png,webp,avif,JPG,JPEG,PNG}');
+const nameStory = {
+  id: 'name',
+  kicker: 'The name',
+  title: '自留地',
+  body: [
+    'In Chinese, 自留地 is the small private plot a household was allowed to keep for itself, back when all the other land was farmed in common. Nobody set a quota for it. Nothing grown on it had to be handed in.',
+    'That is what I want an hour with me to be. Not a forecast you then have to live up to — a piece of ground that is yours, where you are allowed to say the thing you have not said out loud yet.',
+  ],
+};
 
-const volumes = (await getCollection('volumes', ({ data }) => !data.draft)).sort(
-  (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
-);
-const essays = (await getCollection('essays', ({ data }) => !data.draft))
-  .sort((a, b) => b.data.n - a.data.n)
-  .slice(0, 4);
+const how = {
+  id: 'how',
+  kicker: 'How I read',
+  title: 'I don’t read fate. I read where you are standing.',
+  body: [
+    'The cards are very good at showing the shape of a situation: what you are actually afraid of, what you have been calling love, what you have already decided and are only waiting for permission to do.',
+    'They are much worse at telling you what will happen, and I won’t pretend otherwise. So a reading with me is a conversation with a deck on the table. You will not get “he comes back on the fourteenth.” You will get a clearer view of what you want, what it would cost, and how much of it is actually in your hands — which is usually more than people expect.',
+  ],
+};
 
-const latest = volumes[0];
-let latestCover = null;
-if (latest && latest.data.photos.length) {
-  const key = `/src/assets/volumes/${latest.id}/${latest.data.photos[0].file}`;
-  if (covers[key]) latestCover = (await covers[key]()).default;
-}
+// 时长和价格填这里
+const readings = [
+  {
+    n: '01',
+    name: 'One question',
+    len: '〔30 min〕',
+    price: '〔price〕',
+    note: 'One thing you keep circling. We look at it properly, and then we stop.',
+  },
+  {
+    n: '02',
+    name: 'Full reading',
+    len: '〔60 min〕',
+    price: '〔price〕',
+    note: 'Where you are, what is moving and what is not. Room for more than one thread.',
+  },
+  {
+    n: '03',
+    name: '〔third option — delete this block if you only offer two〕',
+    len: '〔length〕',
+    price: '〔price〕',
+    note: '〔one line〕',
+  },
+];
 
-const fmt = (d) => `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0')}`;
+const readingsNote =
+  'Online, over 〔video / voice / written〕. In English or Chinese — whichever you think in.';
+
+// 攒够了再放。不满三条就先把这一节整个删掉，空着比没有更差
+const says = [
+  { quote: '〔a few lines someone wrote you after a reading〕', who: '〔R., London〕' },
+  { quote: '〔another one〕', who: '〔who〕' },
+  { quote: '〔another one〕', who: '〔who〕' },
+];
+
+// 感悟：短。一两句就够 —— 这不是文章，是你在解读里说过、
+// 对方当场记下来的那种话
+const notes = [
+  { t: '〔a short thought〕', b: '〔one or two sentences.〕' },
+  { t: '〔another〕', b: '〔…〕' },
+  { t: '〔another〕', b: '〔…〕' },
+];
+
+const book = {
+  id: 'book',
+  kicker: 'Book',
+  title: 'Readings are booked through Instagram.',
+  body:
+    'Send me a message and tell me roughly what is going on — no need to make it tidy. We will find a time.',
+};
 ---
 
-<Base bare wide sheen title={null}>
+<Base bare wide sheen title={`${site.latin} ${site.cjk}`} description={site.tagline}>
   <section class="hero">
     <Picture
       src={satin}
@@ -101,9 +157,9 @@ const fmt = (d) => `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0
 
     <div class="stage">
       <div class="mark-wrap">
-        <a href="/0052/" class="mark" aria-label="00:52 —— 这个网站从哪来"
-          >00:52<span class="mark-hint" aria-hidden="true">关于这里 →</span></a
-        >
+        <h1 class="mark">
+          {site.cjk}<span class="mark-latin">{site.latin}</span>
+        </h1>
       </div>
       {
         pieces.map((p, i) => (
@@ -123,80 +179,108 @@ const fmt = (d) => `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0
     </div>
 
     <div class="topbar">
-      <span class="spacer"></span>
-      <nav aria-label="主导航">
-        <a href="/volumes/">如梦似幻</a>
-        <a href="/essays/">头脑的温水</a>
-        <a href="/poems/">情诗</a>
-        <a href="/about/">我由什么组成</a>
+      <span class="brand label">{site.latin}</span>
+      <nav aria-label="Sections">
+        {nav.map((item) => <a href={item.href}>{item.label}</a>)}
       </nav>
     </div>
 
     <div class="bottombar">
-      <p class="feelings">
-        {[feelings.slice(0, 4), feelings.slice(4)].map((row, i) => (
-          <span class={`frow frow-${i + 1}`}>
-            {row.map((f) => (f.href ? <a href={f.href}>{f.cjk}</a> : <span>{f.cjk}</span>))}
-          </span>
-        ))}
-      </p>
+      <p class="tagline">{site.tagline}</p>
+      <span class="label sig">{site.by}</span>
     </div>
   </section>
 
   <div class="below">
-  {
-    latest && (
-      <section class="wrap block">
-        <div class="block-head">
-          <span class="label">最新一辑 / Latest volume</span>
-          <span class="label">{fmt(latest.data.date)}</span>
-        </div>
-        <hr class="rule" />
-        <a href={`/volumes/${latest.id}/`} class="latest">
-          {latestCover && (
-            <Picture
-              src={latestCover}
-              formats={['avif', 'webp']}
-              widths={[480, 960, 1440]}
-              sizes="(max-width: 780px) 100vw, 62vw"
-              alt={latest.data.photos[0].alt}
-              loading="lazy"
-            />
-          )}
-          <div class="latest-meta">
-            <h2>{latest.data.title}</h2>
-            {latest.data.place && <p class="place">{latest.data.place}</p>}
-            <p class="count label">{latest.data.photos.length} 张</p>
-          </div>
-        </a>
-      </section>
-    )
-  }
-
-  {
-    essays.length > 0 && (
-      <section class="wrap block">
-        <div class="block-head">
-          <span class="label">头脑的温水 / good for your brains</span>
-          <a href="/essays/" class="label more">
-            全部 →
-          </a>
-        </div>
-        <hr class="rule" />
-        <ul class="essay-list">
-          {essays.map((e) => (
-            <li>
-              <a href={`/essays/${e.id}/`}>
-                <span class="label num">{String(e.data.n).padStart(2, '0')}</span>
-                <h3>{e.data.title}</h3>
-                {e.data.summary && <p class="summary">{e.data.summary}</p>}
-              </a>
-            </li>
+    <!-- 名字的来历 -->
+    <section class="wrap block" id={nameStory.id}>
+      <p class="kicker label">{nameStory.kicker}</p>
+      <hr class="rule" />
+      <div class="two">
+        <h2 class="cjk-title">{nameStory.title}</h2>
+        <div class="prose-en">
+          {nameStory.body.map((t) => (
+            <p>{t}</p>
           ))}
-        </ul>
-      </section>
-    )
-  }
+        </div>
+      </div>
+    </section>
+
+    <!-- 怎么读牌 -->
+    <section class="wrap block" id={how.id}>
+      <p class="kicker label">{how.kicker}</p>
+      <hr class="rule" />
+      <div class="two">
+        <h2 class="stance">{how.title}</h2>
+        <div class="prose-en">
+          {how.body.map((t) => (
+            <p>{t}</p>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- 项目与价格 -->
+    <section class="wrap block" id="readings">
+      <p class="kicker label">Readings</p>
+      <hr class="rule" />
+      <ul class="menu">
+        {readings.map((r) => (
+          <li>
+            <span class="rn">{r.n}</span>
+            <span class="rbody">
+              <h3>{r.name}</h3>
+              <p class="rnote">{r.note}</p>
+            </span>
+            <span class="rmeta">
+              <span class="rlen label">{r.len}</span>
+              <span class="rprice">{r.price}</span>
+            </span>
+          </li>
+        ))}
+      </ul>
+      <p class="menu-note">{readingsNote}</p>
+    </section>
+
+    <!-- 反馈 -->
+    <section class="wrap block" id="says">
+      <p class="kicker label">What people say</p>
+      <hr class="rule" />
+      <ul class="says">
+        {says.map((s) => (
+          <li>
+            <blockquote>{s.quote}</blockquote>
+            <p class="who label">{s.who}</p>
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <!-- 感悟 -->
+    <section class="wrap block" id="notes">
+      <p class="kicker label">Notes</p>
+      <hr class="rule" />
+      <ul class="notes">
+        {notes.map((o) => (
+          <li>
+            <h3>{o.t}</h3>
+            <p>{o.b}</p>
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <!-- 预约 -->
+    <section class="wrap block book" id={book.id}>
+      <p class="kicker label">{book.kicker}</p>
+      <hr class="rule" />
+      <h2 class="stance">{book.title}</h2>
+      <p class="prose-en">{book.body}</p>
+      <a class="cta" href={`https://instagram.com/${site.instagram}`} rel="me noopener">
+        <span>Message me on Instagram</span>
+        <span class="handle">@{site.instagram}</span>
+      </a>
+    </section>
   </div>
 </Base>
 
@@ -415,11 +499,11 @@ const fmt = (d) => `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0
     margin: 0;
     display: block;
     text-align: center;
-    font-family: var(--display);
-    font-size: clamp(88px, 17vw, 250px);
+    font-family: var(--serif-cjk);
+    font-size: clamp(64px, 13.5vw, 186px);
     font-weight: 400;
     line-height: 1;
-    letter-spacing: 0.005em;
+    letter-spacing: 0.06em;
     color: #665049;
     z-index: 2;
     transform: translate3d(0, var(--mty, 0px), 0);
@@ -428,9 +512,18 @@ const fmt = (d) => `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0
     transition: color 0.55s ease, scale 0.55s cubic-bezier(0.22, 0.61, 0.36, 1);
   }
 
-  /* 悬停：颜色变暖一点，同时整体放大 4% —— 用独立的 scale 属性，
-     这样不会和 JS 每帧改写的 transform（漂浮、视差）打架 */
-  .mark:hover { color: #85675a; scale: 1.04; }
+  /* 中文名字下面那行拉丁文 —— 外国人看不懂上面三个字，
+     这一行得紧跟着，不能让人多想一秒 */
+  .mark-latin {
+    display: block;
+    margin-top: clamp(14px, 1.8vw, 26px);
+    font-family: var(--display);
+    font-size: clamp(13px, 1.5vw, 21px);
+    letter-spacing: 0.42em;
+    text-indent: 0.42em;
+    text-transform: uppercase;
+    color: #7c6058;
+  }
 
   .mark:focus-visible { outline: 1px solid var(--accent); outline-offset: 14px; }
 
@@ -504,7 +597,7 @@ const fmt = (d) => `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0
   .nightflower { top: 45%; left: 4%; width: 8.0vmin; --rot: -14deg; z-index: 3; }
 
   /* 鹦鹉螺嵌进 5 里 */
-  .nautilus { top: 58%; left: 52%; width: 8.0vmin; --rot: 18deg; z-index: 6; }
+  .nautilus { top: 66%; left: 55%; width: 8.0vmin; --rot: 18deg; z-index: 6; }
 
   /* 左下，压住数字下缘的一堆 */
   .dagger { top: 3%; left: 41.7%; width: 26.4vmin; --rot: 69deg; z-index: 5; }
@@ -551,35 +644,24 @@ const fmt = (d) => `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0
 
   .topbar nav a:hover { color: var(--accent); }
 
-  .feelings {
+  /* 底栏：一句话说清这是什么。从 IG 点进来的人只看这一眼 */
+  .tagline {
     margin: 0;
-    display: flex;
-    flex-wrap: wrap;
-    gap: clamp(12px, 1.8vw, 26px);
-    font-family: var(--serif-cjk);
-    font-size: clamp(12px, 0.98vw, 14px);
-    font-weight: 400;
-    letter-spacing: 0.2em;
+    font-family: var(--display);
+    font-size: clamp(12px, 1.05vw, 15px);
+    font-style: italic;
+    letter-spacing: 0.08em;
     color: #5e4b47;
   }
 
-  /* 桌面端 display: contents 让这两组「消失」，八个词直接成为一行；
-     手机上再把它们变回两行（见下面的 media query） */
-  .frow { display: contents; }
-
-  /* 八个词现在和顶部导航一个颜色、一样实。能点进去的那两个不靠「更亮」
-     区分，靠脚下一道很淡的线 —— 不然八个字长得一模一样，
-     没人知道纯净水和暗夜是可以按的。 */
-  .feelings a {
-    border-bottom: 1px solid rgba(169, 120, 79, 0.38);
-    padding-bottom: 3px;
-    transition: color 0.3s, border-color 0.3s;
+  .brand {
+    font-family: var(--display);
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: #6b554e;
   }
 
-  .feelings a:hover {
-    color: var(--accent);
-    border-bottom-color: var(--accent);
-  }
+  .sig { color: #8a7370; font-style: italic; }
 
   /* 下方区块：进入视口时浮起 */
   .block {
@@ -613,7 +695,7 @@ const fmt = (d) => `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0
     .moon { top: 30%; left: 2%; width: 25vw; }
     .blueflower { top: 47%; left: 5%; width: 21vw; }
     .uranus { top: 49%; right: 6%; width: 13vw; }
-    .nautilus { top: 51%; left: 57%; width: 16vw; }
+    .nautilus { top: 60%; left: 58%; width: 16vw; }
     .dagger { top: 16%; left: 35%; width: 32vw; }
     /* 底下这一堆往上收一点、小一点 —— 给最下面那排感觉词留出干净的丝缎，
        不然在窄屏上字会压在莲花和小天使身上，看不清 */
@@ -624,25 +706,9 @@ const fmt = (d) => `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0
     .topbar { top: 22px; flex-direction: column; align-items: flex-start; gap: 6px; }
     .bottombar { bottom: 26px; }
 
-    /* 八个词分成上四下四，第二行推到右边错开 ——
-       比挤成一行再吊下来一个「暗夜」好看得多 */
-    .feelings {
-      flex-direction: column;
-      align-items: stretch;
-      width: 100%;
-      gap: 12px;
-      font-size: 13px;
-    }
-
-    .frow {
-      display: flex;
-      gap: 18px;
-    }
-
-    .frow-2 {
-      justify-content: flex-end;
-      padding-right: 2px;
-    }
+    .tagline { font-size: 12px; line-height: 1.7; }
+    .bottombar { flex-direction: column; align-items: flex-start; gap: 6px; }
+    .brand { display: none; }
   }
 
   /* ── 第一屏之下：一块从下方升起、盖住第一屏的面板 ── */
@@ -732,5 +798,217 @@ const fmt = (d) => `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0
     .block { margin-top: 80px; }
     .essay-list a { grid-template-columns: 1fr; gap: 6px; }
     .essay-list .summary { grid-column: 1; }
+  }
+
+  /* ── 下方各节 ─────────────────────────────────────────
+     英文正文用 Karla（宋体的西文很难看），行长控制在 34em 以内。
+     每一节都是：小标 → 细线 → 内容，节奏统一。 */
+  .kicker {
+    margin: 0 0 14px;
+    color: var(--accent);
+  }
+
+  .two {
+    display: grid;
+    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.4fr);
+    gap: clamp(22px, 5vw, 80px);
+    align-items: start;
+    padding-top: clamp(18px, 2.4vw, 32px);
+  }
+
+  .cjk-title {
+    margin: 0;
+    font-family: var(--serif-cjk);
+    font-size: clamp(34px, 5.6vw, 76px);
+    font-weight: 400;
+    letter-spacing: 0.1em;
+    line-height: 1.2;
+    color: var(--ink);
+  }
+
+  .stance {
+    margin: 0;
+    font-family: var(--display);
+    font-size: clamp(23px, 3vw, 40px);
+    font-weight: 400;
+    line-height: 1.3;
+    letter-spacing: 0.005em;
+    color: var(--ink);
+    text-wrap: balance;
+  }
+
+  .prose-en {
+    max-width: 34em;
+    font-family: var(--sans);
+    font-size: clamp(15px, 1.15vw, 17px);
+    line-height: 1.85;
+    color: var(--ink-soft);
+  }
+
+  .prose-en p { margin: 0 0 1.25em; }
+  .prose-en p:last-child { margin-bottom: 0; }
+
+  /* ── 项目与价格 ─────────────────────────────────────── */
+  .menu { list-style: none; margin: 0; padding: 0; }
+
+  .menu li {
+    display: grid;
+    grid-template-columns: clamp(42px, 5vw, 76px) minmax(0, 1fr) auto;
+    gap: clamp(14px, 2.6vw, 40px);
+    align-items: baseline;
+    padding-block: clamp(22px, 2.6vw, 32px);
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .rn {
+    font-family: var(--display);
+    font-size: clamp(20px, 2.4vw, 32px);
+    line-height: 1;
+    color: var(--rule);
+  }
+
+  .menu h3 {
+    margin: 0;
+    font-family: var(--display);
+    font-size: clamp(19px, 1.9vw, 25px);
+    font-weight: 400;
+    letter-spacing: 0.01em;
+  }
+
+  .rnote {
+    margin: 8px 0 0;
+    max-width: 34em;
+    font-family: var(--sans);
+    font-size: 14px;
+    line-height: 1.8;
+    color: var(--ink-soft);
+  }
+
+  .rmeta {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 7px;
+    text-align: right;
+    white-space: nowrap;
+  }
+
+  .rprice {
+    font-family: var(--display);
+    font-size: clamp(17px, 1.7vw, 23px);
+    color: var(--accent);
+  }
+
+  .menu-note {
+    margin: 22px 0 0;
+    font-family: var(--sans);
+    font-size: 14px;
+    line-height: 1.8;
+    color: var(--ink-soft);
+  }
+
+  /* ── 反馈 ───────────────────────────────────────────── */
+  .says {
+    list-style: none;
+    margin: 0;
+    padding: clamp(14px, 2vw, 26px) 0 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: clamp(24px, 3.6vw, 56px);
+  }
+
+  .says blockquote {
+    margin: 0;
+    font-family: var(--display);
+    font-size: clamp(16px, 1.45vw, 20px);
+    font-style: italic;
+    line-height: 1.65;
+    color: var(--ink);
+  }
+
+  .says .who { margin: 14px 0 0; }
+
+  /* ── 感悟 ───────────────────────────────────────────── */
+  .notes {
+    list-style: none;
+    margin: 0;
+    padding: clamp(14px, 2vw, 26px) 0 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: clamp(22px, 3.2vw, 50px);
+  }
+
+  .notes h3 {
+    margin: 0 0 10px;
+    font-family: var(--display);
+    font-size: clamp(17px, 1.6vw, 21px);
+    font-weight: 400;
+  }
+
+  .notes p {
+    margin: 0;
+    font-family: var(--sans);
+    font-size: 14px;
+    line-height: 1.85;
+    color: var(--ink-soft);
+  }
+
+  /* ── 预约 ───────────────────────────────────────────── */
+  .book .prose-en { margin-top: 16px; }
+
+  /* 整页只有这一个按钮。它必须是最大、最实、最容易按到的东西 */
+  .cta {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 14px;
+    margin-top: clamp(26px, 3vw, 40px);
+    padding: 17px 30px;
+    border: 1px solid var(--ink);
+    border-radius: 999px;
+    font-family: var(--display);
+    font-size: clamp(16px, 1.5vw, 19px);
+    color: var(--ink);
+    transition: background-color 0.35s, color 0.35s, border-color 0.35s;
+  }
+
+  .cta .handle {
+    font-size: 13px;
+    letter-spacing: 0.08em;
+    opacity: 0.6;
+  }
+
+  .cta:hover {
+    background: var(--ink);
+    border-color: var(--ink);
+    color: var(--ground);
+  }
+
+  @media (max-width: 760px) {
+    .two { grid-template-columns: 1fr; gap: 18px; }
+
+    .menu li {
+      grid-template-columns: 34px minmax(0, 1fr);
+      gap: 12px;
+    }
+
+    /* 手机上价格换到标题下面，别挤成一条 */
+    .rmeta {
+      grid-column: 2;
+      flex-direction: row;
+      align-items: baseline;
+      justify-content: flex-start;
+      gap: 14px;
+      text-align: left;
+      margin-top: 10px;
+    }
+
+    /* 手机上让 handle 换到第二行，别把按钮文字挤断 */
+    .cta {
+      width: 100%;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+      padding: 16px 22px;
+    }
   }
 </style>
