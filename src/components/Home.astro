@@ -79,8 +79,8 @@ const T = {
       { href: '#book', label: 'Book' },
     ],
     nameStory: {
-      kicker: 'The space',
-      title: '自留地',
+      kicker: 'The Open Space · 自留地',
+      title: 'Where am I?',
       body: [
         'Hi, I’m Vicky — welcome to my healing space, The Open Space 自留地.',
         'The name came to me in a flash one night. I had always wanted my tarot practice to be demystified: an open, friendly space where the person asking and the person reading both grow a little, and discover something, as we read the cards and connect. In a fast world, I want fewer final verdicts — and more of the blank space we keep for ourselves, those moments that matter.',
@@ -115,12 +115,12 @@ const T = {
         note: 'One question, one answer. We choose the spread together, depending on what you want to know.',
         toggle: ['See the spreads', 'Hide the spreads'],
         spreads: [
-          { k: 3, name: 'Three-card spread', zh: '万能牌阵', pos: 'Development · Outcome · Thoughts', for: 'Works for almost any single question.', tag: 'Any question' },
-          { k: 5, name: 'Cross spread', zh: '综合十字', pos: 'Development · Influences · Obstacles · Outcome / Advice', for: 'A rounded look at one situation, with advice on what to do next.', tag: 'Any question' },
-          { k: 5, kl: '5 / 7', name: 'Two or three paths', zh: '二选一 / 三选一', pos: 'One line of cards for each option', for: 'For when you have several choices and can’t decide — see how each one is likely to unfold.', tag: 'Decisions' },
-          { k: 6, name: 'Thoughts & direction', zh: '想法及发展', pos: 'Their view of you · Where it’s heading', for: 'What the other person currently thinks of you, and where your relationship is going.', tag: 'Love' },
-          { k: 8, name: 'Venus love spread', zh: '爱情维纳斯', pos: 'Both sides · Influences · Direction · Obstacles · Outcome', for: 'A deep reading of a relationship, from both people’s side.', tag: 'Love' },
-          { k: 10, name: 'Celtic Cross', zh: '凯尔特十字', pos: 'Present · Obstacles · Past · Future · Conscious · Subconscious · Advice · Influences · Outcome', for: 'The most complete spread, for when you want the whole picture.', tag: 'The full picture' },
+          { k: 3, lay: 'three', name: 'Three-card spread', zh: '万能牌阵', pos: 'Development · Outcome · Thoughts', for: 'Works for almost any single question.', tag: 'Any question' },
+          { k: 5, lay: 'cross', name: 'Cross spread', zh: '综合十字', pos: 'Development · Influences · Obstacles · Outcome / Advice', for: 'A rounded look at one situation, with advice on what to do next.', tag: 'Any question' },
+          { k: 5, kl: '5 / 7', lay: 'choice', name: 'Choice spread', zh: '二选一 / 三选一', pos: 'You at the base · one line of cards for each path', for: 'Torn between two paths, or three? See how each is likely to unfold — and which way to go.', tag: 'Decisions' },
+          { k: 6, lay: 'six', name: 'Thoughts & direction', zh: '想法及发展', pos: 'Their thoughts · Where it’s heading', for: 'Any relationship in your life — a partner, a colleague, a classmate, a friend: what they currently think of you, and where things between you are going.', tag: 'Relationships' },
+          { k: 8, lay: 'venus', name: 'Venus love spread', zh: '爱情维纳斯', pos: 'Both sides · Influences · Direction · Obstacles · Outcome', for: 'A deep reading of a relationship, from both people’s side.', tag: 'Love' },
+          { k: 10, lay: 'celtic', name: 'Celtic Cross', zh: '凯尔特十字', pos: 'Present · Obstacles · Past · Future · Conscious · Subconscious · Advice · Influences · Outcome', for: 'The most complete spread, for when you want the whole picture.', tag: 'The full picture' },
         ],
       },
       {
@@ -128,11 +128,11 @@ const T = {
         name: 'Healing & channelling',
         len: '50 min / session',
         price: 'DM for prices',
-        note: 'A longer session with no limit on questions — tarot, deep listening, live channelling and therapeutic conversation.',
+        note: 'A longer session with no limit on questions — tarot (and a pendulum when it helps), deep listening, live channelling and therapeutic conversation.',
         toggle: ['What happens in a session', 'Close'],
         points: [
           'Ask as many questions as you like',
-          'Tarot, deep listening, live channelling and therapeutic conversation, combined',
+          'Tarot — and a pendulum when it helps — with deep listening, live channelling and therapeutic conversation',
           'Use the cards to explore the deeper psychology and causes behind a problem',
           'Face the core of the issue — together',
           'Break old patterns, limiting beliefs and old scripts',
@@ -179,7 +179,7 @@ const T = {
       { href: '#book', label: '预约' },
     ],
     nameStory: {
-      kicker: '这个空间',
+      kicker: 'The Open Space · 自留地',
       title: '自留地',
       body: [
         '嗨你好，欢迎来到我的疗愈空间「The Open Space 自留地」，我是 Vicky。',
@@ -191,7 +191,7 @@ const T = {
     about: {
       kicker: '关于我',
       title: 'Vicky',
-      tags: ['心理学专业', '灵性成长者 / 灵修者', '显化者', '塔罗师'],
+      tags: ['心理学专业', '灵修者', '显化者', '塔罗师'],
       body: '主张自我关怀与自我接纳，让塔罗牌成为向内探索的工具。',
       motto: '以人驭牌，以牌驭运。',
     },
@@ -215,12 +215,12 @@ const T = {
         note: '一问一答，不含延伸问题。根据你想问的事，我们一起选合适的牌阵。',
         toggle: ['展开牌阵', '收起牌阵'],
         spreads: [
-          { k: 3, name: '3 张万能牌阵', pos: '发展 · 结果 · 想法', for: '几乎任何单个问题都适用。', tag: '万能' },
-          { k: 5, name: '综合十字', pos: '发展 · 影响 · 阻碍 · 结局 / 建议', for: '全面看一件事，并给出下一步的建议。', tag: '万能' },
-          { k: 5, kl: '5 / 7', name: '二选一 / 三选一', pos: '每个选项各一组牌', for: '适用于拥有多种选择、犹豫不决，希望查看各自未来发展的情况。', tag: '抉择' },
-          { k: 6, name: '想法及发展', pos: '对方的想法 · 关系走向', for: '查看对方目前对你的想法，以及你们关系未来的发展。', tag: '感情' },
-          { k: 8, name: '爱情维纳斯', pos: '双方想法 · 影响 · 关系走向 · 阻碍 · 结局', for: '深度解读一段感情，从双方的角度来看。', tag: '感情' },
-          { k: 10, name: '凯尔特十字', pos: '现状 · 阻碍 · 过去 · 未来 · 表意识 · 潜意识 · 建议 · 影响 · 结果', for: '最全面的牌阵，想看清全局时用。', tag: '全局' },
+          { k: 3, lay: 'three', name: '3 张万能牌阵', pos: '发展 · 结果 · 想法', for: '几乎任何单个问题都适用。', tag: '万能' },
+          { k: 5, lay: 'cross', name: '综合十字', pos: '发展 · 影响 · 阻碍 · 结局 / 建议', for: '全面看一件事，并给出下一步的建议。', tag: '万能' },
+          { k: 5, kl: '5 / 7', lay: 'choice', name: '选择牌阵 · 二选一 / 三选一', pos: '最下面是你 · 每条路各一列牌', for: '适用于拥有多种选择、犹豫不决，希望看清每条路的未来发展、该怎么选的情况。', tag: '抉择' },
+          { k: 6, lay: 'six', name: '想法及发展', pos: '对方的想法 · 关系走向', for: '不只是感情——同事、同学、朋友，任何一段关系都可以看：对方目前对你的想法，以及你们关系未来的发展。', tag: '人际' },
+          { k: 8, lay: 'venus', name: '爱情维纳斯', pos: '双方想法 · 影响 · 关系走向 · 阻碍 · 结局', for: '深度解读一段感情，从双方的角度来看。', tag: '感情' },
+          { k: 10, lay: 'celtic', name: '凯尔特十字', pos: '现状 · 阻碍 · 过去 · 未来 · 表意识 · 潜意识 · 建议 · 影响 · 结果', for: '最全面的牌阵，想看清全局时用。', tag: '全局' },
         ],
       },
       {
@@ -228,11 +228,11 @@ const T = {
         name: '疗愈传讯',
         len: '50 分钟 / 节',
         price: '私信获取价目',
-        note: '不限提问次数。结合占卜、倾听陪伴、即时传讯与咨询疗愈的一节长时段咨询。',
+        note: '不限提问次数。结合占卜（塔罗，必要时也会用灵摆）、倾听陪伴、即时传讯与咨询疗愈的一节长时段咨询。',
         toggle: ['展开详情', '收起'],
         points: [
           '不限提问次数',
-          '结合占卜、倾听陪伴、即时传讯与咨询疗愈',
+          '结合占卜（塔罗牌，必要时也会用灵摆）、倾听陪伴、即时传讯与咨询疗愈',
           '帮助你一起通过牌面，探索问题背后的深层心理机制与成因',
           '陪伴你直面问题核心',
           '打破行为模式、限制性信念、旧剧本',
@@ -263,6 +263,20 @@ const T = {
       cta: { type: 'copy', value: 'SeeSoul_', label: '复制微信号', detail: 'SeeSoul_', done: '已复制，去微信搜索添加' },
     },
   },
+};
+
+// 牌阵摆法示意：每张牌是 [中心 x, 中心 y, 是否横放]，单位约等于「牌宽 12、牌高 19」
+const W = 12, H = 19;
+const layouts = {
+  three: { vb: [0, 0, 42, 19], cards: [[6, 9.5], [21, 9.5], [36, 9.5]] },
+  cross: { vb: [0, 0, 42, 63], cards: [[21, 9.5], [6, 31.5], [21, 31.5], [36, 31.5], [21, 53.5]] },
+  // 选择牌阵：最下面一张是你，往上两条路各自两张
+  choice: { vb: [0, 0, 42, 63], cards: [[21, 53.5], [12, 31.5], [30, 31.5], [6, 9.5], [36, 9.5]] },
+  six: { vb: [0, 0, 42, 41], cards: [[6, 9.5], [21, 9.5], [36, 9.5], [6, 31.5], [21, 31.5], [36, 31.5]] },
+  // 维纳斯：照你那张实拍图的位置摆的
+  venus: { vb: [0, 0, 48, 96], cards: [[24, 9.5], [9.5, 26.5], [38.5, 26.5], [24, 37.5], [6.5, 62], [24, 62], [41.5, 62], [24, 86.5]] },
+  // 凯尔特十字（韦特版）：中间 1、2 交叉，3 上 4 下，6 左 5 右，右边一列从下往上 7→10
+  celtic: { vb: [0, 0, 72, 85], cards: [[26, 42.5], [26, 42.5, 1], [26, 20.5], [26, 64.5], [44, 42.5], [8, 42.5], [64, 75.5], [64, 53.5], [64, 31.5], [64, 9.5]] },
 };
 
 const { site, nav, nameStory, about, how, readingsKicker, readings, readingsNote, saysKicker, says, notesKicker, notes, book } = T[lang];
@@ -343,7 +357,7 @@ const other = lang === 'en' ? { href: '/zh/', label: '中文' } : { href: '/', l
       <p class="kicker label">{nameStory.kicker}</p>
       <hr class="rule" />
       <div class="two">
-        <h2 class="cjk-title">{nameStory.title}</h2>
+        <h2 class={`cjk-title ${lang === 'en' ? 'where' : ''}`}>{nameStory.title}</h2>
         <div class="prose-t">
           {nameStory.body.map((t) => (
             <p>{t}</p>
@@ -412,9 +426,17 @@ const other = lang === 'en' ? { href: '/zh/', label: '中文' } : { href: '/', l
                   <ul class="spreads">
                     {r.spreads.map((sp) => (
                       <li class="spread">
-                        <span class="fan" style={`--n:${sp.k}`} aria-hidden="true">
-                          {Array.from({ length: sp.k }, (_, j) => <i style={`--j:${j}`} />)}
-                        </span>
+                        <svg class="sv" viewBox={layouts[sp.lay].vb.join(' ')} width={Math.round(layouts[sp.lay].vb[2] * Math.min(1.15, 92 / layouts[sp.lay].vb[3]))} height={Math.round(layouts[sp.lay].vb[3] * Math.min(1.15, 92 / layouts[sp.lay].vb[3]))} aria-hidden="true">
+                          {layouts[sp.lay].cards.map(([x, y, side], j) => {
+                            const w = side ? H : W, h = side ? W : H;
+                            return (
+                              <g style={`--j:${j}`}>
+                                <rect x={x - w / 2 + 0.6} y={y - h / 2 + 0.6} width={w - 1.2} height={h - 1.2} rx="1.4" />
+                                <rect class="sv-in" x={x - w / 2 + 2.2} y={y - h / 2 + 2.2} width={w - 4.4} height={h - 4.4} rx="0.6" />
+                              </g>
+                            );
+                          })}
+                        </svg>
                         <span class="sp-main">
                           <span class="sp-name">
                             {sp.name}
@@ -526,6 +548,11 @@ const other = lang === 'en' ? { href: '/zh/', label: '中文' } : { href: '/', l
 </Base>
 
 <script>
+  // 滚过首屏以后给 html 加个标记（左下角徽章用它垫底色）
+  const markPast = () => document.documentElement.classList.toggle('past-hero', scrollY > innerHeight * 0.75);
+  addEventListener('scroll', markPast, { passive: true });
+  markPast();
+
   // 解读项目：点标题展开 / 收起
   document.querySelectorAll('.svc-head').forEach((btn) => {
     btn.addEventListener('click', () => {
@@ -1280,24 +1307,40 @@ const other = lang === 'en' ? { href: '/zh/', label: '中文' } : { href: '/', l
   /* ── 关于我 ─────────────────────────────────────────── */
   .about-title { font-family: var(--didot); letter-spacing: -0.01em; }
 
+  .cjk-title.where {
+    font-family: var(--didot);
+    font-style: italic;
+    font-weight: 400;
+    letter-spacing: -0.01em;
+    line-height: 1.05;
+  }
+
   .tags {
     list-style: none;
     margin: 0 0 22px;
     padding: 0;
     display: flex;
     flex-wrap: wrap;
-    gap: 10px;
+    gap: 8px 4px;
   }
 
+  /* 标签：不加框，直接列出来，中间用小星星隔开 */
   .tags li {
-    padding: 8px 16px 7px;
-    border: 1px solid rgba(78, 57, 51, 0.28);
-    border-radius: 999px;
+    display: inline-flex;
+    align-items: center;
     font-family: var(--hero-serif);
-    font-size: 14px;
-    letter-spacing: 0.04em;
+    font-size: clamp(15px, 1.3vw, 18px);
+    font-style: italic;
+    letter-spacing: 0.03em;
     color: var(--ink);
-    background: rgba(255, 252, 246, 0.5);
+  }
+
+  .tags li + li::before {
+    content: '✦';
+    margin: 0 14px 0 4px;
+    font-size: 9px;
+    font-style: normal;
+    color: #c4923c;
   }
 
   .motto {
@@ -1492,35 +1535,30 @@ const other = lang === 'en' ? { href: '/zh/', label: '中文' } : { href: '/', l
 
   .spread:last-child { border-bottom: 0; padding-bottom: 4px; }
 
-  /* 小小的一把扇形牌：几张牌就画几张 */
-  .fan {
-    position: relative;
-    height: 54px;
-    width: 92px;
+  /* 牌阵摆法的小示意图：几张牌、怎么摆，一眼看得出 */
+  .sv {
+    display: block;
+    margin: 0 auto;
+    max-width: 92px;
+    height: auto;
+    overflow: visible;
   }
 
-  .fan i {
-    position: absolute;
-    left: 50%;
-    bottom: 2px;
-    width: 24px;
-    height: 38px;
-    margin-left: -12px;
-    border: 1px solid rgba(78, 57, 51, 0.5);
-    border-radius: 3px;
-    background:
-      linear-gradient(135deg, rgba(201, 163, 90, 0.0) 46%, rgba(201, 163, 90, 0.55) 50%, rgba(201, 163, 90, 0) 54%),
-      linear-gradient(45deg, rgba(201, 163, 90, 0.0) 46%, rgba(201, 163, 90, 0.55) 50%, rgba(201, 163, 90, 0) 54%),
-      #f8efe6;
-    transform-origin: 50% 120%;
-    transform: rotate(calc((var(--j) - (var(--n) - 1) / 2) * (min(var(--n) * 14deg, 96deg) / max(var(--n) - 1, 1))));
-    box-shadow: 0 2px 6px -3px rgba(78, 57, 51, 0.4);
-    transition: transform 0.5s cubic-bezier(0.22, 0.61, 0.36, 1);
+  .sv rect {
+    fill: #fbf5ec;
+    stroke: rgba(78, 57, 51, 0.55);
+    stroke-width: 0.7;
+    filter: drop-shadow(0 0.8px 0.8px rgba(78, 57, 51, 0.25));
   }
 
-  .spread:hover .fan i {
-    transform: rotate(calc((var(--j) - (var(--n) - 1) / 2) * (min(var(--n) * 17deg, 116deg) / max(var(--n) - 1, 1)))) translateY(-2px);
+  .sv .sv-in { fill: none; stroke: rgba(196, 146, 60, 0.75); stroke-width: 0.45; filter: none; }
+
+  .sv g {
+    transition: transform 0.45s cubic-bezier(0.34, 1.4, 0.5, 1);
+    transition-delay: calc(var(--j) * 40ms);
   }
+
+  .spread:hover .sv g { transform: translateY(-1.6px); }
 
   .sp-main { display: flex; flex-direction: column; gap: 4px; }
 
@@ -1718,7 +1756,7 @@ const other = lang === 'en' ? { href: '/zh/', label: '中文' } : { href: '/', l
     .rules, .points { grid-template-columns: 1fr; }
 
     .spread { grid-template-columns: 64px minmax(0, 1fr); gap: 14px; align-items: start; }
-    .fan { width: 64px; height: 46px; transform: scale(0.8); transform-origin: 50% 100%; }
+    .sv { max-width: 64px; transform: scale(0.8); transform-origin: 50% 0; }
     .sp-side { grid-column: 2; flex-direction: row; align-items: center; gap: 12px; }
     .sp-k { font-size: 20px; }
     .sp-zh { display: block; margin: 2px 0 0; }
@@ -1789,6 +1827,19 @@ const other = lang === 'en' ? { href: '/zh/', label: '中文' } : { href: '/', l
     width: 96px;
     height: 96px;
   }
+
+  /* 滚到下面米色面板上时，徽章后面垫一小团底色，不和正文的字打架 */
+  .seal-wrap::before {
+    content: '';
+    position: absolute;
+    inset: -4px;
+    border-radius: 50%;
+    background: radial-gradient(closest-side, rgba(239, 234, 225, 0.95) 62%, rgba(239, 234, 225, 0));
+    opacity: 0;
+    transition: opacity 0.5s ease;
+  }
+
+  :global(html.past-hero) .seal-wrap::before { opacity: 1; }
 
   .ring {
     position: absolute;
@@ -1885,6 +1936,6 @@ const other = lang === 'en' ? { href: '/zh/', label: '中文' } : { href: '/', l
   .svc-toggle:lang(zh),
   .rprice:lang(zh),
   .how-title i:lang(zh) { font-style: normal; font-family: var(--cjk); letter-spacing: 0.06em; }
-  .tags li:lang(zh) { font-family: var(--cjk); letter-spacing: 0.08em; }
+  .tags li:lang(zh) { font-family: var(--cjk); font-style: normal; letter-spacing: 0.1em; }
   .sp-tag:lang(zh) { letter-spacing: 0.2em; }
 </style>
