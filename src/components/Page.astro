@@ -26,6 +26,7 @@ const otherLang = lang === 'en' ? 'zh' : 'en';
     <div class="strip-bar">
       <a class="back" href={url(lang)}><span class="back-arrow" aria-hidden="true">←</span> {u.home}</a>
       <nav class="pnav" aria-label="Pages">
+        <a href={`${url(lang)}#space`}>{lang === 'en' ? 'The space' : '这个空间'}</a>
         {order.map((k) => (
           <a href={url(lang, k)} aria-current={k === page ? 'page' : undefined}>{pm[k].nav}</a>
         ))}
@@ -34,25 +35,12 @@ const otherLang = lang === 'en' ? 'zh' : 'en';
     </div>
     <div class="strip-title">
       <p class="strip-n">{me.n}</p>
-      <h1 class={`strip-h ${page === 'space' && lang === 'en' ? 'is-italic' : ''}`}>{me.title}</h1>
+      <h1 class="strip-h">{me.title}</h1>
     </div>
     <LangSeal lang={lang} href={url(otherLang, page)} inline />
   </header>
 
   <div class="below">
-    {page === 'space' && (
-    <section class="wrap block" id="content">
-      <div class="two">
-        <p class={`cjk-title side-name ${lang === 'zh' ? 'where' : ''}`} aria-hidden="true">{lang === 'en' ? '自留地' : 'The Open Space'}</p>
-        <div class="prose-t">
-          {nameStory.body.map((t) => (
-            <p>{t}</p>
-          ))}
-        </div>
-      </div>
-    </section>
-    )}
-
     {page === 'about' && (
     <section class="wrap block" id="content">
       <div class="two">

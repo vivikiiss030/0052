@@ -4,7 +4,7 @@ import Base from '../layouts/Base.astro';
 import LangSeal from './LangSeal.astro';
 import Book from './Book.astro';
 import WeChatSheet from './WeChatSheet.astro';
-import { T, url, pageMeta } from '../lib/site.js';
+import { T, url, pageMeta, doors } from '../lib/site.js';
 
 const { lang = 'en' } = Astro.props;
 
@@ -60,13 +60,14 @@ const pieces = [
   { k: 'butterflyGreen', src: butterflyGreen, alt: '绿色凤蝶', d: 0.75, ph: 2.3 },
 ];
 
-const { site } = T[lang];
+const { site, nameStory } = T[lang];
+const myDoors = doors[lang];
 const pm = pageMeta[lang];
 // 首页右上角：三个内容页 + 预约（「这个空间」从店名进）
 const nav = ['about', 'guide', 'readings'].map((k) => ({ href: url(lang, k), label: pm[k].nav }));
 ---
 
-<Base bare wide sheen nofoot lang={lang} alt="/" title={`The Open Space ${site.cjk}`} description={site.tagline}>
+<Base bare wide sheen lang={lang} alt="/" title={`The Open Space ${site.cjk}`} description={site.tagline}>
   <section class="hero">
     <Picture
       src={satin}
@@ -81,8 +82,8 @@ const nav = ['about', 'guide', 'readings'].map((k) => ({ href: url(lang, k), lab
     <div class="stage">
       <div class="mark-wrap">
         <h1 class="mark">
-          <!-- 店名本身就是入口：点一下进「这个空间」 -->
-          <a class="mark-link" href={url(lang, 'space')}>
+          <!-- 店名本身就是入口：点一下滑到下面「这个空间」 -->
+          <a class="mark-link" href="#space">
             <span class="ml" style="--i:0">The </span>
             <span class="ml ml-open" style="--i:1">Open </span>
             <span class="ml" style="--i:2">Space </span>
@@ -132,12 +133,60 @@ const nav = ['about', 'guide', 'readings'].map((k) => ({ href: url(lang, k), lab
     </div>
   </section>
 
+  <!-- 往下拉：一块升起来的面板，只讲「这里是什么地方」，然后是三扇门 -->
+  <div class="below">
+    <section class="wrap block" id="space">
+      <p class="kicker label">The Open Space · 自留地</p>
+      <hr class="rule" />
+      <div class="two">
+        <h2 class={`space-title ${lang === 'en' ? 'is-en' : ''}`}>{lang === 'en' ? 'What is this place?' : '自留地'}</h2>
+        <div class="prose-t">
+          {nameStory.body.map((t) => <p>{t}</p>)}
+        </div>
+      </div>
+    </section>
+
+    <section class="wrap block doors" aria-label={lang === 'en' ? 'Pages' : '页面'}>
+      <ul class="door-list">
+        {myDoors.map((d, i) => (
+          <li>
+            <a class="door" href={url(lang, d.key)}>
+              <span class="door-n">{['I', 'II', 'III'][i]}</span>
+              <span class="door-t">{pageMeta[lang][d.key].title}</span>
+              <span class="door-b">{d.line}</span>
+              <span class="door-go" aria-hidden="true">→</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+      <div class="door-book">
+        <Book lang={lang} variant="cta" />
+      </div>
+    </section>
+  </div>
+
 
   {lang === 'zh' && <WeChatSheet />}
   <LangSeal lang={lang} href={url(lang === 'en' ? 'zh' : 'en')} />
 </Base>
 
 <script>
+  // 滚过首屏以后给 html 加个标记（左下角徽章用它垫底色）
+  const markPast = () => document.documentElement.classList.toggle('past-hero', scrollY > innerHeight * 0.75);
+  addEventListener('scroll', markPast, { passive: true });
+  markPast();
+
+  // 下方区块进入视口时浮起
+  {
+    const still = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const blocks = document.querySelectorAll('.block');
+    if (still || !('IntersectionObserver' in window)) blocks.forEach((b) => b.classList.add('in'));
+    else {
+      const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }), { rootMargin: '0px 0px -10% 0px' });
+      blocks.forEach((b) => io.observe(b));
+    }
+  }
+
   // 丝缎的动感：滚动视差 + 极慢的漂浮。
   // 两者都只改 transform，合成一个 rAF 循环，不触发重排。
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -711,4 +760,109 @@ const nav = ['about', 'guide', 'readings'].map((k) => ({ href: url(lang, k), lab
     .tagline { font-size: 12px; line-height: 1.7; text-align: right; }
   }
 
+
+  /* ── 往下拉的面板：只放空间介绍和三扇门 ─────────────── */
+  .below {
+    position: relative;
+    z-index: 5;
+    background: var(--ground);
+    border-radius: 30px 30px 0 0;
+    box-shadow: 0 -26px 64px rgba(96, 74, 72, 0.18);
+    padding-top: 76px;
+    padding-bottom: 40px;
+  }
+
+  #space { scroll-margin-top: 0; }
+  .kicker { margin: 0 0 14px; color: var(--accent); }
+
+  .two {
+    display: grid;
+    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.4fr);
+    gap: clamp(22px, 5vw, 80px);
+    align-items: start;
+    padding-top: clamp(18px, 2.4vw, 32px);
+  }
+
+  .space-title {
+    margin: 0;
+    font-family: 'PingFang SC', var(--cjk);
+    font-size: clamp(34px, 5.6vw, 76px);
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    line-height: 1.2;
+    color: var(--ink);
+  }
+
+  .space-title.is-en {
+    font-family: var(--didot);
+    font-style: italic;
+    font-weight: 400;
+    letter-spacing: -0.015em;
+    line-height: 1.02;
+  }
+
+  .prose-t {
+    max-width: 34em;
+    font-family: var(--sans);
+    font-size: clamp(15px, 1.15vw, 17px);
+    line-height: 1.85;
+    color: var(--ink-soft);
+  }
+
+  .prose-t p { margin: 0 0 1.25em; }
+  .prose-t p:last-child { margin-bottom: 0; }
+  .prose-t:lang(zh) { font-family: var(--cjk); font-size: 15px; line-height: 2; letter-spacing: 0.04em; }
+
+  /* 三扇门：三张并排的卡片，点进去是单独的页面 */
+  .doors { margin-top: clamp(64px, 8vw, 110px); }
+
+  .door-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+  }
+
+  .door {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    height: 100%;
+    padding: 28px 26px 30px;
+    border: 1px solid rgba(78, 57, 51, 0.16);
+    border-radius: 22px;
+    background: linear-gradient(180deg, rgba(255, 252, 247, 0.8), rgba(250, 243, 236, 0.5));
+    box-shadow: 0 18px 40px -30px rgba(96, 60, 48, 0.4);
+    transition: transform 0.5s cubic-bezier(0.22, 0.61, 0.36, 1), box-shadow 0.5s, border-color 0.4s;
+  }
+
+  .door:hover { transform: translateY(-4px); border-color: rgba(78, 57, 51, 0.3); box-shadow: 0 26px 50px -28px rgba(96, 60, 48, 0.5); }
+
+  .door-n { font-family: var(--didot); font-style: italic; font-size: 15px; letter-spacing: 0.2em; color: #a48a7c; }
+  .door-t { font-family: var(--didot); font-size: clamp(26px, 2.6vw, 36px); font-weight: 450; letter-spacing: -0.01em; color: var(--ink); }
+  .door-t:lang(zh) { font-family: 'PingFang SC', var(--cjk); font-weight: 500; letter-spacing: 0.08em; }
+  .door-b { font-family: var(--sans); font-size: 14px; line-height: 1.7; color: var(--ink-soft); padding-right: 30px; }
+  .door-b:lang(zh) { font-family: var(--cjk); letter-spacing: 0.04em; }
+
+  .door-go {
+    position: absolute;
+    right: 24px;
+    bottom: 24px;
+    font-size: 20px;
+    color: #7a5246;
+    transition: transform 0.4s cubic-bezier(0.22, 0.61, 0.36, 1);
+  }
+
+  .door:hover .door-go { transform: translateX(5px); }
+
+  .door-book { margin-top: 28px; display: flex; justify-content: center; }
+
+  @media (max-width: 760px) {
+    .two { grid-template-columns: 1fr; gap: 18px; }
+    .door-list { grid-template-columns: 1fr; gap: 12px; }
+    .door { padding: 22px 22px 24px; }
+  }
 </style>

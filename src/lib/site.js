@@ -27,7 +27,7 @@ export const T = {
         'Hi, I’m Vicky — welcome to my healing space, The Open Space 自留地.',
         'The name came to me in a flash one night. I had always wanted my tarot practice to be demystified: an open, friendly space where the person asking and the person reading both grow a little, and discover something, as we read the cards and connect. In a fast world, I want fewer final verdicts — and more of the blank space we keep for ourselves, those moments that matter.',
         'Liúbái 留白, leaving space empty, is part of traditional Chinese aesthetics, and a deeply philosophical idea in itself. As with yin and yang: where there is yin there is yang, and where there is yang there is yin. Nothing is absolute, and nothing stays the same. Only by walking the road yourself can you step into another person’s shoes and know whether they are warm or cold.',
-        'Two kinds of sessions are open for now — you’ll find them under Readings, with everything you should know before booking under Good to know. Please DM me ahead of time to book; if you have any particular needs, I’ll do my best to find a slot that suits us both.',
+        'Two kinds of sessions are open for now — you’ll find them, and everything to know before booking, just below. Please DM me ahead of time to book; if you have any particular needs, I’ll do my best to find a slot that suits us both.',
       ],
     },
     about: {
@@ -127,7 +127,7 @@ export const T = {
         '嗨你好，欢迎来到我的疗愈空间「The Open Space 自留地」，我是 Vicky。',
         '这个空间的名字来源于一个夜晚的灵光一闪——我一直想为自己的占卜愿景打造一个「去神秘化」的开放友好空间，希望我与问卜者都能够在读牌、链接的过程中彼此有所成长与发现。在这个快节奏的时代，少一点「断言定论」，多一些留给自己的，那些重要的空白时刻。',
         '「留白」作为中国传统美学的一部分，本身也是一个极具哲学意味的理念。正如阴阳之中，有阴必有阳，有阳必有阴。没有什么是绝对的，也没有什么是一成不变的。持续在道路中体验，才能把脚踏进另一个人的鞋子里，知其冷暖。',
-        '目前已开放两类服务，具体见「解读项目」，须知见「占卜须知」，价目表请私信获取。咨询需求请提前私信预约，如有任何特殊需要，我会尽可能协调一个双方都方便的 slot 完成。',
+        '目前已开放两类服务，具体项目和须知就在下面，价目表请私信获取。咨询需求请提前私信预约，如有任何特殊需要，我会尽可能协调一个双方都方便的 slot 完成。',
       ],
     },
     about: {
@@ -224,20 +224,18 @@ export const layouts = {
 
 // ── 四个内容页 ───────────────────────────────────────────────
 // 顺序就是「下一页」的顺序
-export const order = ['space', 'about', 'guide', 'readings'];
+export const order = ['about', 'guide', 'readings'];
 
 export const pageMeta = {
   en: {
-    space: { n: 'I', title: 'What is this place?', nav: 'The space' },
-    about: { n: 'II', title: 'About me', nav: 'About me' },
-    guide: { n: 'III', title: 'Good to know', nav: 'Good to know' },
-    readings: { n: 'IV', title: 'Readings', nav: 'Readings' },
+    about: { n: 'I', title: 'About me', nav: 'About me' },
+    guide: { n: 'II', title: 'Good to know', nav: 'Good to know' },
+    readings: { n: 'III', title: 'Readings', nav: 'Readings' },
   },
   zh: {
-    space: { n: 'I', title: '自留地', nav: '这个空间' },
-    about: { n: 'II', title: '关于我', nav: '关于我' },
-    guide: { n: 'III', title: '占卜须知', nav: '占卜须知' },
-    readings: { n: 'IV', title: '解读项目', nav: '解读项目' },
+    about: { n: 'I', title: '关于我', nav: '关于我' },
+    guide: { n: 'II', title: '占卜须知', nav: '占卜须知' },
+    readings: { n: 'III', title: '解读项目', nav: '解读项目' },
   },
 };
 
@@ -247,3 +245,17 @@ export const ui = {
 };
 
 export const url = (lang, key) => `${lang === 'zh' ? '/zh' : ''}/${key ? key + '/' : ''}`;
+
+// 首页往下拉，空间介绍下面的三扇门
+export const doors = {
+  en: [
+    { key: 'about', line: 'Who will be reading for you.' },
+    { key: 'guide', line: 'What tarot can and can’t answer, and how a reading works.' },
+    { key: 'readings', line: 'Two kinds of sessions, and the spreads I use.' },
+  ],
+  zh: [
+    { key: 'about', line: '为你读牌的人。' },
+    { key: 'guide', line: '塔罗能问什么、不适合问什么，以及咨询流程。' },
+    { key: 'readings', line: '两类服务，以及我常用的牌阵。' },
+  ],
+};
