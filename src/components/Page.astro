@@ -1,0 +1,972 @@
+---
+// 四个内容页共用的外壳：顶上一条丝缎（和首页连着），左上角回首页，
+// 中间是这一页的内容，最底下「预约」+「下一页」。
+import { Image, Picture } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import LangSeal from './LangSeal.astro';
+import Book from './Book.astro';
+import WeChatSheet from './WeChatSheet.astro';
+import satin from '../assets/collage/satin.jpg';
+import { T, layouts, W, H, order, pageMeta, ui, url } from '../lib/site.js';
+
+const { lang = 'en', page } = Astro.props;
+const { site, nameStory, about, how, readings, readingsNote, book } = T[lang];
+const pm = pageMeta[lang];
+const u = ui[lang];
+const me = pm[page];
+const idx = order.indexOf(page);
+const nextKey = order[idx + 1];
+const next = nextKey ? { href: url(lang, nextKey), label: pm[nextKey].title } : { href: url(lang), label: u.backToStart };
+const otherLang = lang === 'en' ? 'zh' : 'en';
+---
+
+<Base bare wide sheen nofoot lang={lang} alt={`/${page}/`} title={`${me.title} · The Open Space ${site.cjk}`} description={site.tagline}>
+  <header class="strip">
+    <Picture src={satin} formats={['avif', 'webp']} widths={[800, 1400, 2000]} sizes="100vw" alt="" loading="eager" class="strip-bg" />
+    <div class="strip-bar">
+      <a class="back" href={url(lang)}><span class="back-arrow" aria-hidden="true">←</span> {u.home}</a>
+      <nav class="pnav" aria-label="Pages">
+        {order.map((k) => (
+          <a href={url(lang, k)} aria-current={k === page ? 'page' : undefined}>{pm[k].nav}</a>
+        ))}
+        <Book lang={lang} variant="nav" />
+      </nav>
+    </div>
+    <div class="strip-title">
+      <p class="strip-n">{me.n}</p>
+      <h1 class={`strip-h ${page === 'space' && lang === 'en' ? 'is-italic' : ''}`}>{me.title}</h1>
+    </div>
+    <LangSeal lang={lang} href={url(otherLang, page)} inline />
+  </header>
+
+  <div class="below">
+    {page === 'space' && (
+    <section class="wrap block" id="content">
+      <div class="two">
+        <p class={`cjk-title side-name ${lang === 'zh' ? 'where' : ''}`} aria-hidden="true">{lang === 'en' ? '自留地' : 'The Open Space'}</p>
+        <div class="prose-t">
+          {nameStory.body.map((t) => (
+            <p>{t}</p>
+          ))}
+        </div>
+      </div>
+    </section>
+    )}
+
+    {page === 'about' && (
+    <section class="wrap block" id="content">
+      <div class="two">
+        <h2 class="cjk-title about-title">{about.title}</h2>
+        <div class="about-r">
+          <ul class="tags">
+            {about.tags.map((t) => <li>{t}</li>)}
+          </ul>
+          <p class="prose-t">{about.body}</p>
+          <p class="motto">{about.motto}</p>
+        </div>
+      </div>
+    </section>
+    )}
+
+    {page === 'guide' && (
+    <section class="wrap block" id="content">
+      <h2 class="stance how-title">{how.title[0]}<br /><i>{how.title[1]}</i></h2>
+      <ol class="rules">
+        {how.items.map((it, i) => (
+          <li>
+            <span class="rules-n">{String(i + 1).padStart(2, '0')}</span>
+            <h3>{it.t}</h3>
+            {it.b.map((t) => <p>{t}</p>)}
+          </li>
+        ))}
+      </ol>
+    </section>
+    )}
+
+    {page === 'readings' && (
+    <section class="wrap block" id="content">
+      <ul class="svcs">
+        {readings.map((r, i) => (
+          <li class="svc">
+            <button class="svc-head" type="button" aria-expanded="false" aria-controls={`svc-${i}`} data-open={r.toggle[1]} data-closed={r.toggle[0]}>
+              <span class="rn">{r.n}</span>
+              <span class="svc-title">
+                <h3>{r.name}</h3>
+                <span class="svc-note">{r.note}</span>
+              </span>
+              <span class="rmeta">
+                <span class="rlen label">{r.len}</span>
+                <span class="rprice">{r.price}</span>
+              </span>
+              <span class="svc-toggle">
+                <span class="svc-toggle-t">{r.toggle[0]}</span>
+                <span class="plus" aria-hidden="true"></span>
+              </span>
+            </button>
+            <div class="svc-body" id={`svc-${i}`}>
+              <div class="svc-inner">
+                {r.spreads && (
+                  <ul class="spreads">
+                    {r.spreads.map((sp) => (
+                      <li class="spread">
+                        <svg class="sv" viewBox={layouts[sp.lay].vb.join(' ')} width={Math.round(layouts[sp.lay].vb[2] * Math.min(1.15, 92 / layouts[sp.lay].vb[3]))} height={Math.round(layouts[sp.lay].vb[3] * Math.min(1.15, 92 / layouts[sp.lay].vb[3]))} aria-hidden="true">
+                          {layouts[sp.lay].cards.map(([x, y, side], j) => {
+                            const w = side ? H : W, h = side ? W : H;
+                            return (
+                              <g style={`--j:${j}`}>
+                                <rect x={x - w / 2 + 0.6} y={y - h / 2 + 0.6} width={w - 1.2} height={h - 1.2} rx="1.4" />
+                                <rect class="sv-in" x={x - w / 2 + 2.2} y={y - h / 2 + 2.2} width={w - 4.4} height={h - 4.4} rx="0.6" />
+                              </g>
+                            );
+                          })}
+                        </svg>
+                        <span class="sp-main">
+                          <span class="sp-name">
+                            {sp.name}
+                            {sp.zh && <span class="sp-zh">{sp.zh}</span>}
+                          </span>
+                          <span class="sp-pos">{sp.pos}</span>
+                          <span class="sp-for">{sp.for}</span>
+                        </span>
+                        <span class="sp-side">
+                          <span class="sp-k">{sp.kl ?? sp.k}<small>{lang === 'en' ? ' cards' : ' 张'}</small></span>
+                          <span class="sp-tag">{sp.tag}</span>
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+                {r.points && (
+                  <div class="healing">
+                    <ul class="points">
+                      {r.points.map((p) => <li>{p}</li>)}
+                    </ul>
+                    <p class="healing-after">{r.after}</p>
+                  </div>
+                )}
+              </div>
+            </div>
+          </li>
+        ))}
+      </ul>
+      <p class="menu-note">{readingsNote}</p>
+    </section>
+    )}
+
+    <!-- 最底下：预约 + 下一页 -->
+    <section class="wrap endbar">
+      <div class="end-book">
+        {page === 'readings' && <h2 class="stance end-title">{book.title}</h2>}
+        {page === 'readings' && <p class="prose-t end-body">{book.body}</p>}
+        <Book lang={lang} variant="cta" />
+      </div>
+      <a class="next" href={next.href}>
+        <span class="next-k label">{nextKey ? u.next : ''}</span>
+        <span class="next-t">{next.label} <span aria-hidden="true">→</span></span>
+      </a>
+    </section>
+  </div>
+
+  {lang === 'zh' && <WeChatSheet />}
+</Base>
+
+<script>
+  // 解读项目：点标题展开 / 收起
+  document.querySelectorAll('.svc-head').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const open = btn.getAttribute('aria-expanded') !== 'true';
+      btn.setAttribute('aria-expanded', String(open));
+      btn.closest('.svc')?.classList.toggle('is-open', open);
+      const t = btn.querySelector('.svc-toggle-t');
+      if (t) t.textContent = btn.getAttribute(open ? 'data-open' : 'data-closed') || '';
+    });
+  });
+
+  // 内容进入视口时浮起
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const blocks = document.querySelectorAll('.block');
+  if (reduce || !('IntersectionObserver' in window)) {
+    blocks.forEach((b) => b.classList.add('in'));
+  } else {
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+    }, { rootMargin: '0px 0px -8% 0px' });
+    blocks.forEach((b) => io.observe(b));
+  }
+</script>
+
+<style>
+  @property --amp { syntax: '<number>'; inherits: true; initial-value: 0; }
+
+  /* ── 顶上一条丝缎 ───────────────────────────────────── */
+  .strip {
+    position: relative;
+    height: clamp(250px, 40vh, 380px);
+    overflow: hidden;
+    background: #eadad4;
+  }
+
+  .strip-bg, .strip-bg :global(img) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .strip-bar {
+    position: absolute;
+    top: 28px;
+    left: clamp(20px, 3.4vw, 48px);
+    right: clamp(20px, 3.4vw, 48px);
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 20px;
+    z-index: 2;
+    font-family: var(--hero-serif);
+    font-size: clamp(14px, 1.15vw, 17px);
+    letter-spacing: 0.05em;
+    color: #5e4b47;
+  }
+
+  .back { display: inline-flex; align-items: baseline; gap: 10px; font-style: italic; }
+  .back-arrow { font-style: normal; transition: transform 0.4s cubic-bezier(0.22, 0.61, 0.36, 1); }
+  .back:hover { color: var(--accent); }
+  .back:hover .back-arrow { transform: translateX(-5px); }
+
+  .pnav { display: flex; gap: clamp(14px, 2.2vw, 32px); }
+  .pnav a { border-bottom: 1px solid transparent; padding-bottom: 2px; transition: color 0.3s, border-color 0.3s; }
+  .pnav a:hover { color: var(--accent); }
+  .pnav a[aria-current='page'] { color: var(--ink); border-bottom-color: rgba(78, 57, 51, 0.5); }
+
+  .strip-title {
+    position: absolute;
+    left: clamp(20px, 6vw, 96px);
+    right: clamp(20px, 6vw, 96px);
+    bottom: clamp(60px, 9vh, 96px);
+    z-index: 2;
+  }
+
+  .strip-n {
+    margin: 0 0 10px;
+    font-family: var(--didot);
+    font-style: italic;
+    font-size: clamp(15px, 1.4vw, 19px);
+    letter-spacing: 0.2em;
+    color: #8a6a5e;
+  }
+
+  .strip-h {
+    margin: 0;
+    font-family: var(--didot);
+    font-weight: 450;
+    font-size: clamp(46px, 7.4vw, 112px);
+    line-height: 0.95;
+    letter-spacing: -0.02em;
+    color: #4e3933;
+  }
+
+  .strip-h.is-italic { font-style: italic; font-weight: 400; }
+  .strip-h:lang(zh) { font-family: 'PingFang SC', var(--cjk); font-weight: 600; letter-spacing: 0.08em; }
+
+  /* ── 最底下：预约 + 下一页 ─────────────────────────────── */
+  .endbar {
+    margin-bottom: clamp(48px, 7vw, 90px);
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 32px;
+    flex-wrap: wrap;
+    margin-top: clamp(64px, 9vw, 120px);
+    padding-top: 28px;
+    border-top: 1px solid var(--rule);
+  }
+
+  .end-book { display: flex; flex-direction: column; align-items: flex-start; gap: 14px; max-width: 34em; }
+  .end-title { margin: 0; }
+  .end-body { margin: 0 0 6px; }
+
+  .next { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; text-align: right; margin-left: auto; }
+  .next-k { color: var(--accent); }
+  .next-t {
+    font-family: var(--didot);
+    font-size: clamp(24px, 2.8vw, 38px);
+    letter-spacing: -0.01em;
+    color: var(--ink);
+    transition: color 0.3s;
+  }
+  .next-t:lang(zh) { font-family: 'PingFang SC', var(--cjk); font-weight: 500; letter-spacing: 0.06em; }
+  .next-t span { display: inline-block; transition: transform 0.4s cubic-bezier(0.22, 0.61, 0.36, 1); }
+  .next:hover .next-t { color: #7a5246; }
+  .next:hover .next-t span { transform: translateX(6px); }
+
+  .side-name { opacity: 0.9; }
+
+  @media (max-width: 760px) {
+    .strip { height: 270px; }
+    .strip-bar { top: 20px; font-size: 14px; }
+    .pnav a { display: none; }
+    .strip-title { bottom: 58px; right: 110px; }
+    .strip-h { font-size: 11.5vw; line-height: 1; }
+    .endbar { flex-direction: column; align-items: stretch; }
+    .next { align-items: flex-start; text-align: left; margin-left: 0; }
+  }
+
+  /* ── 第一屏之下：一块从下方升起、盖住第一屏的面板 ── */
+  .below {
+    position: relative;
+    z-index: 5;
+    background: var(--ground);
+    border-radius: 30px 30px 0 0;
+    box-shadow: 0 -26px 64px rgba(96, 74, 72, 0.18);
+    padding-top: 76px;
+    padding-bottom: 40px;
+  }
+
+  .block { margin-top: 96px; }
+  .block:first-child { margin-top: 0; }
+
+  .block-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 18px;
+  }
+
+  .more:hover { color: var(--accent); }
+
+  .latest { display: block; margin-top: 36px; }
+
+  .latest img {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+  }
+
+  .latest-meta {
+    display: flex;
+    align-items: baseline;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-top: 20px;
+  }
+
+  .latest-meta h2 {
+    margin: 0;
+    font-family: var(--cjk);
+    font-size: 21px;
+    font-weight: 400;
+    letter-spacing: 0.08em;
+  }
+
+  .place { margin: 0; font-size: 13px; color: var(--ink-soft); letter-spacing: 0.08em; }
+  .count { margin: 0; margin-left: auto; }
+  .latest:hover h2 { color: var(--accent); }
+
+  .essay-list { list-style: none; margin: 0; padding: 0; }
+  .essay-list li { border-bottom: 1px solid var(--rule); }
+
+  .essay-list a {
+    display: grid;
+    grid-template-columns: 96px minmax(0, 1fr);
+    gap: 24px;
+    align-items: baseline;
+    padding-block: 26px;
+  }
+
+  .essay-list h3 {
+    margin: 0;
+    font-family: var(--cjk);
+    font-size: 19px;
+    font-weight: 400;
+    letter-spacing: 0.06em;
+  }
+
+  .essay-list .summary {
+    grid-column: 2;
+    margin: 8px 0 0;
+    font-family: var(--cjk);
+    font-size: 14px;
+    font-weight: 300;
+    line-height: 1.9;
+    color: var(--ink-soft);
+    max-width: 44em;
+  }
+
+  .essay-list a:hover h3 { color: var(--accent); }
+
+  @media (max-width: 640px) {
+    .block { margin-top: 80px; }
+    .essay-list a { grid-template-columns: 1fr; gap: 6px; }
+    .essay-list .summary { grid-column: 1; }
+  }
+
+  /* ── 下方各节 ─────────────────────────────────────────
+     英文正文用 Karla（宋体的西文很难看），行长控制在 34em 以内。
+     每一节都是：小标 → 细线 → 内容，节奏统一。 */
+  .kicker {
+    margin: 0 0 14px;
+    color: var(--accent);
+  }
+
+  .two {
+    display: grid;
+    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.4fr);
+    gap: clamp(22px, 5vw, 80px);
+    align-items: start;
+    padding-top: clamp(18px, 2.4vw, 32px);
+  }
+
+  .cjk-title {
+    margin: 0;
+    font-family: var(--cjk);
+    font-size: clamp(34px, 5.6vw, 76px);
+    font-weight: 400;
+    letter-spacing: 0.1em;
+    line-height: 1.2;
+    color: var(--ink);
+  }
+
+  .stance {
+    margin: 0;
+    font-family: var(--didot);
+    font-size: clamp(23px, 3vw, 40px);
+    font-weight: 400;
+    line-height: 1.3;
+    letter-spacing: 0.005em;
+    color: var(--ink);
+    text-wrap: balance;
+  }
+
+  .prose-t {
+    max-width: 34em;
+    font-family: var(--sans);
+    font-size: clamp(15px, 1.15vw, 17px);
+    line-height: 1.85;
+    color: var(--ink-soft);
+  }
+
+  .prose-t p { margin: 0 0 1.25em; }
+  .prose-t p:last-child { margin-bottom: 0; }
+
+  /* ── 关于我 ─────────────────────────────────────────── */
+  .about-title { font-family: var(--didot); letter-spacing: -0.01em; }
+
+  .cjk-title.where {
+    font-family: var(--didot);
+    font-style: italic;
+    font-weight: 400;
+    letter-spacing: -0.01em;
+    line-height: 1.05;
+  }
+
+  .tags {
+    list-style: none;
+    margin: 0 0 22px;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 4px;
+  }
+
+  /* 标签：不加框，直接列出来，中间用小星星隔开 */
+  .tags li {
+    display: inline-flex;
+    align-items: center;
+    font-family: var(--hero-serif);
+    font-size: clamp(15px, 1.3vw, 18px);
+    font-style: italic;
+    letter-spacing: 0.03em;
+    color: var(--ink);
+  }
+
+  .tags li + li::before {
+    content: '✦';
+    margin: 0 14px 0 4px;
+    font-size: 9px;
+    font-style: normal;
+    color: #c4923c;
+  }
+
+  .motto {
+    margin: 26px 0 0;
+    font-family: var(--didot);
+    font-style: italic;
+    font-size: clamp(22px, 2.4vw, 32px);
+    line-height: 1.35;
+    color: #7a5246;
+  }
+
+  /* ── 占卜服务须知：四条，两列 ─────────────────────────── */
+  .how-title { padding-top: clamp(18px, 2.4vw, 32px); max-width: 22em; }
+
+  .rules {
+    list-style: none;
+    margin: clamp(26px, 3.4vw, 46px) 0 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: clamp(26px, 3.6vw, 52px) clamp(28px, 5vw, 80px);
+  }
+
+  .rules li { position: relative; padding-top: 18px; border-top: 1px solid var(--rule); }
+
+  .rules-n {
+    display: block;
+    margin-bottom: 10px;
+    font-family: var(--sans);
+    font-size: 11px;
+    letter-spacing: 0.24em;
+    color: var(--accent);
+  }
+
+  .rules h3 {
+    margin: 0 0 12px;
+    font-family: var(--didot);
+    font-size: clamp(20px, 1.9vw, 25px);
+    font-weight: 500;
+    letter-spacing: 0;
+    color: var(--ink);
+  }
+
+  .rules p {
+    margin: 0 0 0.9em;
+    font-family: var(--sans);
+    font-size: 14.5px;
+    line-height: 1.85;
+    color: var(--ink-soft);
+  }
+
+  .rules p:last-child { margin-bottom: 0; }
+
+  /* ── 解读项目：可以展开的两张卡 ──────────────────────── */
+  .svcs { list-style: none; margin: clamp(18px, 2.4vw, 30px) 0 0; padding: 0; display: grid; gap: 16px; }
+
+  .svc {
+    border: 1px solid rgba(78, 57, 51, 0.16);
+    border-radius: 22px;
+    background: linear-gradient(180deg, rgba(255, 252, 247, 0.78), rgba(250, 243, 236, 0.55));
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.6) inset, 0 18px 40px -28px rgba(96, 60, 48, 0.35);
+    transition: box-shadow 0.4s ease, border-color 0.4s ease;
+    overflow: hidden;
+  }
+
+  .svc:hover, .svc.is-open { border-color: rgba(78, 57, 51, 0.28); box-shadow: 0 1px 0 rgba(255,255,255,.6) inset, 0 26px 50px -30px rgba(96, 60, 48, 0.45); }
+
+  .svc-head {
+    all: unset;
+    box-sizing: border-box;
+    width: 100%;
+    cursor: pointer;
+    display: grid;
+    grid-template-columns: clamp(42px, 5vw, 76px) minmax(0, 1fr) auto;
+    grid-template-areas: 'n title meta' 'n toggle toggle';
+    gap: 14px clamp(14px, 2.6vw, 40px);
+    align-items: baseline;
+    padding: clamp(22px, 2.6vw, 34px) clamp(20px, 2.8vw, 40px);
+  }
+
+  .svc-head:focus-visible { outline: 1px solid var(--accent); outline-offset: -6px; border-radius: 22px; }
+
+  .svc-head .rn { grid-area: n; font-family: var(--didot); color: #c9b6a6; }
+  .svc-title { grid-area: title; }
+  .svc-head .rmeta { grid-area: meta; }
+
+  .svc-head h3 {
+    margin: 0;
+    font-family: var(--didot);
+    font-size: clamp(24px, 2.6vw, 36px);
+    font-weight: 450;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+  }
+
+  .svc-note {
+    display: block;
+    margin-top: 8px;
+    max-width: 36em;
+    font-family: var(--sans);
+    font-size: 14.5px;
+    line-height: 1.75;
+    color: var(--ink-soft);
+  }
+
+  .rmeta {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 7px;
+    text-align: right;
+    white-space: nowrap;
+  }
+
+  .rprice {
+    font-family: var(--didot);
+    font-style: italic;
+    font-size: clamp(17px, 1.6vw, 21px);
+    color: var(--accent);
+  }
+
+  .svc-toggle {
+    grid-area: toggle;
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    justify-self: start;
+    font-family: var(--hero-serif);
+    font-style: italic;
+    font-size: 15px;
+    letter-spacing: 0.03em;
+    color: #7a5246;
+  }
+
+  .svc-toggle-t { border-bottom: 1px solid rgba(122, 82, 70, 0.35); padding-bottom: 1px; }
+
+  /* 加号 → 减号 */
+  .plus {
+    position: relative;
+    width: 26px;
+    height: 26px;
+    border: 1px solid rgba(122, 82, 70, 0.45);
+    border-radius: 50%;
+    transition: transform 0.5s cubic-bezier(0.22, 0.61, 0.36, 1), background 0.3s;
+  }
+
+  .plus::before, .plus::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 10px;
+    height: 1px;
+    background: currentColor;
+    transform: translate(-50%, -50%);
+  }
+
+  .plus::after { transform: translate(-50%, -50%) rotate(90deg); transition: transform 0.5s cubic-bezier(0.22, 0.61, 0.36, 1); }
+  .svc.is-open .plus { transform: rotate(180deg); background: rgba(122, 82, 70, 0.08); }
+  .svc.is-open .plus::after { transform: translate(-50%, -50%) rotate(0deg); }
+  .svc-head:hover .svc-toggle-t { border-bottom-color: currentColor; }
+
+  /* 展开：grid 0fr → 1fr，高度不用写死 */
+  .svc-body {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 0.6s cubic-bezier(0.22, 0.61, 0.36, 1);
+  }
+
+  .svc.is-open .svc-body { grid-template-rows: 1fr; }
+  .svc-inner { overflow: hidden; min-height: 0; }
+
+  .spreads, .healing {
+    margin: 0 clamp(20px, 2.8vw, 40px) clamp(22px, 2.6vw, 34px);
+    opacity: 0;
+    transform: translateY(-8px);
+    transition: opacity 0.45s ease 0.05s, transform 0.6s cubic-bezier(0.22, 0.61, 0.36, 1);
+  }
+
+  .svc.is-open .spreads, .svc.is-open .healing { opacity: 1; transform: none; transition-delay: 0.12s; }
+
+  .spreads { list-style: none; padding: 0; border-top: 1px solid var(--rule); }
+
+  .spread {
+    display: grid;
+    grid-template-columns: 92px minmax(0, 1fr) auto;
+    gap: clamp(14px, 2.4vw, 34px);
+    align-items: center;
+    padding: 20px 0;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .spread:last-child { border-bottom: 0; padding-bottom: 4px; }
+
+  /* 牌阵摆法的小示意图：几张牌、怎么摆，一眼看得出 */
+  .sv {
+    display: block;
+    margin: 0 auto;
+    max-width: 92px;
+    height: auto;
+    overflow: visible;
+  }
+
+  .sv rect {
+    fill: #fbf5ec;
+    stroke: rgba(78, 57, 51, 0.55);
+    stroke-width: 0.7;
+    filter: drop-shadow(0 0.8px 0.8px rgba(78, 57, 51, 0.25));
+  }
+
+  .sv .sv-in { fill: none; stroke: rgba(196, 146, 60, 0.75); stroke-width: 0.45; filter: none; }
+
+  .sv g {
+    transition: transform 0.45s cubic-bezier(0.34, 1.4, 0.5, 1);
+    transition-delay: calc(var(--j) * 40ms);
+  }
+
+  .spread:hover .sv g { transform: translateY(-1.6px); }
+
+  .sp-main { display: flex; flex-direction: column; gap: 4px; }
+
+  .sp-name {
+    font-family: var(--didot);
+    font-size: clamp(18px, 1.6vw, 21px);
+    font-weight: 500;
+    color: var(--ink);
+  }
+
+  .sp-zh {
+    margin-left: 10px;
+    font-family: var(--cjk);
+    font-size: 13px;
+    font-weight: 400;
+    letter-spacing: 0.1em;
+    color: var(--ink-soft);
+  }
+
+  .sp-pos {
+    font-family: var(--hero-serif);
+    font-style: italic;
+    font-size: 14px;
+    letter-spacing: 0.02em;
+    color: #7a5246;
+  }
+
+  .sp-for { font-family: var(--sans); font-size: 14px; line-height: 1.7; color: var(--ink-soft); }
+
+  .sp-side { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; white-space: nowrap; }
+
+  .sp-k { font-family: var(--didot); font-size: 26px; line-height: 1; color: var(--ink); }
+  .sp-k small { font-size: 12px; letter-spacing: 0.1em; color: var(--ink-soft); }
+
+  .sp-tag {
+    padding: 4px 11px 3px;
+    border-radius: 999px;
+    background: rgba(201, 163, 90, 0.16);
+    font-family: var(--sans);
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #8a6a35;
+  }
+
+  .healing { border-top: 1px solid var(--rule); padding-top: 22px; }
+
+  .points {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px clamp(20px, 3vw, 44px);
+  }
+
+  .points li {
+    position: relative;
+    padding-left: 22px;
+    font-family: var(--sans);
+    font-size: 14.5px;
+    line-height: 1.7;
+    color: var(--ink);
+  }
+
+  .points li::before {
+    content: '✦';
+    position: absolute;
+    left: 0;
+    top: 0.1em;
+    font-size: 11px;
+    color: #c4923c;
+  }
+
+  .healing-after {
+    margin: 22px 0 0;
+    padding: 18px 22px;
+    border-radius: 14px;
+    background: rgba(201, 163, 90, 0.1);
+    font-family: var(--hero-serif);
+    font-style: italic;
+    font-size: 15.5px;
+    line-height: 1.75;
+    color: #5e4b47;
+  }
+
+  .menu-note {
+    margin: 22px 0 0;
+    font-family: var(--sans);
+    font-size: 14px;
+    line-height: 1.8;
+    color: var(--ink-soft);
+  }
+
+  /* ── 反馈 ───────────────────────────────────────────── */
+  .says {
+    list-style: none;
+    margin: 0;
+    padding: clamp(14px, 2vw, 26px) 0 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: clamp(24px, 3.6vw, 56px);
+  }
+
+  .says blockquote {
+    margin: 0;
+    font-family: var(--display);
+    font-size: clamp(16px, 1.45vw, 20px);
+    font-style: italic;
+    line-height: 1.65;
+    color: var(--ink);
+  }
+
+  .says .who { margin: 14px 0 0; }
+
+  /* 私占须知：三条，用小号数字领头 */
+  .before { counter-reset: b; }
+  .before li { counter-increment: b; }
+  .before h3::before {
+    content: counter(b, decimal-leading-zero);
+    display: block;
+    margin-bottom: 8px;
+    font-family: var(--sans);
+    font-size: 11px;
+    letter-spacing: 0.24em;
+    color: var(--accent);
+  }
+
+  /* ── 感悟 ───────────────────────────────────────────── */
+  .notes {
+    list-style: none;
+    margin: 0;
+    padding: clamp(14px, 2vw, 26px) 0 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: clamp(22px, 3.2vw, 50px);
+  }
+
+  .notes h3 {
+    margin: 0 0 10px;
+    font-family: var(--display);
+    font-size: clamp(17px, 1.6vw, 21px);
+    font-weight: 400;
+  }
+
+  .notes p {
+    margin: 0;
+    font-family: var(--sans);
+    font-size: 14px;
+    line-height: 1.85;
+    color: var(--ink-soft);
+  }
+
+  /* ── 预约 ───────────────────────────────────────────── */
+  .book .prose-t { margin-top: 16px; }
+
+  /* 整页只有这一个按钮。它必须是最大、最实、最容易按到的东西 */
+  .cta {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 14px;
+    margin-top: clamp(26px, 3vw, 40px);
+    padding: 17px 30px;
+    border: 1px solid var(--ink);
+    border-radius: 999px;
+    font-family: var(--display);
+    font-size: clamp(16px, 1.5vw, 19px);
+    color: var(--ink);
+    transition: background-color 0.35s, color 0.35s, border-color 0.35s;
+  }
+
+  .cta .handle {
+    font-size: 13px;
+    letter-spacing: 0.08em;
+    opacity: 0.6;
+  }
+
+  .cta:hover {
+    background: var(--ink);
+    border-color: var(--ink);
+    color: var(--ground);
+  }
+
+  @media (max-width: 760px) {
+    .two { grid-template-columns: 1fr; gap: 18px; }
+
+    .svc-head {
+      grid-template-columns: 30px minmax(0, 1fr);
+      grid-template-areas: 'n title' 'n meta' 'n toggle';
+      gap: 12px;
+    }
+
+    .svc-head .rmeta { flex-direction: row; flex-wrap: wrap; align-items: baseline; gap: 6px 14px; justify-self: start; white-space: normal; text-align: left; }
+    .rlen:lang(zh) { letter-spacing: 0.12em; }
+    .rules, .points { grid-template-columns: 1fr; }
+
+    .spread { grid-template-columns: 64px minmax(0, 1fr); gap: 14px; align-items: start; }
+    .sv { max-width: 64px; transform: scale(0.8); transform-origin: 50% 0; }
+    .sp-side { grid-column: 2; flex-direction: row; align-items: center; gap: 12px; }
+    .sp-k { font-size: 20px; }
+    .sp-zh { display: block; margin: 2px 0 0; }
+
+    /* 手机上让 handle 换到第二行，别把按钮文字挤断 */
+    .cta {
+      width: 100%;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+      padding: 16px 22px;
+    }
+  }
+
+  /* ── 中文版的字 ─────────────────────────────────────── */
+  .prose-t:lang(zh),
+  .rules p:lang(zh),
+  .svc-note:lang(zh),
+  .sp-for:lang(zh),
+  .points li:lang(zh),
+  .rnote:lang(zh),
+  .menu-note:lang(zh),
+  .notes p:lang(zh) {
+    font-family: var(--cjk);
+    font-size: 15px;
+    line-height: 2;
+    letter-spacing: 0.04em;
+  }
+
+  .says blockquote:lang(zh),
+  .stance i:lang(zh) {
+    font-style: normal;
+  }
+
+  .stance:lang(zh),
+  .menu h3:lang(zh),
+  .notes h3:lang(zh),
+  .says blockquote:lang(zh) {
+    font-family: var(--cjk);
+    letter-spacing: 0.06em;
+  }
+
+  .stance:lang(zh) { font-size: clamp(22px, 2.6vw, 34px); line-height: 1.55; }
+
+  /* 按钮版的 cta（中文版复制微信号）—— 去掉浏览器默认样式 */
+  button.cta {
+    background: transparent;
+    cursor: pointer;
+    font: inherit;
+    font-family: var(--display);
+    font-size: clamp(16px, 1.5vw, 19px);
+  }
+
+  .cta:lang(zh) { font-family: var(--cjk); letter-spacing: 0.08em; }
+
+  .rules h3:lang(zh),
+  .svc-head h3:lang(zh),
+  .sp-name:lang(zh) { font-family: var(--cjk); font-weight: 500; letter-spacing: 0.06em; }
+  .motto:lang(zh),
+  .sp-pos:lang(zh),
+  .healing-after:lang(zh),
+  .svc-toggle:lang(zh),
+  .rprice:lang(zh),
+  .how-title i:lang(zh) { font-style: normal; font-family: var(--cjk); letter-spacing: 0.06em; }
+  .tags li:lang(zh) { font-family: var(--cjk); font-style: normal; letter-spacing: 0.1em; }
+  .sp-tag:lang(zh) { letter-spacing: 0.2em; }
+</style>

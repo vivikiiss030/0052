@@ -1,0 +1,158 @@
+---
+// 左下角的日月徽章：中英文切换。首页和每个内容页都用它。
+// href 是另一种语言的同一页；solid 表示下面是米色底（内容页），徽章后面垫一团底色
+import { Image } from 'astro:assets';
+import medallion from '../assets/collage/medallion.png';
+const { lang = 'en', href, solid = false, inline = false } = Astro.props;
+---
+
+<!-- 左下角的语言切换：一直在，滚到哪儿都能按 -->
+  <nav class={`lang ${solid ? 'is-solid' : ''} ${inline ? 'is-inline' : ''}`} aria-label="Language">
+    <!-- 日月徽章，上面一圈 English、下面一圈 中文：当前语言是实色，另一个是虚的。
+         整枚都能点，移上去徽章整个翻一圈 -->
+    <a class={`seal-wrap ${lang === 'en' ? 'on-en' : 'on-zh'}`} href={href} hreflang={lang === 'en' ? 'zh-Hans' : 'en'} aria-label={lang === 'en' ? '中文' : 'English'}>
+      <svg class="ring" viewBox="0 0 100 100" aria-hidden="true">
+        <defs>
+          <path id="arc-top" d="M 13 50 A 37 37 0 0 1 87 50" />
+          <path id="arc-bot" d="M 6.5 50 A 43.5 43.5 0 0 0 93.5 50" />
+        </defs>
+        <text class="ring-en"><textPath href="#arc-top" startOffset="50%" text-anchor="middle">ENGLISH</textPath></text>
+        <text class="ring-zh"><textPath href="#arc-bot" startOffset="50%" text-anchor="middle">中文</textPath></text>
+        <circle class="ring-dot" cx="7" cy="44" r="1.1" />
+        <circle class="ring-dot" cx="93" cy="44" r="1.1" />
+      </svg>
+      <span class="seal">
+        <span class="seal-in">
+          <span class="seal-face seal-front"><Image src={medallion} alt="" width={112} /></span>
+        </span>
+      </span>
+    </a>
+  </nav>
+
+<style>
+  /* ── 左下角语言切换 ─────────────────────────────────
+     固定在屏幕上，滚到哪儿都在。半透明 + 模糊，
+     压在丝缎上和压在米色面板上都看得清 */
+  .lang {
+    position: fixed;
+    left: clamp(6px, 2.2vw, 30px);
+    bottom: calc(clamp(6px, 1.8vw, 24px) + env(safe-area-inset-bottom, 0px));
+    z-index: 60;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--hero-serif);
+    font-size: 15px;
+    letter-spacing: 0.08em;
+    color: var(--ink-soft);
+    perspective: 400px;
+  }
+
+  /* 日月徽章：两面硬币。正面用拼贴里那枚徽章，背面做成同样的
+     旧锡底 + 金边，中间一个金色的字 */
+  .seal-wrap {
+    position: relative;
+    display: block;
+    width: 96px;
+    height: 96px;
+  }
+
+  /* 滚到下面米色面板上时，徽章后面垫一小团底色，不和正文的字打架 */
+  .seal-wrap::before {
+    content: '';
+    position: absolute;
+    inset: -4px;
+    border-radius: 50%;
+    background: radial-gradient(closest-side, rgba(239, 234, 225, 0.95) 62%, rgba(239, 234, 225, 0));
+    opacity: 0;
+    transition: opacity 0.5s ease;
+  }
+
+  :global(html.past-hero) .seal-wrap::before,
+  .is-solid .seal-wrap::before { opacity: 1; }
+
+  .ring {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+  }
+
+  .ring text { fill: var(--ink); transition: opacity 0.5s ease, fill 0.5s ease; }
+
+  .ring-en {
+    font-family: var(--didot);
+    font-size: 9.5px;
+    font-weight: 500;
+    letter-spacing: 2.6px;
+  }
+
+  .ring-zh {
+    font-family: 'PingFang SC', var(--cjk);
+    font-size: 10.5px;
+    font-weight: 500;
+    letter-spacing: 4px;
+  }
+
+  .ring-dot { fill: #c4923c; }
+
+  /* 当前语言实色，另一种虚着；移上去时虚的那一个亮起来一点，告诉你「点这里去那边」 */
+  .on-en .ring-zh, .on-zh .ring-en { opacity: 0.3; }
+  .on-en:hover .ring-zh, .on-zh:hover .ring-en { opacity: 1; }
+  .on-en:hover .ring-en, .on-zh:hover .ring-zh { opacity: 0.3; }
+
+  .seal {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    display: block;
+    width: 50px;
+    height: 50px;
+    margin: -25px 0 0 -25px;
+    perspective: 360px;
+    filter: drop-shadow(0 4px 8px rgba(70, 45, 30, 0.35));
+  }
+
+  .seal-in {
+    position: relative;
+    display: block;
+    width: 100%;
+    height: 100%;
+    transform-style: preserve-3d;
+    transition: transform 1.1s cubic-bezier(0.34, 1.2, 0.5, 1);
+  }
+
+  .seal-wrap:hover .seal-in { transform: rotateY(360deg); }
+
+  .seal-face {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+  }
+
+  .seal-front img { width: 100%; height: 100%; object-fit: contain; display: block; }
+
+
+
+  .lang-other {
+    font-style: italic;
+    color: var(--ink-soft);
+    border-bottom: 1px solid rgba(96, 74, 67, 0.3);
+    transition: color 0.3s, border-color 0.3s;
+  }
+
+  .lang-other:hover { color: var(--accent); border-bottom-color: var(--accent); }
+
+
+  /* 内容页：徽章不再固定在屏幕上，而是放在顶上那条丝缎的右下角，跟着页面走，不会压到正文 */
+  .lang.is-inline {
+    position: absolute;
+    left: auto;
+    right: clamp(10px, 3vw, 40px);
+    bottom: 6px;
+    z-index: 3;
+  }
+</style>

@@ -1,7 +1,9 @@
 ---
 import '../styles/global.css';
 
-const { title, description = 'Tarot readings with Vicky', wide = false, bare = false, sheen = false, lang = 'en' } = Astro.props;
+const { title, description = 'Tarot readings with Vicky', wide = false, bare = false, sheen = false, lang = 'en', nofoot = false, alt = '/' } = Astro.props;
+// alt：这一页在两种语言下的路径（不带 /zh 前缀），用来写 hreflang
+const altZh = alt === '/' ? '/zh/' : `/zh${alt}`;
 const site = 'The Open Space';
 const pageTitle = title ?? `${site} · 自留地`;
 const path = Astro.url.pathname;
@@ -22,8 +24,8 @@ const nav = [
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{pageTitle}</title>
     <meta name="description" content={description} />
-    <link rel="alternate" hreflang="en" href="/" />
-    <link rel="alternate" hreflang="zh-Hans" href="/zh/" />
+    <link rel="alternate" hreflang="en" href={alt} />
+    <link rel="alternate" hreflang="zh-Hans" href={altZh} />
 
     <meta property="og:type" content="website" />
     <meta property="og:title" content={pageTitle} />
@@ -56,6 +58,7 @@ const nav = [
       <slot />
     </main>
 
+    {!nofoot && (
     <footer class="wrap site-foot">
       <hr class="rule" />
       <div class="foot-row">
@@ -63,6 +66,7 @@ const nav = [
         <span class="label">Vicky &nbsp;/&nbsp; 2026</span>
       </div>
     </footer>
+    )}
 
     <script>
       // 星屑。桌面端是魔杖式的拖尾：鼠标走过的路上密密地落下两种东西 ——

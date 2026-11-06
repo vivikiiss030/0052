@@ -1,0 +1,41 @@
+---
+// 「预约」：英文版直接去 IG 私信；中文版弹出一张微信卡片。
+// variant="nav" 是导航里的一个词，"cta" 是一颗大按钮
+import { T, ui } from '../lib/site.js';
+const { lang = 'en', variant = 'nav' } = Astro.props;
+const { book } = T[lang];
+const u = ui[lang];
+const ig = lang === 'en' ? book.cta : null;
+---
+
+{ig ? (
+  <a class={`book book-${variant}`} href={ig.href} target="_blank" rel="me noopener">
+    {variant === 'nav' ? u.book : <><span>{ig.label}</span><span class="handle">{ig.detail}</span></>}
+  </a>
+) : (
+  <button class={`book book-${variant}`} type="button" data-sheet-open>
+    {variant === 'nav' ? u.book : <><span>{book.cta.label.replace('复制', '加')}</span><span class="handle">{book.cta.detail}</span></>}
+  </button>
+)}
+
+<style>
+  .book { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
+  .book-nav { border-bottom: 1px solid rgba(94, 75, 71, 0.4); padding-bottom: 2px; transition: color 0.3s, border-color 0.3s; }
+  .book-nav:hover { color: var(--accent); border-bottom-color: var(--accent); }
+
+  .book-cta {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 16px;
+    padding: 15px 28px 14px;
+    border: 1px solid var(--ink);
+    border-radius: 999px;
+    font-family: var(--didot);
+    font-size: clamp(16px, 1.4vw, 19px);
+    color: var(--ink);
+    transition: background 0.35s, color 0.35s;
+  }
+  .book-cta:lang(zh) { font-family: 'PingFang SC', var(--cjk); letter-spacing: 0.08em; }
+  .book-cta .handle { font-family: var(--sans); font-size: 12px; letter-spacing: 0.1em; opacity: 0.6; }
+  .book-cta:hover { background: var(--ink); color: var(--ground); }
+</style>

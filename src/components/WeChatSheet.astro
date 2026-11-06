@@ -1,0 +1,77 @@
+---
+// 中文版点「预约」弹出的小卡片：微信号 + 一键复制。不用浏览器自带的弹窗
+import { T } from '../lib/site.js';
+const { book } = T.zh;
+---
+
+<div class="sheet" data-sheet hidden>
+  <div class="sheet-bg" data-sheet-close></div>
+  <div class="sheet-card" role="dialog" aria-modal="true" aria-labelledby="sheet-t">
+    <button class="sheet-x" type="button" data-sheet-close aria-label="关闭">×</button>
+    <p class="sheet-k">预约</p>
+    <h2 class="sheet-t" id="sheet-t">{book.title}</h2>
+    <p class="sheet-b">{book.body}</p>
+    <div class="sheet-id">
+      <span class="sheet-id-k">微信号</span>
+      <span class="sheet-id-v">{book.cta.value}</span>
+    </div>
+    <button class="sheet-copy" type="button" data-copy={book.cta.value} data-done={book.cta.done}>
+      <span class="cta-label">{book.cta.label}</span>
+    </button>
+  </div>
+</div>
+
+<script>
+  const sheet = document.querySelector('[data-sheet]');
+  if (sheet) {
+    const open = () => { sheet.hidden = false; requestAnimationFrame(() => sheet.classList.add('is-open')); };
+    const close = () => { sheet.classList.remove('is-open'); setTimeout(() => { sheet.hidden = true; }, 380); };
+    document.querySelectorAll('[data-sheet-open]').forEach((b) => b.addEventListener('click', open));
+    sheet.querySelectorAll('[data-sheet-close]').forEach((b) => b.addEventListener('click', close));
+    addEventListener('keydown', (e) => { if (e.key === 'Escape' && !sheet.hidden) close(); });
+    sheet.querySelectorAll('[data-copy]').forEach((btn) => {
+      btn.addEventListener('click', async () => {
+        const v = btn.getAttribute('data-copy') || '';
+        try { await navigator.clipboard.writeText(v); } catch {}
+        const label = btn.querySelector('.cta-label');
+        if (!label) return;
+        const before = label.textContent;
+        label.textContent = btn.getAttribute('data-done') || before;
+        setTimeout(() => { label.textContent = before; }, 2400);
+      });
+    });
+  }
+</script>
+
+<style>
+  .sheet { position: fixed; inset: 0; z-index: 100; display: grid; place-items: center; padding: 20px; }
+  .sheet[hidden] { display: none; }
+  .sheet-bg { position: absolute; inset: 0; background: rgba(60, 40, 36, 0.32); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); opacity: 0; transition: opacity 0.38s ease; }
+
+  .sheet-card {
+    position: relative;
+    width: min(380px, 100%);
+    padding: 34px 30px 28px;
+    border-radius: 24px;
+    background: linear-gradient(180deg, #fbf6ef, #f3ebe2);
+    box-shadow: 0 30px 70px -20px rgba(60, 30, 24, 0.5);
+    text-align: center;
+    font-family: 'PingFang SC', var(--cjk);
+    color: var(--ink);
+    opacity: 0;
+    transform: translateY(16px) scale(0.98);
+    transition: opacity 0.38s ease, transform 0.5s cubic-bezier(0.22, 0.61, 0.36, 1);
+  }
+
+  .sheet.is-open .sheet-bg, .sheet.is-open .sheet-card { opacity: 1; }
+  .sheet.is-open .sheet-card { transform: none; }
+
+  .sheet-x { position: absolute; top: 12px; right: 16px; border: 0; background: none; font-size: 24px; line-height: 1; color: var(--ink-soft); cursor: pointer; }
+  .sheet-k { margin: 0 0 8px; font-size: 12px; letter-spacing: 0.3em; color: var(--accent); }
+  .sheet-t { margin: 0 0 12px; font-size: 20px; font-weight: 600; letter-spacing: 0.06em; }
+  .sheet-b { margin: 0 0 22px; font-size: 14px; line-height: 1.9; color: var(--ink-soft); }
+  .sheet-id { display: flex; flex-direction: column; gap: 4px; margin-bottom: 20px; padding: 14px; border-radius: 14px; background: rgba(201, 163, 90, 0.12); }
+  .sheet-id-k { font-size: 12px; letter-spacing: 0.2em; color: var(--ink-soft); }
+  .sheet-id-v { font-family: var(--didot); font-size: 26px; letter-spacing: 0.04em; }
+  .sheet-copy { width: 100%; padding: 14px; border: 0; border-radius: 999px; background: var(--ink); color: var(--ground); font: inherit; font-size: 15px; letter-spacing: 0.12em; cursor: pointer; }
+</style>
