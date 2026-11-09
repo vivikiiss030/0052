@@ -32,9 +32,9 @@ import moonlet from '../assets/collage/moonlet.png';
 import nautilus2 from '../assets/collage/nautilus2.png';
 import butterflyGreen from '../assets/collage/butterfly-green.png';
 // 三张塔罗牌牌面上的画
-import moonGold from '../assets/collage/moon2.png';
+import eyeArt from '../assets/collage/eye-painted.png';
 import keyArt from '../assets/collage/key.png';
-import star8 from '../assets/collage/star8.png';
+import butterflyArt from '../assets/collage/butterfly-eye.png';
 
 // 首屏的拼贴元素。位置在下面的 CSS 里，这里只定义层次：
 // depth 决定视差幅度（越「近」动得越多），ph 是漂浮的相位差
@@ -165,7 +165,7 @@ const nav = ['about', 'guide', 'readings'].map((k) => ({ href: url(lang, k), lab
                 </svg>
                 <span class="card-n">{['I', 'II', 'III'][i]}</span>
                 <span class="card-art">
-                  <Image src={[moonGold, keyArt, star8][i]} alt="" width={360} format="webp" quality={82} />
+                  <Image src={[eyeArt, keyArt, butterflyArt][i]} alt="" width={360} format="webp" quality={82} />
                 </span>
                 <span class="card-name">{pageMeta[lang][d.key].title}</span>
               </span>
@@ -1118,10 +1118,6 @@ const nav = ['about', 'guide', 'readings'].map((k) => ({ href: url(lang, k), lab
     transition: transform 0.7s cubic-bezier(0.22, 0.61, 0.36, 1);
   }
   .door:hover .card-art :global(img) { transform: scale(1.04); }
-  /* 金月亮比钥匙和星星亮，压暗一点做旧，三张才像一套 */
-  .door-list li:first-child .card-art :global(img) {
-    filter: sepia(0.5) saturate(0.7) brightness(0.92) contrast(0.95) drop-shadow(0 5px 6px rgba(70, 50, 30, 0.22));
-  }
 
   /* 牌名：像塔罗牌底下那条名牌 */
   .card-name {
