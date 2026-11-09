@@ -226,21 +226,20 @@ const otherLang = lang === 'en' ? 'zh' : 'en';
     background: #eadad4;
   }
 
-  /* ── 从首页点牌进来：一开始满屏丝缎（接着首页那张放大的牌），再收成顶上这一条，
-     标题、导航、正文依次浮上来。html.portal-enter 由 Base.astro 头部的小脚本加上 ── */
+  /* ── 从首页点牌进来：页面从米色里浮出来（接着首页那张放大淡出的牌）。
+     html.portal-enter 由 Base.astro 头部的小脚本加上 ── */
   :global(html.portal-enter) .strip {
-    animation: strip-open 1s cubic-bezier(0.7, 0, 0.2, 1) both;
+    animation: fade-in 0.7s ease-out both;
   }
   :global(html.portal-enter) .strip-bar,
-  :global(html.portal-enter) .strip-title,
-  :global(html.portal-enter) .strip :global(.lang) {
-    animation: rise-in 0.8s 0.55s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  :global(html.portal-enter) .strip-title {
+    animation: rise-in 0.8s 0.2s cubic-bezier(0.2, 0.7, 0.2, 1) both;
   }
   :global(html.portal-enter) .below {
-    animation: rise-in 0.9s 0.45s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+    animation: rise-in 0.9s 0.3s cubic-bezier(0.2, 0.7, 0.2, 1) both;
   }
-  @keyframes strip-open {
-    from { height: 100svh; }
+  @keyframes fade-in {
+    from { opacity: 0; }
   }
   @keyframes rise-in {
     from { opacity: 0; transform: translateY(28px); }

@@ -71,10 +71,6 @@ const { lang = 'en', href, solid = false, inline = false } = Astro.props;
   :global(html.past-hero) .seal-wrap::before,
   .is-solid .seal-wrap::before { opacity: 1; }
 
-  /* 首页往下是深橄榄绿：底色换成绿，环上的字换成米白 */
-  :global(html.past-hero) .seal-wrap::before { background: radial-gradient(closest-side, rgba(43, 46, 23, 0.92) 62%, rgba(43, 46, 23, 0)); }
-  :global(html.past-hero) .ring text { fill: #efe6d3; }
-
   .ring {
     position: absolute;
     inset: 0;
