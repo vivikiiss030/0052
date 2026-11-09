@@ -34,7 +34,7 @@ import butterflyGreen from '../assets/collage/butterfly-green.png';
 // 三张塔罗牌牌面上的画
 import moonFace from '../assets/collage/moon-face-big.png';
 import keyArt from '../assets/collage/key.png';
-import sunGold from '../assets/collage/sun-gold.png';
+import star8 from '../assets/collage/star8.png';
 
 // 首屏的拼贴元素。位置在下面的 CSS 里，这里只定义层次：
 // depth 决定视差幅度（越「近」动得越多），ph 是漂浮的相位差
@@ -158,9 +158,14 @@ const nav = ['about', 'guide', 'readings'].map((k) => ({ href: url(lang, k), lab
               <!-- 一张做旧的塔罗牌：纸是单独一层（会被「磨损」滤镜弄毛边），上面放数字、画、牌名 -->
               <span class="card">
                 <span class="card-paper" aria-hidden="true"></span>
+                <!-- 边框是矢量画的（不跟纸一起被「磨损」滤镜扭），线条顺滑；每条边微微不直，像手印的 -->
+                <svg class="card-frame" viewBox="0 0 70 120" preserveAspectRatio="none" aria-hidden="true">
+                  <path class="cf-out" d="M4.2 6.3Q35.0 5.8500000000000005 65.8 6.2Q66.08 60.0 65.75 113.8Q35.0 114.045 4.25 113.75Q3.85 60.0 4.2 6.3Z" />
+                  <path class="cf-in" d="M5.95 8.5Q35.0 8.65 64.05 8.4Q63.849999999999994 60.0 64.0 111.6Q35.0 111.425 6.0 111.55Q6.2 60.0 5.95 8.5Z" />
+                </svg>
                 <span class="card-n">{['I', 'II', 'III'][i]}</span>
                 <span class="card-art">
-                  <Image src={[moonFace, keyArt, sunGold][i]} alt="" width={360} format="webp" quality={82} />
+                  <Image src={[moonFace, keyArt, star8][i]} alt="" width={360} format="webp" quality={82} />
                 </span>
                 <span class="card-name">{pageMeta[lang][d.key].title}</span>
               </span>
@@ -180,7 +185,8 @@ const nav = ['about', 'guide', 'readings'].map((k) => ({ href: url(lang, k), lab
   <svg class="defs" width="0" height="0" aria-hidden="true" focusable="false">
     <filter id="worn" x="-5%" y="-5%" width="110%" height="110%">
       <feTurbulence type="fractalNoise" baseFrequency="0.022" numOctaves="3" seed="7" result="n" />
-      <feDisplacementMap in="SourceGraphic" in2="n" scale="3.5" xChannelSelector="R" yChannelSelector="G" />
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="3.5" xChannelSelector="R" yChannelSelector="G" result="d" />
+      <feGaussianBlur in="d" stdDeviation="0.35" />
     </filter>
   </svg>
 
@@ -1031,15 +1037,6 @@ const nav = ['about', 'guide', 'readings'].map((k) => ({ href: url(lang, k), lab
       radial-gradient(9% 6% at var(--fx1) var(--fy1), rgba(140, 92, 40, 0.22), transparent 70%),
       radial-gradient(5% 4% at var(--fx2) var(--fy2), rgba(140, 92, 40, 0.2), transparent 70%),
       radial-gradient(3% 2% at calc(var(--fx2) - 12%) calc(var(--fy1) + 9%), rgba(120, 80, 30, 0.22), transparent 70%),
-      /* 双线边框：外圈墨线、里圈褪了色的金线 */
-      linear-gradient(rgba(60, 42, 28, 0.7), rgba(60, 42, 28, 0.7)) 50% 5.2% / 88% 1px no-repeat,
-      linear-gradient(rgba(60, 42, 28, 0.7), rgba(60, 42, 28, 0.7)) 50% 94.8% / 88% 1px no-repeat,
-      linear-gradient(rgba(60, 42, 28, 0.7), rgba(60, 42, 28, 0.7)) 6% 50% / 1px 89.6% no-repeat,
-      linear-gradient(rgba(60, 42, 28, 0.7), rgba(60, 42, 28, 0.7)) 94% 50% / 1px 89.6% no-repeat,
-      linear-gradient(rgba(168, 128, 64, 0.75), rgba(168, 128, 64, 0.75)) 50% 7% / 83% 1px no-repeat,
-      linear-gradient(rgba(168, 128, 64, 0.75), rgba(168, 128, 64, 0.75)) 50% 93% / 83% 1px no-repeat,
-      linear-gradient(rgba(168, 128, 64, 0.75), rgba(168, 128, 64, 0.75)) 8.5% 50% / 1px 86% no-repeat,
-      linear-gradient(rgba(168, 128, 64, 0.75), rgba(168, 128, 64, 0.75)) 91.5% 50% / 1px 86% no-repeat,
       /* 纸纹颗粒 */
       url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='p'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.35 0 0 0 0 0.24 0 0 0 0 0.1 0 0 0 0.16 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23p)'/%3E%3C/svg%3E"),
       /* 泛黄：中间浅，四周越来越黄、越暗 */
@@ -1058,6 +1055,18 @@ const nav = ['about', 'guide', 'readings'].map((k) => ({ href: url(lang, k), lab
   /* 点下去：牌被抽出来，往前一凑 */
   .door.is-picked .card { transform: rotate(0deg) translateY(-22px) scale(1.06); transition-duration: 0.26s; }
   .defs { position: absolute; width: 0; height: 0; overflow: hidden; }
+
+  .card-frame {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+    pointer-events: none;
+  }
+  .card-frame path { fill: none; vector-effect: non-scaling-stroke; stroke-linejoin: round; }
+  .cf-out { stroke: rgba(60, 42, 28, 0.68); stroke-width: 1; }
+  .cf-in { stroke: rgba(160, 120, 58, 0.7); stroke-width: 0.8; }
 
   /* 点牌时浮在最上面的两层：慢慢盖上来的米色、牌的复制品 */
   :global(.portal-veil) {
