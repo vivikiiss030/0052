@@ -224,8 +224,32 @@ const otherLang = lang === 'en' ? 'zh' : 'en';
     height: clamp(250px, 40vh, 380px);
     overflow: hidden;
     background: #eadad4;
-    /* 首页点一张牌，那张牌会「长」成这条丝缎（跨页面过渡，见 global.css） */
-    view-transition-name: portal;
+  }
+
+  /* ── 从首页点牌进来：一开始满屏丝缎（接着首页那张放大的牌），再收成顶上这一条，
+     标题、导航、正文依次浮上来。html.portal-enter 由 Base.astro 头部的小脚本加上 ── */
+  :global(html.portal-enter) .strip {
+    animation: strip-open 1s cubic-bezier(0.7, 0, 0.2, 1) both;
+  }
+  :global(html.portal-enter) .strip-bar,
+  :global(html.portal-enter) .strip-title,
+  :global(html.portal-enter) .strip :global(.lang) {
+    animation: rise-in 0.8s 0.55s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  }
+  :global(html.portal-enter) .below {
+    animation: rise-in 0.9s 0.45s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  }
+  @keyframes strip-open {
+    from { height: 100svh; }
+  }
+  @keyframes rise-in {
+    from { opacity: 0; transform: translateY(28px); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    :global(html.portal-enter) .strip,
+    :global(html.portal-enter) .strip-bar,
+    :global(html.portal-enter) .strip-title,
+    :global(html.portal-enter) .below { animation: none; }
   }
 
   .strip-bg, .strip-bg :global(img) {

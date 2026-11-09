@@ -139,7 +139,6 @@ const nav = ['about', 'guide', 'readings'].map((k) => ({ href: url(lang, k), lab
 
   <!-- 往下拉：一块升起来的面板，只讲「这里是什么地方」，然后是三扇门 -->
   <div class="below">
-    <span class="lace-wrap" aria-hidden="true"><span class="lace-back"></span><span class="lace"></span></span>
     <section class="wrap block" id="space">
       <p class="kicker label">The Open Space · 自留地</p>
       <hr class="rule" />
@@ -193,17 +192,13 @@ const nav = ['about', 'guide', 'readings'].map((k) => ({ href: url(lang, k), lab
   // ── 拉一下，下拉页就自己滑上来；在下拉页顶上往回拉一下，就弹回首屏 ──
   {
     const below = document.querySelector('.below');
-    const lace = document.querySelector('.lace-wrap');
     const still = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const root = document.documentElement;
     let busy = false;
     let quietUntil = 0;
 
-    // 停在这里：蕾丝的扇贝正好到屏幕顶，首屏被盖住
-    const target = () => {
-      const lt = lace ? lace.getBoundingClientRect().top + scrollY : below.offsetTop;
-      return Math.max(0, Math.round(lt));
-    };
+    // 停在这里：下拉页的上沿正好到屏幕顶，首屏被盖住
+    const target = () => Math.max(0, Math.round(below.getBoundingClientRect().top + scrollY));
 
     // 往上滑：带一点点回弹（冲过头一丁点再落回去）
     const easeUp = (t) => {
@@ -276,27 +271,86 @@ const nav = ['about', 'guide', 'readings'].map((k) => ({ href: url(lang, k), lab
     if (location.hash === '#space') requestAnimationFrame(() => scrollTo(0, target()));
   }
 
-  // ── 点一张牌：牌被抽起来，然后像通道一样放大，变成内容页顶上那条丝缎 ──
-  // 用浏览器自带的跨页面过渡（view transition）：这张牌和内容页的丝缎条
-  // 用同一个名字 portal，浏览器会把一个「长」成另一个。不支持的浏览器就是普通跳转。
-  document.querySelectorAll('a[data-portal]').forEach((a) => {
-    a.addEventListener('click', (e) => {
-      if (e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0) return;
-      const card = a.querySelector('.card');
-      if (!card) return;
-      e.preventDefault();
-      document.querySelectorAll('.card').forEach((c) => (c.style.viewTransitionName = ''));
-      card.style.viewTransitionName = 'portal';
-      a.classList.add('is-picked');
-      const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      setTimeout(() => { location.href = a.href; }, reduce ? 0 : 260);
+  // ── 点一张牌：牌被抽起来，放大铺满屏幕，牌面化成粉色丝缎，然后进内容页 ──
+  // 内容页一打开也是满屏丝缎，再收成顶上那一条（见 Page.astro 的 portal-enter）。
+  // 两边画面接得上，中间没有「白一下」。动画全在页面里自己做，不依赖浏览器支持。
+  // 为了流畅：丝缎层只动 clip-path（一个从牌的大小开到全屏的窗口），
+  // 牌面只动 transform 和 opacity —— 都不用每帧重新排版、重算滤镜。
+  {
+    const satin = () => document.querySelector('img.ground, .ground img')?.currentSrc || '';
+    // 提前把三个内容页抓下来，点的时候基本不用等
+    document.querySelectorAll('a[data-portal]').forEach((a) => {
+      const l = document.createElement('link');
+      l.rel = 'prefetch';
+      l.href = a.href;
+      document.head.appendChild(l);
     });
-  });
-  // 从内容页按返回键回来时，把抽起来的那张牌放回去
-  addEventListener('pageshow', () => {
-    document.querySelectorAll('.door.is-picked').forEach((d) => d.classList.remove('is-picked'));
-    document.querySelectorAll('.card').forEach((c) => (c.style.viewTransitionName = ''));
-  });
+
+    document.querySelectorAll('a[data-portal]').forEach((a) => {
+      a.addEventListener('click', (e) => {
+        if (e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0) return;
+        const card = a.querySelector('.card');
+        const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        if (!card || reduce || !Element.prototype.animate) return;
+        e.preventDefault();
+
+        const r = card.getBoundingClientRect();
+        const W = innerWidth, H = innerHeight;
+        const DUR = 1150;
+        const ease = 'cubic-bezier(0.7, 0, 0.2, 1)';
+        const lift = 18;
+
+        // 背后压暗的一层
+        const veil = document.createElement('div');
+        veil.className = 'portal-veil';
+        // 丝缎层：铺满屏幕，但一开始只露出牌那么大的一块
+        const ov = document.createElement('div');
+        ov.className = 'portal-ov';
+        ov.style.backgroundImage = `url("${satin()}")`;
+        // 牌面：一张一模一样的牌，摆在原来的位置上
+        const face = card.cloneNode(true);
+        face.classList.add('portal-face');
+        // 牌的内边距原来是按百分比算的，浮出来以后要换成固定像素，不然会按整个屏幕宽度算
+        const cs = getComputedStyle(card);
+        Object.assign(face.style, { left: `${r.left}px`, top: `${r.top}px`, width: `${r.width}px`, height: `${r.height}px`, padding: cs.padding });
+        // 霉斑位置是按「第几张牌」（--k）算的，复制品要把这个编号带上
+        face.style.setProperty('--k', getComputedStyle(card).getPropertyValue('--k') || '1');
+        document.body.append(veil, ov, face);
+        card.style.visibility = 'hidden';
+
+        const inset = (t, rt, b, l, rad) => `inset(${t}px ${rt}px ${b}px ${l}px round ${rad}px)`;
+        const lw = r.width * 0.03, lh = r.height * 0.03;   // 抽起来时放大 6%
+        ov.animate([
+          { clipPath: inset(r.top, W - r.right, H - r.bottom, r.left, 9), offset: 0 },
+          { clipPath: inset(r.top - lift - lh, W - r.right - lw, H - r.bottom + lift - lh, r.left - lw, 9), offset: 0.24, easing: ease },
+          { clipPath: inset(0, 0, 0, 0, 0), offset: 1 },
+        ], { duration: DUR, fill: 'forwards' });
+
+        const S = Math.max(W / r.width, H / r.height) * 1.05;
+        const dx = W / 2 - (r.left + r.width / 2);
+        const dy = H / 2 - (r.top + r.height / 2);
+        face.animate([
+          { transform: 'translate(0, 0) scale(1)', opacity: 1, offset: 0 },
+          { transform: `translate(0, ${-lift}px) scale(1.06)`, opacity: 1, offset: 0.24, easing: ease },
+          { transform: `translate(${dx}px, ${dy * 0.6}px) scale(${S * 0.55})`, opacity: 0, offset: 0.78 },
+          { transform: `translate(${dx}px, ${dy}px) scale(${S})`, opacity: 0, offset: 1 },
+        ], { duration: DUR, fill: 'forwards' });
+
+        veil.animate([{ opacity: 0 }, { opacity: 1 }], { duration: DUR * 0.6, easing: 'ease-out', fill: 'forwards' });
+
+        setTimeout(() => {
+          try { sessionStorage.setItem('portal', '1'); } catch (_) {}
+          location.href = a.href;
+        }, DUR - 40);
+      });
+    });
+
+    // 按返回键回来（页面从缓存里恢复）：把一切还原
+    addEventListener('pageshow', () => {
+      document.querySelectorAll('.portal-ov, .portal-face, .portal-veil').forEach((o) => o.remove());
+      document.querySelectorAll('.card').forEach((c) => (c.style.visibility = ''));
+    });
+  }
 
   // 滚过首屏以后给 html 加个标记（左下角徽章用它垫底色）
   const markPast = () => document.documentElement.classList.toggle('past-hero', scrollY > innerHeight * 0.75);
@@ -904,43 +958,8 @@ const nav = ['about', 'guide', 'readings'].map((k) => ({ href: url(lang, k), lab
       var(--olive);
     padding-top: clamp(96px, 10vw, 140px);
     padding-bottom: 56px;
-    /* 蕾丝从面板上沿往上凸出 0.59 × 132px ≈ 78px。面板整体往下挪这么多，
-       静止时首屏完整，一点蕾丝都不露；往下拉才跟着面板一起出现 */
-    margin-top: 78px;
-  }
-
-  /* 交界处：一条白蕾丝跨在丝缎和绿色之间。
-     .lace-back 是面板本身的底色（颗粒 + 绿），用 lace-edge.svg 裁出一条波浪形的上沿，藏在花纹后面；
-     .lace 是白蕾丝本身，大扇贝朝上压在丝缎上。
-     两张图都由 scripts/make-lace.py 生成，对齐方式必须一样（center top）。
-     面板上沿在图里 78/132 处，被波浪绿色盖住，看不到 */
-  .lace-wrap {
-    --lh: 132px;
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: calc(var(--lh) * -0.59);
-    height: var(--lh);
-    pointer-events: none;
-    z-index: 2;
-  }
-
-  .lace-back,
-  .lace {
-    position: absolute;
-    inset: 0;
-  }
-
-  .lace-back {
-    background: var(--grain), var(--olive);
-    -webkit-mask: url('/lace-edge.svg') repeat-x center top / auto 100%;
-    mask: url('/lace-edge.svg') repeat-x center top / auto 100%;
-  }
-
-  .lace {
-    background: url('/lace.svg') repeat-x center top / auto 100%;
-    /* 很淡的深色描边影子：白蕾丝在浅粉丝缎上才分得清 */
-    filter: drop-shadow(0 1px 1.5px rgba(80, 45, 45, 0.4)) drop-shadow(0 3px 8px rgba(80, 45, 45, 0.16));
+    /* 往上盖住首屏时，上沿投一点影子，像一张纸压上来 */
+    box-shadow: 0 -24px 60px rgba(60, 36, 36, 0.28);
   }
 
   #space { scroll-margin-top: 0; }
@@ -1063,6 +1082,33 @@ const nav = ['about', 'guide', 'readings'].map((k) => ({ href: url(lang, k), lab
   .door.is-picked .card { transform: rotate(0deg) translateY(-22px) scale(1.06); transition-duration: 0.26s; }
   .defs { position: absolute; width: 0; height: 0; overflow: hidden; }
 
+  /* 点牌时浮在最上面的三层：压暗的底、丝缎（clip-path 从牌开到全屏）、牌面复制品 */
+  :global(.portal-veil) {
+    position: fixed;
+    inset: 0;
+    z-index: 99;
+    background: rgba(24, 26, 12, 0.55);
+    pointer-events: none;
+  }
+  :global(.portal-ov) {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    background: #eadad4 center / cover no-repeat;
+    will-change: clip-path;
+    pointer-events: none;
+  }
+  :global(.portal-face) {
+    position: fixed !important;
+    z-index: 101;
+    max-width: none !important;
+    aspect-ratio: auto !important;
+    transform: none;
+    transform-origin: 50% 50%;
+    will-change: transform, opacity;
+    pointer-events: none;
+  }
+
   .card-n {
     position: relative;
     z-index: 1;
@@ -1135,8 +1181,6 @@ const nav = ['about', 'guide', 'readings'].map((k) => ({ href: url(lang, k), lab
 
   @media (max-width: 760px) {
     .two { grid-template-columns: 1fr; gap: 18px; }
-    .lace-wrap { --lh: 92px; }
-    .below { margin-top: 54px; }
     .door-list { gap: 10px; }
     .door { gap: 12px; }
     .card { transform: rotate(calc((var(--k) - 1) * 4deg)) translateY(calc((var(--k) - 1) * (var(--k) - 1) * 8px)); }

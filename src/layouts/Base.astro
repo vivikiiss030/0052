@@ -27,6 +27,15 @@ const nav = [
     <link rel="alternate" hreflang="en" href={alt} />
     <link rel="alternate" hreflang="zh-Hans" href={altZh} />
 
+    <!-- 从首页点塔罗牌进来时，内容页要接着那个「满屏丝缎」的画面往下走（见 Page.astro） -->
+    <script is:inline>
+      try {
+        if (sessionStorage.getItem('portal')) {
+          document.documentElement.classList.add('portal-enter');
+          sessionStorage.removeItem('portal');
+        }
+      } catch (e) {}
+    </script>
     <link rel="icon" type="image/png" href="/favicon.png" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <meta name="theme-color" content="#efeae1" />
