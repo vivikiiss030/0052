@@ -27,10 +27,25 @@ const nav = [
     <link rel="alternate" hreflang="en" href={alt} />
     <link rel="alternate" hreflang="zh-Hans" href={altZh} />
 
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <meta name="theme-color" content="#efeae1" />
+
+    <!-- 分享预览：链接发到 IG / WhatsApp / iMessage 等时显示的小卡片。
+         图是首页首屏截的（public/og.jpg，1200×630）。
+         网址写在 astro.config.mjs 的 site 里 —— 以后换网址，改那一处就行 -->
     <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="The Open Space 自留地" />
+    <meta property="og:locale" content={lang === 'zh' ? 'zh_CN' : 'en_GB'} />
+    <meta property="og:url" content={new URL(path, Astro.site)} />
     <meta property="og:title" content={pageTitle} />
     <meta property="og:description" content={description} />
+    <meta property="og:image" content={new URL('/og.jpg', Astro.site)} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="The Open Space 自留地 — tarot with Vicky" />
     <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content={new URL('/og.jpg', Astro.site)} />
 
   </head>
 
@@ -441,8 +456,8 @@ const nav = [
         position: relative;
         z-index: 5;
         background: var(--ground);
-        margin-top: 120px;
-        padding-bottom: 96px;
+        margin-top: 64px;
+        padding-bottom: 72px;
       }
 
       .foot-link {
@@ -456,13 +471,28 @@ const nav = [
         border-bottom-color: var(--accent);
       }
 
+      /* 左下角固定着日月徽章（约 130px 宽），页脚的字从它右边开始，不被压住 */
       .foot-row {
         display: flex;
         justify-content: space-between;
         padding-top: 20px;
+        padding-left: max(0px, calc(150px - var(--gutter)));
       }
 
       @media (max-width: 720px) {
+        /* 手机上两行都靠右叠起来，徽章占左下角，互不打扰 */
+        .site-foot {
+          margin-top: 24px;
+          padding-bottom: calc(40px + env(safe-area-inset-bottom, 0px));
+        }
+        .foot-row {
+          flex-direction: column;
+          align-items: flex-end;
+          gap: 8px;
+          padding-left: 0;
+          text-align: right;
+        }
+        .foot-row .label { font-size: 10px; letter-spacing: 0.24em; }
         .site-head {
           flex-direction: column;
           align-items: flex-start;

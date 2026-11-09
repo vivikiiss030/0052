@@ -31,6 +31,7 @@ const otherLang = lang === 'en' ? 'zh' : 'en';
           <a href={url(lang, k)} aria-current={k === page ? 'page' : undefined}>{pm[k].nav}</a>
         ))}
         <Book lang={lang} variant="nav" />
+        <button class="menu-btn" type="button" aria-expanded="false" aria-controls="mmenu" data-open={lang === 'en' ? 'Close' : '收起'} data-closed={lang === 'en' ? 'Menu' : '目录'}>{lang === 'en' ? 'Menu' : '目录'}</button>
       </nav>
     </div>
     <div class="strip-title">
@@ -39,6 +40,17 @@ const otherLang = lang === 'en' ? 'zh' : 'en';
     </div>
     <LangSeal lang={lang} href={url(otherLang, page)} inline />
   </header>
+
+  <!-- 手机上的小目录：点右上角「Menu / 目录」从顶上滑下来 -->
+  <div class="mmenu" id="mmenu" aria-hidden="true">
+    <ol class="mmenu-list">
+      <li><a href={`${url(lang)}#space`} tabindex="-1"><span class="mm-n"></span>{lang === 'en' ? 'The space' : '这个空间'}</a></li>
+      {order.map((k) => (
+        <li><a href={url(lang, k)} tabindex="-1" aria-current={k === page ? 'page' : undefined}><span class="mm-n">{pm[k].n}</span>{pm[k].title}</a></li>
+      ))}
+    </ol>
+  </div>
+  <div class="mmenu-veil" aria-hidden="true"></div>
 
   <div class="below">
     {page === 'about' && (
@@ -170,6 +182,26 @@ const otherLang = lang === 'en' ? 'zh' : 'en';
     });
   });
 
+  // 手机目录：打开 / 关上（点遮罩、按 Esc、点链接都会关）
+  {
+    const btn = document.querySelector('.menu-btn');
+    const menu = document.getElementById('mmenu');
+    const veil = document.querySelector('.mmenu-veil');
+    const links = menu ? [...menu.querySelectorAll('a')] : [];
+    const set = (open) => {
+      if (!btn || !menu) return;
+      btn.setAttribute('aria-expanded', String(open));
+      btn.textContent = btn.getAttribute(open ? 'data-open' : 'data-closed') || '';
+      menu.setAttribute('aria-hidden', String(!open));
+      document.documentElement.classList.toggle('menu-open', open);
+      links.forEach((a) => a.setAttribute('tabindex', open ? '0' : '-1'));
+    };
+    btn?.addEventListener('click', () => set(btn.getAttribute('aria-expanded') !== 'true'));
+    veil?.addEventListener('click', () => set(false));
+    links.forEach((a) => a.addEventListener('click', () => set(false)));
+    addEventListener('keydown', (e) => { if (e.key === 'Escape') set(false); });
+  }
+
   // 内容进入视口时浮起
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const blocks = document.querySelectorAll('.block');
@@ -290,6 +322,90 @@ const otherLang = lang === 'en' ? 'zh' : 'en';
   .next:hover .next-t span { transform: translateX(6px); }
 
   .side-name { opacity: 0.9; }
+
+  /* ── 手机目录 ───────────────────────────────────────── */
+  .menu-btn, .mmenu, .mmenu-veil { display: none; }
+
+  @media (max-width: 760px) {
+    .pnav { align-items: baseline; gap: 22px; }
+
+    .menu-btn {
+      display: inline-block;
+      font: inherit;
+      font-style: italic;
+      color: inherit;
+      background: none;
+      border: 0;
+      padding: 0 0 2px;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .menu-btn::before { content: '✦'; margin-right: 7px; font-size: 9px; font-style: normal; vertical-align: 2px; color: #c4923c; }
+    .menu-btn:lang(zh) { font-style: normal; font-family: 'PingFang SC', var(--cjk); letter-spacing: 0.1em; }
+
+    /* 打开时，顶栏浮在面板之上，字和按钮还在原处 */
+    :global(html.menu-open) .strip-bar { z-index: 80; position: absolute; }
+
+    .mmenu {
+      display: block;
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 75;
+      padding: 66px 22px 22px;
+      background: rgba(246, 240, 232, 0.96);
+      -webkit-backdrop-filter: blur(14px);
+      backdrop-filter: blur(14px);
+      border-radius: 0 0 26px 26px;
+      box-shadow: 0 24px 50px -24px rgba(96, 60, 48, 0.4);
+      transform: translateY(-104%);
+      transition: transform 0.55s cubic-bezier(0.22, 0.61, 0.36, 1);
+      visibility: hidden;
+    }
+    :global(html.menu-open) .mmenu { transform: none; visibility: visible; }
+
+    .mmenu-list { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--rule); }
+    .mmenu-list li { border-bottom: 1px solid var(--rule); }
+    .mmenu-list li:last-child { border-bottom: 0; }
+
+    .mmenu-list a {
+      display: flex;
+      align-items: baseline;
+      gap: 16px;
+      padding: 15px 2px 14px;
+      font-family: var(--didot);
+      font-size: 25px;
+      line-height: 1.15;
+      letter-spacing: -0.01em;
+      color: var(--ink);
+    }
+    .mmenu-list a:lang(zh) { font-family: 'PingFang SC', var(--cjk); font-size: 20px; font-weight: 500; letter-spacing: 0.08em; }
+    .mmenu-list a[aria-current='page'] { color: #7a5246; }
+    .mmenu-list a[aria-current='page']::after { content: '✦'; margin-left: auto; font-size: 10px; color: #c4923c; }
+
+    .mm-n {
+      width: 30px;
+      flex: none;
+      font-family: var(--didot);
+      font-style: italic;
+      font-size: 14px;
+      letter-spacing: 0.12em;
+      color: #b49a8a;
+    }
+
+    .mmenu-veil {
+      display: block;
+      position: fixed;
+      inset: 0;
+      z-index: 70;
+      background: rgba(60, 40, 36, 0.2);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.4s ease;
+    }
+    :global(html.menu-open) .mmenu-veil { opacity: 1; pointer-events: auto; }
+  }
 
   @media (max-width: 760px) {
     .strip { height: 270px; }
@@ -430,8 +546,8 @@ const otherLang = lang === 'en' ? 'zh' : 'en';
   .prose-t {
     max-width: 34em;
     font-family: var(--sans);
-    font-size: clamp(15px, 1.15vw, 17px);
-    line-height: 1.85;
+    font-size: clamp(16px, 1.2vw, 18px);
+    line-height: 1.8;
     color: var(--ink-soft);
   }
 
@@ -521,7 +637,7 @@ const otherLang = lang === 'en' ? 'zh' : 'en';
   .rules p {
     margin: 0 0 0.9em;
     font-family: var(--sans);
-    font-size: 14.5px;
+    font-size: 15.5px;
     line-height: 1.85;
     color: var(--ink-soft);
   }
@@ -575,7 +691,7 @@ const otherLang = lang === 'en' ? 'zh' : 'en';
     margin-top: 8px;
     max-width: 36em;
     font-family: var(--sans);
-    font-size: 14.5px;
+    font-size: 15.5px;
     line-height: 1.75;
     color: var(--ink-soft);
   }
@@ -720,7 +836,7 @@ const otherLang = lang === 'en' ? 'zh' : 'en';
     color: #7a5246;
   }
 
-  .sp-for { font-family: var(--sans); font-size: 14px; line-height: 1.7; color: var(--ink-soft); }
+  .sp-for { font-family: var(--sans); font-size: 15px; line-height: 1.7; color: var(--ink-soft); }
 
   .sp-side { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; white-space: nowrap; }
 
@@ -753,7 +869,7 @@ const otherLang = lang === 'en' ? 'zh' : 'en';
     position: relative;
     padding-left: 22px;
     font-family: var(--sans);
-    font-size: 14.5px;
+    font-size: 15.5px;
     line-height: 1.7;
     color: var(--ink);
   }
@@ -782,7 +898,7 @@ const otherLang = lang === 'en' ? 'zh' : 'en';
   .menu-note {
     margin: 22px 0 0;
     font-family: var(--sans);
-    font-size: 14px;
+    font-size: 15px;
     line-height: 1.8;
     color: var(--ink-soft);
   }
