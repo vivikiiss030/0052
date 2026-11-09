@@ -1,21 +1,34 @@
 ---
 // 「预约」：英文版直接去 IG 私信；中文版弹出一张微信卡片。
-// variant="nav" 是导航里的一个词，"cta" 是一颗大按钮
+// variant="nav" 是导航里的一个词，"cta" 是一个大按钮 —— 做成一只旧信封：
+// 泛黄的纸、信封口的折线、正中一枚红色火漆印，底下写字。和三张做旧塔罗牌是一套。
 import { T, ui } from '../lib/site.js';
 const { lang = 'en', variant = 'nav' } = Astro.props;
 const { book } = T[lang];
 const u = ui[lang];
 const ig = lang === 'en' ? book.cta : null;
+const label = ig ? ig.label : book.cta.label.replace('复制', '加');
+const detail = ig ? ig.detail : book.cta.detail;
+const Tag = ig ? 'a' : 'button';
+const attrs = ig
+  ? { href: ig.href, target: '_blank', rel: 'me noopener' }
+  : { type: 'button', 'data-sheet-open': true };
 ---
 
-{ig ? (
-  <a class={`book book-${variant}`} href={ig.href} target="_blank" rel="me noopener">
-    {variant === 'nav' ? u.book : <><span>{ig.label}</span><span class="handle">{ig.detail}</span></>}
-  </a>
+{variant === 'nav' ? (
+  <Tag class="book book-nav" {...attrs}>{u.book}</Tag>
 ) : (
-  <button class={`book book-${variant}`} type="button" data-sheet-open>
-    {variant === 'nav' ? u.book : <><span>{book.cta.label.replace('复制', '加')}</span><span class="handle">{book.cta.detail}</span></>}
-  </button>
+  <Tag class="book book-cta" {...attrs}>
+    <!-- 信封口：两条折线从上角斜到中间 -->
+    <svg class="env-flap" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+      <path d="M0.5 0.5 L50 40 L99.5 0.5" />
+    </svg>
+    <span class="env-seal" aria-hidden="true"><span>✦</span></span>
+    <span class="env-text">
+      <span class="env-label">{label}</span>
+      <span class="env-handle">{detail}</span>
+    </span>
+  </Tag>
 )}
 
 <style>
@@ -23,19 +36,104 @@ const ig = lang === 'en' ? book.cta : null;
   .book-nav { border-bottom: 1px solid rgba(94, 75, 71, 0.4); padding-bottom: 2px; transition: color 0.3s, border-color 0.3s; }
   .book-nav:hover { color: var(--accent); border-bottom-color: var(--accent); }
 
+  /* ── 信封 ─────────────────────────────────────────── */
   .book-cta {
+    position: relative;
     display: inline-flex;
-    align-items: baseline;
-    gap: 16px;
-    padding: 15px 28px 14px;
-    border: 1px solid var(--ink);
-    border-radius: 999px;
-    font-family: var(--didot);
-    font-size: clamp(16px, 1.4vw, 19px);
-    color: var(--ink);
-    transition: background 0.35s, color 0.35s;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: center;
+    width: min(84vw, 340px);
+    aspect-ratio: 360 / 196;
+    padding: 0 24px 18px;
+    border-radius: 3px;
+    color: #3a2a1d;
+    text-align: center;
+    background:
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='p'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.35 0 0 0 0 0.24 0 0 0 0 0.1 0 0 0 0.14 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23p)'/%3E%3C/svg%3E"),
+      radial-gradient(120% 120% at 50% 35%, #f3e8cf 0%, #e9d9b3 60%, #d8c299 100%);
+    box-shadow:
+      inset 0 0 0 1px rgba(110, 80, 40, 0.28),
+      inset 0 0 16px rgba(120, 84, 36, 0.22),
+      0 14px 24px -12px rgba(96, 60, 48, 0.45),
+      0 2px 4px rgba(96, 60, 48, 0.15);
+    transform: rotate(-1.2deg);
+    transition: transform 0.5s cubic-bezier(0.22, 0.61, 0.36, 1), box-shadow 0.5s;
   }
-  .book-cta:lang(zh) { font-family: 'PingFang SC', var(--cjk); letter-spacing: 0.08em; }
-  .book-cta .handle { font-family: var(--sans); font-size: 12px; letter-spacing: 0.1em; opacity: 0.6; }
-  .book-cta:hover { background: var(--ink); color: var(--ground); }
+
+  .env-flap {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+  }
+  .env-flap path {
+    fill: rgba(140, 104, 56, 0.07);
+    stroke: rgba(90, 64, 36, 0.45);
+    stroke-width: 1;
+    vector-effect: non-scaling-stroke;
+    stroke-linejoin: round;
+  }
+
+  /* 火漆印：压在折线交汇处 */
+  .env-seal {
+    position: absolute;
+    left: 50%;
+    top: 40%;
+    width: 38px;
+    height: 38px;
+    margin: -19px 0 0 -19px;
+    display: grid;
+    place-items: center;
+    border-radius: 47% 53% 50% 48% / 52% 46% 54% 48%;
+    background: radial-gradient(circle at 36% 32%, #b4483f 0%, #8a2a24 45%, #5e1814 100%);
+    box-shadow:
+      inset 0 0 0 3px rgba(70, 14, 10, 0.35),
+      inset 0 2px 3px rgba(255, 190, 170, 0.35),
+      0 2px 4px rgba(60, 20, 10, 0.4);
+    transition: transform 0.5s cubic-bezier(0.34, 1.4, 0.5, 1);
+  }
+  .env-seal span {
+    font-size: 13px;
+    line-height: 1;
+    color: #e6c27a;
+    text-shadow: 0 1px 0 rgba(60, 14, 10, 0.6);
+  }
+
+  .env-text {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .env-label {
+    font-family: var(--didot);
+    font-style: italic;
+    font-size: clamp(17px, 1.5vw, 20px);
+    letter-spacing: 0.01em;
+    line-height: 1.2;
+  }
+  .env-label:lang(zh) { font-family: 'PingFang SC', var(--cjk); font-style: normal; font-weight: 500; letter-spacing: 0.12em; }
+
+  .env-handle {
+    font-family: var(--sans);
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    color: rgba(58, 42, 29, 0.6);
+  }
+
+  .book-cta:hover,
+  .book-cta:focus-visible {
+    transform: rotate(0deg) translateY(-4px);
+    box-shadow:
+      inset 0 0 0 1px rgba(110, 80, 40, 0.28),
+      inset 0 0 16px rgba(120, 84, 36, 0.22),
+      0 22px 32px -14px rgba(96, 60, 48, 0.5),
+      0 3px 6px rgba(96, 60, 48, 0.18);
+  }
+  .book-cta:hover .env-seal { transform: scale(1.08) rotate(-8deg); }
+  .book-cta:focus-visible { outline: 1px solid var(--accent); outline-offset: 4px; }
 </style>
