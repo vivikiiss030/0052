@@ -10,3 +10,5 @@ export default defineConfig({
     smartypants: false, // 中文排版下关掉英文智能引号
   },
 });
+
+// 部署记录：2026-11-09 重新触发 Cloudflare 构建
