@@ -101,7 +101,7 @@ export const T = {
       title: 'Readings are booked through Instagram.',
       body: 'Send me a DM with a little background — no need to make it tidy. I’ll send you the price list, and we’ll find a spread and a time that suits us both.',
       // 英文版：点了直接去 IG
-      cta: { type: 'link', href: 'https://instagram.com/v.vikiiss_', label: 'Message me on Instagram', detail: '@v.vikiiss_' },
+      cta: { type: 'link', href: 'https://instagram.com/v.vikiiss_', label: 'Message me on Instagram', detail: '@v.vikiiss_', note: 'DM on Instagram' },
     },
   },
 
@@ -202,7 +202,7 @@ export const T = {
       body: '加微信时简单说说你的问题背景就好，不用整理得很清楚。我会发你价目表，再约一个双方都方便的时间。',
       // 中文版：国内的人多半没有 IG，走你现在的微信私域。
       // 微信号不能做成链接，所以按钮是「点一下复制」
-      cta: { type: 'copy', value: 'SeeSoul_', label: '复制微信号', detail: 'SeeSoul_', done: '已复制，去微信搜索添加' },
+      cta: { type: 'copy', value: 'SeeSoul_', label: '复制微信号', detail: 'SeeSoul_', done: '已复制，去微信搜索添加', note: '如何联系？', noteDetail: 'WeChat: SeeSoul_' },
     },
   },
 };
