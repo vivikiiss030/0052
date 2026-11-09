@@ -155,9 +155,10 @@ const nav = ['about', 'guide', 'readings'].map((k) => ({ href: url(lang, k), lab
       <ul class="door-list">
         {myDoors.map((d, i) => (
           <li style={`--k:${i}`}>
-            <a class="door" href={url(lang, d.key)}>
-              <!-- 一张塔罗牌：顶上罗马数字，中间一幅画，底下牌名 -->
+            <a class="door" href={url(lang, d.key)} data-portal>
+              <!-- 一张做旧的塔罗牌：纸是单独一层（会被「磨损」滤镜弄毛边），上面放数字、画、牌名 -->
               <span class="card">
+                <span class="card-paper" aria-hidden="true"></span>
                 <span class="card-n">{['I', 'II', 'III'][i]}</span>
                 <span class="card-art">
                   <Image src={[moonFace, keyArt, sunGold][i]} alt="" width={360} format="webp" quality={82} />
@@ -176,11 +177,127 @@ const nav = ['about', 'guide', 'readings'].map((k) => ({ href: url(lang, k), lab
   </div>
 
 
+  <!-- 塔罗牌的「磨损」滤镜：用噪声把纸边和边框线推得毛毛的、不笔直 -->
+  <svg class="defs" width="0" height="0" aria-hidden="true" focusable="false">
+    <filter id="worn" x="-5%" y="-5%" width="110%" height="110%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.022" numOctaves="3" seed="7" result="n" />
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="3.5" xChannelSelector="R" yChannelSelector="G" />
+    </filter>
+  </svg>
+
   {lang === 'zh' && <WeChatSheet />}
   <LangSeal lang={lang} href={url(lang === 'en' ? 'zh' : 'en')} />
 </Base>
 
 <script>
+  // ── 拉一下，下拉页就自己滑上来；在下拉页顶上往回拉一下，就弹回首屏 ──
+  {
+    const below = document.querySelector('.below');
+    const lace = document.querySelector('.lace-wrap');
+    const still = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const root = document.documentElement;
+    let busy = false;
+    let quietUntil = 0;
+
+    // 停在这里：蕾丝的扇贝正好到屏幕顶，首屏被盖住
+    const target = () => {
+      const lt = lace ? lace.getBoundingClientRect().top + scrollY : below.offsetTop;
+      return Math.max(0, Math.round(lt));
+    };
+
+    // 往上滑：带一点点回弹（冲过头一丁点再落回去）
+    const easeUp = (t) => {
+      const c = 0.9;
+      return 1 + (c + 1) * Math.pow(t - 1, 3) + c * Math.pow(t - 1, 2);
+    };
+    const easeBack = (t) => 1 - Math.pow(1 - t, 4);
+
+    const glide = (to) => {
+      if (busy) return;
+      const from = scrollY;
+      if (Math.abs(to - from) < 2) return;
+      if (still) { scrollTo(0, to); return; }
+      busy = true;
+      root.style.scrollBehavior = 'auto';
+      const down = to > from;
+      const t0 = performance.now();
+      const dur = down ? 950 : 800;
+      const step = (now) => {
+        const t = Math.min((now - t0) / dur, 1);
+        scrollTo(0, from + (to - from) * (down ? easeUp(t) : easeBack(t)));
+        if (t < 1) requestAnimationFrame(step);
+        else {
+          busy = false;
+          root.style.scrollBehavior = '';
+          quietUntil = performance.now() + 650;   // 吃掉触控板的惯性，不要接着又滚
+        }
+      };
+      requestAnimationFrame(step);
+    };
+
+    // 在首屏里往下 → 滑到下拉页；在下拉页最顶上往上 → 回首屏
+    const decide = (dir) => {
+      const T = target();
+      const y = scrollY;
+      if (dir > 0 && y < T - 4) { glide(T); return true; }
+      if (dir < 0 && y > 4 && y <= T + 6) { glide(0); return true; }
+      return false;
+    };
+
+    addEventListener('wheel', (e) => {
+      if (e.ctrlKey) return;                         // 双指缩放不管
+      if (busy || performance.now() < quietUntil) {
+        if (scrollY <= target() + 6) { e.preventDefault(); return; }
+      }
+      if (Math.abs(e.deltaY) < 2) return;
+      if (decide(Math.sign(e.deltaY))) e.preventDefault();
+    }, { passive: false });
+
+    // 手机：手指一划就决定方向
+    let sy = 0, handled = false;
+    addEventListener('touchstart', (e) => { sy = e.touches[0].clientY; handled = false; }, { passive: true });
+    addEventListener('touchmove', (e) => {
+      const T = target();
+      const dy = sy - e.touches[0].clientY;          // >0：手指往上划，页面往下走
+      const inZone = scrollY < T - 4 || (dy < 0 && scrollY <= T + 6);
+      if (!inZone) return;
+      if (busy) { e.preventDefault(); return; }
+      if (!handled && Math.abs(dy) > 14) handled = decide(Math.sign(dy));
+      if (handled) e.preventDefault();
+    }, { passive: false });
+
+    // 点店名（#space）也用同一个滑法
+    document.querySelectorAll('a[href="#space"]').forEach((a) => a.addEventListener('click', (e) => {
+      e.preventDefault();
+      glide(target());
+    }));
+
+    // 从内容页点「这个空间」带着 #space 进来：直接停在下拉页
+    if (location.hash === '#space') requestAnimationFrame(() => scrollTo(0, target()));
+  }
+
+  // ── 点一张牌：牌被抽起来，然后像通道一样放大，变成内容页顶上那条丝缎 ──
+  // 用浏览器自带的跨页面过渡（view transition）：这张牌和内容页的丝缎条
+  // 用同一个名字 portal，浏览器会把一个「长」成另一个。不支持的浏览器就是普通跳转。
+  document.querySelectorAll('a[data-portal]').forEach((a) => {
+    a.addEventListener('click', (e) => {
+      if (e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0) return;
+      const card = a.querySelector('.card');
+      if (!card) return;
+      e.preventDefault();
+      document.querySelectorAll('.card').forEach((c) => (c.style.viewTransitionName = ''));
+      card.style.viewTransitionName = 'portal';
+      a.classList.add('is-picked');
+      const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      setTimeout(() => { location.href = a.href; }, reduce ? 0 : 260);
+    });
+  });
+  // 从内容页按返回键回来时，把抽起来的那张牌放回去
+  addEventListener('pageshow', () => {
+    document.querySelectorAll('.door.is-picked').forEach((d) => d.classList.remove('is-picked'));
+    document.querySelectorAll('.card').forEach((c) => (c.style.viewTransitionName = ''));
+  });
+
   // 滚过首屏以后给 html 加个标记（左下角徽章用它垫底色）
   const markPast = () => document.documentElement.classList.toggle('past-hero', scrollY > innerHeight * 0.75);
   addEventListener('scroll', markPast, { passive: true });
@@ -787,6 +904,9 @@ const nav = ['about', 'guide', 'readings'].map((k) => ({ href: url(lang, k), lab
       var(--olive);
     padding-top: clamp(96px, 10vw, 140px);
     padding-bottom: 56px;
+    /* 蕾丝从面板上沿往上凸出 0.59 × 132px ≈ 78px。面板整体往下挪这么多，
+       静止时首屏完整，一点蕾丝都不露；往下拉才跟着面板一起出现 */
+    margin-top: 78px;
   }
 
   /* 交界处：一条白蕾丝跨在丝缎和绿色之间。
@@ -886,7 +1006,8 @@ const nav = ['about', 'guide', 'readings'].map((k) => ({ href: url(lang, k), lab
     text-align: center;
   }
 
-  /* 牌：象牙色牌面，外圈细墨线，里圈金线，比例是真塔罗牌的 7:12 */
+  /* 牌：做旧的纸牌。纸是 .card-paper 一层，被 #worn 滤镜弄出毛边；
+     上面叠：泛黄 + 纸纹颗粒 + 几块霉斑 + 边缘发暗。双线边框也画在纸上，跟着一起毛 */
   .card {
     position: relative;
     display: flex;
@@ -896,31 +1017,51 @@ const nav = ['about', 'guide', 'readings'].map((k) => ({ href: url(lang, k), lab
     max-width: 270px;
     aspect-ratio: 7 / 12;
     padding: 9%;
-    border-radius: 10px;
-    background:
-      radial-gradient(130% 90% at 50% 40%, #faf3e4 0%, #efe3c9 75%, #e2d2b0 100%);
-    box-shadow:
-      0 1px 0 rgba(255, 255, 255, 0.5) inset,
-      0 30px 50px -22px rgba(10, 12, 2, 0.7),
-      0 4px 10px rgba(10, 12, 2, 0.25);
     transform: rotate(calc((var(--k) - 1) * 4deg)) translateY(calc((var(--k) - 1) * (var(--k) - 1) * 14px));
-    transition: transform 0.6s cubic-bezier(0.22, 0.61, 0.36, 1), box-shadow 0.6s;
+    transition: transform 0.6s cubic-bezier(0.22, 0.61, 0.36, 1);
+    /* 三张牌各自的霉斑位置不一样 */
+    --fx1: calc(18% + var(--k) * 27%);
+    --fy1: calc(72% - var(--k) * 19%);
+    --fx2: calc(84% - var(--k) * 31%);
+    --fy2: calc(16% + var(--k) * 23%);
   }
 
-  .card::before,
-  .card::after {
-    content: '';
+  .card-paper {
     position: absolute;
-    pointer-events: none;
+    inset: 0;
+    border-radius: 9px;
+    background:
+      /* 几块霉斑 */
+      radial-gradient(9% 6% at var(--fx1) var(--fy1), rgba(140, 92, 40, 0.22), transparent 70%),
+      radial-gradient(5% 4% at var(--fx2) var(--fy2), rgba(140, 92, 40, 0.2), transparent 70%),
+      radial-gradient(3% 2% at calc(var(--fx2) - 12%) calc(var(--fy1) + 9%), rgba(120, 80, 30, 0.22), transparent 70%),
+      /* 双线边框：外圈墨线、里圈褪了色的金线 */
+      linear-gradient(rgba(60, 42, 28, 0.7), rgba(60, 42, 28, 0.7)) 50% 5.2% / 88% 1px no-repeat,
+      linear-gradient(rgba(60, 42, 28, 0.7), rgba(60, 42, 28, 0.7)) 50% 94.8% / 88% 1px no-repeat,
+      linear-gradient(rgba(60, 42, 28, 0.7), rgba(60, 42, 28, 0.7)) 6% 50% / 1px 89.6% no-repeat,
+      linear-gradient(rgba(60, 42, 28, 0.7), rgba(60, 42, 28, 0.7)) 94% 50% / 1px 89.6% no-repeat,
+      linear-gradient(rgba(168, 128, 64, 0.75), rgba(168, 128, 64, 0.75)) 50% 7% / 83% 1px no-repeat,
+      linear-gradient(rgba(168, 128, 64, 0.75), rgba(168, 128, 64, 0.75)) 50% 93% / 83% 1px no-repeat,
+      linear-gradient(rgba(168, 128, 64, 0.75), rgba(168, 128, 64, 0.75)) 8.5% 50% / 1px 86% no-repeat,
+      linear-gradient(rgba(168, 128, 64, 0.75), rgba(168, 128, 64, 0.75)) 91.5% 50% / 1px 86% no-repeat,
+      /* 纸纹颗粒 */
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='p'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.35 0 0 0 0 0.24 0 0 0 0 0.1 0 0 0 0.16 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23p)'/%3E%3C/svg%3E"),
+      /* 泛黄：中间浅，四周越来越黄、越暗 */
+      radial-gradient(120% 95% at 48% 42%, #f4ead2 0%, #eadbb6 55%, #d6c095 88%, #c3a774 100%);
+    box-shadow:
+      inset 0 0 0 1px rgba(110, 80, 40, 0.25),
+      inset 0 0 18px rgba(120, 84, 36, 0.28);
+    filter: url(#worn) drop-shadow(0 22px 26px rgba(10, 12, 2, 0.55)) drop-shadow(0 3px 5px rgba(10, 12, 2, 0.3));
   }
-  .card::before { inset: 5.5%; border: 1px solid rgba(52, 40, 30, 0.75); border-radius: 4px; }
-  .card::after { inset: 7.5%; border: 1px solid rgba(176, 134, 62, 0.85); border-radius: 2px; }
 
   .door:hover .card,
   .door:focus-visible .card {
     transform: rotate(0deg) translateY(-14px);
-    box-shadow: 0 1px 0 rgba(255,255,255,.5) inset, 0 44px 60px -24px rgba(10, 12, 2, 0.8), 0 6px 14px rgba(10, 12, 2, 0.3);
   }
+
+  /* 点下去：牌被抽出来，往前一凑 */
+  .door.is-picked .card { transform: rotate(0deg) translateY(-22px) scale(1.06); transition-duration: 0.26s; }
+  .defs { position: absolute; width: 0; height: 0; overflow: hidden; }
 
   .card-n {
     position: relative;
@@ -948,7 +1089,8 @@ const nav = ['about', 'guide', 'readings'].map((k) => ({ href: url(lang, k), lab
     height: auto;
     max-height: 100%;
     object-fit: contain;
-    filter: drop-shadow(0 6px 8px rgba(70, 50, 30, 0.28));
+    filter: sepia(0.22) saturate(0.9) contrast(0.96) drop-shadow(0 5px 6px rgba(70, 50, 30, 0.22));
+    mix-blend-mode: multiply;
     transition: transform 0.7s cubic-bezier(0.22, 0.61, 0.36, 1);
   }
   .door:hover .card-art :global(img) { transform: scale(1.04); }
@@ -960,12 +1102,13 @@ const nav = ['about', 'guide', 'readings'].map((k) => ({ href: url(lang, k), lab
     width: 100%;
     margin-bottom: 3%;
     padding-top: 7%;
-    border-top: 1px solid rgba(176, 134, 62, 0.7);
+    border-top: 1px solid rgba(150, 112, 56, 0.55);
     font-family: var(--didot);
     font-size: clamp(11px, 1.35vw, 17px);
     letter-spacing: 0.2em;
     text-transform: uppercase;
-    color: #2e2219;
+    color: #3a2a1d;
+    text-shadow: 0 0 0.6px rgba(58, 42, 29, 0.6);   /* 一点点洇墨 */
   }
   .card-name:lang(zh) { font-family: 'PingFang SC', var(--cjk); font-weight: 500; letter-spacing: 0.3em; text-transform: none; }
 
@@ -993,9 +1136,10 @@ const nav = ['about', 'guide', 'readings'].map((k) => ({ href: url(lang, k), lab
   @media (max-width: 760px) {
     .two { grid-template-columns: 1fr; gap: 18px; }
     .lace-wrap { --lh: 92px; }
+    .below { margin-top: 54px; }
     .door-list { gap: 10px; }
     .door { gap: 12px; }
-    .card { border-radius: 7px; transform: rotate(calc((var(--k) - 1) * 4deg)) translateY(calc((var(--k) - 1) * (var(--k) - 1) * 8px)); }
+    .card { transform: rotate(calc((var(--k) - 1) * 4deg)) translateY(calc((var(--k) - 1) * (var(--k) - 1) * 8px)); }
     .card-name { font-size: 9.5px; letter-spacing: 0.06em; padding-top: 6%; white-space: nowrap; }
     .card-name:lang(zh) { font-size: 11px; letter-spacing: 0.14em; }
     .card-n { font-size: 11px; }

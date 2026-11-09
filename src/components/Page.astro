@@ -224,6 +224,8 @@ const otherLang = lang === 'en' ? 'zh' : 'en';
     height: clamp(250px, 40vh, 380px);
     overflow: hidden;
     background: #eadad4;
+    /* 首页点一张牌，那张牌会「长」成这条丝缎（跨页面过渡，见 global.css） */
+    view-transition-name: portal;
   }
 
   .strip-bg, .strip-bg :global(img) {

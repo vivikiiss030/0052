@@ -232,17 +232,18 @@ const nav = [
           { passive: true }
         );
 
-        // 只在第一屏里有拖尾。退场不是「到了某一行就关掉」，
-        // 而是跟着滚动连续变淡：滑到第一屏一半开始暗，滑到底就没了。
-        // 已经落下的星屑不会被抹掉，它们各自过完自己那零点几秒。
+        // 鼠标拖尾整页都有（下拉页上也有）。
+        // 只有手机上「拼贴自己闪一下」这件事跟着第一屏走：滑过第一屏就不再闪，
+        // 不然星星会从绿色面板后面的拼贴位置冒出来。
         const heroEl = document.querySelector('.hero');
-        let vis = 1;
+        const vis = 1;
+        let heroVis = 1;
         const zone = () => {
           const H = heroEl ? heroEl.offsetHeight : h;
-          const a0 = H * 0.42;
-          const a1 = H * 0.96;
+          const a0 = H * 0.3;
+          const a1 = H * 0.7;
           const y = window.scrollY;
-          vis = y <= a0 ? 1 : y >= a1 ? 0 : 1 - (y - a0) / (a1 - a0);
+          heroVis = y <= a0 ? 1 : y >= a1 ? 0 : 1 - (y - a0) / (a1 - a0);
         };
         zone();
         window.addEventListener('scroll', zone, { passive: true });
@@ -281,7 +282,7 @@ const nav = [
           // 已经离开第一屏、且屏幕上一颗都不剩：什么都不用画
           if (vis <= 0.002 && bits.length === 0) { requestAnimationFrame(frame); return; }
 
-          if (!fine && vis > 0.05) {
+          if (!fine && heroVis > 0.05) {
             sparkIn -= dt;
             if (sparkIn <= 0) {
               sparkIn = 0.5 + Math.random() * 0.8;   // 大约每半秒到一秒三闪一下
