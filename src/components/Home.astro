@@ -36,10 +36,13 @@ import eyeArt from '../assets/collage/eye-painted.png';
 import keyArt from '../assets/collage/key.png';
 import butterflyArt from '../assets/collage/wings.png';
 // 下拉页上零星的拼贴：一页旧信、一只瓢虫、一朵蓝花、一颗海星
-import letterPage from '../assets/collage/letter-page.png';
 import ladybug from '../assets/collage/ladybug.png';
-import blueBloom from '../assets/collage/blueflower.png';
-import starfishArt from '../assets/collage/starfish.png';
+// zen 拼贴（Vicky 找的素材，抠了底）
+import zBuddha from '../assets/zen/buddha-white.png';
+import zLily from '../assets/zen/lily-pink.png';
+import zOrchid from '../assets/zen/orchid-green.png';
+import zPearl from '../assets/zen/pearl.png';
+import zHand from '../assets/zen/hand-spiral.png';
 
 // 首屏的拼贴元素。位置在下面的 CSS 里，这里只定义层次：
 // depth 决定视差幅度（越「近」动得越多），ph 是漂浮的相位差
@@ -145,8 +148,9 @@ const nav = ['about', 'guide', 'readings'].map((k) => ({ href: url(lang, k), lab
   <!-- 往下拉：一块升起来的面板，只讲「这里是什么地方」，然后是三扇门 -->
   <div class="below">
     <!-- 零星的拼贴：和首屏是一路的，但只放几样，压在角落里 -->
-    <Image src={letterPage} alt="" width={320} format="webp" quality={78} class="bits bit-letter" aria-hidden="true" />
-    <Image src={starfishArt} alt="" width={200} format="webp" quality={80} class="bits bit-starfish" aria-hidden="true" />
+    <Image src={zBuddha} alt="" width={480} format="webp" quality={82} class="bits bit-buddha" aria-hidden="true" />
+    <Image src={zLily} alt="" width={340} format="webp" quality={82} class="bits bit-lily" aria-hidden="true" />
+    <Image src={zHand} alt="" width={260} format="webp" quality={82} class="bits bit-hand" aria-hidden="true" />
     <section class="wrap block" id="space">
       <p class="kicker label">The Open Space · 自留地</p>
       <hr class="rule" />
@@ -160,7 +164,7 @@ const nav = ['about', 'guide', 'readings'].map((k) => ({ href: url(lang, k), lab
 
     <section class="wrap block doors" aria-label={lang === 'en' ? 'Pages' : '页面'}>
       <ul class="door-list">
-        <Image src={blueBloom} alt="" width={240} format="webp" quality={80} class="bits bit-bloom" aria-hidden="true" />
+        <Image src={zOrchid} alt="" width={300} format="webp" quality={82} class="bits bit-orchid" aria-hidden="true" />
         {myDoors.map((d, i) => (
           <li style={`--k:${i}`}>
             <a class="door" href={url(lang, d.key)} data-portal>
@@ -185,6 +189,7 @@ const nav = ['about', 'guide', 'readings'].map((k) => ({ href: url(lang, k), lab
         ))}
       </ul>
       <div class="door-book">
+        <Image src={zPearl} alt="" width={140} format="webp" quality={85} class="bits bit-pearl" aria-hidden="true" />
         <Book lang={lang} variant="cta" />
       </div>
     </section>
@@ -1008,30 +1013,44 @@ const nav = ['about', 'guide', 'readings'].map((k) => ({ href: url(lang, k), lab
     pointer-events: none;
     filter: drop-shadow(0 6px 10px rgba(96, 60, 48, 0.22));
   }
-  /* 一页旧信：斜斜地插在标题左下 */
-  :global(.bit-letter) {
-    left: clamp(-60px, -2vw, -10px);
-    top: clamp(280px, 26vw, 400px);
-    width: clamp(120px, 15vw, 210px);
-    transform: rotate(-14deg);
-    opacity: 0.92;
+  /* 白瓷佛像：坐在标题下面的空白里 */
+  :global(.bit-buddha) {
+    left: clamp(40px, 9vw, 150px);
+    top: clamp(330px, 27vw, 430px);
+    width: clamp(150px, 17vw, 250px);
     z-index: 0;
   }
-  /* 海星：右上角 */
-  :global(.bit-starfish) {
-    right: clamp(-30px, 2vw, 40px);
-    top: clamp(36px, 5vw, 70px);
-    width: clamp(70px, 8vw, 120px);
-    transform: rotate(18deg);
+  /* 粉百合：右上角 */
+  :global(.bit-lily) {
+    right: clamp(-50px, -1.5vw, -10px);
+    top: clamp(10px, 2vw, 40px);
+    width: clamp(120px, 13vw, 200px);
+    transform: rotate(16deg);
+  }
+  /* 石手：右边正文旁，压一点在边上 */
+  :global(.bit-hand) {
+    right: clamp(-30px, 1vw, 30px);
+    top: clamp(420px, 36vw, 560px);
+    width: clamp(80px, 8.5vw, 130px);
+    transform: rotate(-10deg);
+    opacity: 0.95;
   }
   .door-list { position: relative; }
-  /* 蓝花：从第三张牌后面探出来 */
-  :global(.bit-bloom) {
-    right: clamp(-50px, -3vw, -20px);
-    bottom: clamp(30px, 6vw, 90px);
-    width: clamp(80px, 10vw, 150px);
-    transform: rotate(-12deg);
+  /* 绿兰花：从第三张牌后面探出来 */
+  :global(.bit-orchid) {
+    right: clamp(-90px, -5vw, -30px);
+    bottom: clamp(40px, 7vw, 100px);
+    width: clamp(100px, 11vw, 170px);
+    transform: rotate(-10deg);
     z-index: 0;
+  }
+  /* 珍珠：滚在信封左下 */
+  .door-book { position: relative; }
+  :global(.bit-pearl) {
+    left: calc(50% - clamp(190px, 16vw, 230px));
+    bottom: clamp(-6px, 0vw, 10px);
+    width: clamp(44px, 4.4vw, 64px);
+    z-index: 2;
   }
   .door-list li { position: relative; z-index: 1; }
   /* 瓢虫：爬在第一张牌的右上角 */
@@ -1206,9 +1225,11 @@ const nav = ['about', 'guide', 'readings'].map((k) => ({ href: url(lang, k), lab
 
   @media (max-width: 760px) {
     .two { grid-template-columns: 1fr; gap: 18px; }
-    :global(.bit-letter) { display: none; }
-    :global(.bit-starfish) { top: 24px; right: 10px; width: 64px; }
-    :global(.bit-bloom) { display: none; }
+    :global(.bit-hand), :global(.bit-orchid) { display: none; }
+    /* 手机上：佛像坐在右上角，百合从它身后探出来 */
+    :global(.bit-buddha) { left: auto; right: 14px; top: 22px; width: 78px; z-index: 1; }
+    :global(.bit-lily) { top: 54px; right: -26px; width: 80px; z-index: 0; }
+    :global(.bit-pearl) { left: 8px; bottom: -8px; width: 40px; }
     .door-list { gap: 10px; }
     .door { gap: 12px; }
     .card { transform: rotate(calc((var(--k) - 1) * 4deg)) translateY(calc((var(--k) - 1) * (var(--k) - 1) * 8px)); }

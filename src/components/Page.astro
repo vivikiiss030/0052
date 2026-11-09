@@ -7,6 +7,15 @@ import LangSeal from './LangSeal.astro';
 import Book from './Book.astro';
 import WeChatSheet from './WeChatSheet.astro';
 import satin from '../assets/collage/satin.jpg';
+// 每页一组 zen 拼贴（Vicky 找的素材，抠了底）
+import zPink from '../assets/zen/buddha-pink.png';
+import zLotusLeaf from '../assets/zen/lotus-leaf.png';
+import zEyes from '../assets/zen/buddha-eyes.png';
+import zShh from '../assets/zen/guanyin-shh.png';
+import zHand from '../assets/zen/hand-spiral.png';
+import zLotusBuddha from '../assets/zen/buddha-lotus.png';
+import zOrchid from '../assets/zen/orchid-pink.png';
+import zLily from '../assets/zen/lily-pale.png';
 import { T, layouts, W, H, order, pageMeta, ui, url } from '../lib/site.js';
 
 const { lang = 'en', page } = Astro.props;
@@ -55,6 +64,8 @@ const otherLang = lang === 'en' ? 'zh' : 'en';
   <div class="below">
     {page === 'about' && (
     <section class="wrap block" id="content">
+      <Image src={zPink} alt="" width={420} format="webp" quality={82} class="zen z-about-buddha" />
+      <Image src={zLotusLeaf} alt="" width={320} format="webp" quality={82} class="zen z-about-lotus" />
       <div class="two">
         <h2 class="cjk-title about-title">{about.title}</h2>
         <div class="about-r">
@@ -70,6 +81,9 @@ const otherLang = lang === 'en' ? 'zh' : 'en';
 
     {page === 'guide' && (
     <section class="wrap block" id="content">
+      <Image src={zShh} alt="" width={260} format="webp" quality={82} class="zen z-guide-shh" />
+      <Image src={zEyes} alt="" width={320} format="webp" quality={82} class="zen z-guide-eyes" />
+      <Image src={zHand} alt="" width={240} format="webp" quality={82} class="zen z-guide-hand" />
       <h2 class="stance how-title">{how.title[0]}<br /><i>{how.title[1]}</i></h2>
       <ol class="rules">
         {how.items.map((it, i) => (
@@ -85,6 +99,9 @@ const otherLang = lang === 'en' ? 'zh' : 'en';
 
     {page === 'readings' && (
     <section class="wrap block" id="content">
+      <Image src={zLotusBuddha} alt="" width={440} format="webp" quality={82} class="zen z-read-buddha" />
+      <Image src={zOrchid} alt="" width={320} format="webp" quality={82} class="zen z-read-orchid" />
+      <Image src={zLily} alt="" width={320} format="webp" quality={82} class="zen z-read-lily" />
       <ul class="svcs">
         {readings.map((r, i) => (
           <li class="svc">
@@ -347,6 +364,43 @@ const otherLang = lang === 'en' ? 'zh' : 'en';
   .next:hover .next-t span { transform: translateX(6px); }
 
   .side-name { opacity: 0.9; }
+
+  /* ── zen 拼贴：压在每页内容的空白处 ─────────────────── */
+  #content, .endbar { position: relative; }
+  .below { overflow-x: clip; }
+  :global(.zen) {
+    position: absolute;
+    height: auto;
+    pointer-events: none;
+    z-index: 0;
+    filter: drop-shadow(0 8px 12px rgba(96, 60, 48, 0.2));
+  }
+  #content > :not(.zen) { position: relative; z-index: 1; }
+
+  /* 关于我：粉色佛像坐在大标题下面，荷花从右下探出 */
+  :global(.z-about-buddha) { left: clamp(150px, 20vw, 300px); top: clamp(-20px, -1vw, 0px); width: clamp(120px, 12vw, 175px); }
+  :global(.z-about-lotus) { right: clamp(-70px, -3vw, -24px); top: clamp(-90px, -5vw, -50px); width: clamp(110px, 11vw, 170px); transform: rotate(8deg); }
+
+  /* 占卜须知：嘘——观音在标题右边，佛眼斜贴在右上，石手在左下 */
+  :global(.z-guide-shh) { right: clamp(20px, 8vw, 140px); top: clamp(-40px, -2vw, -10px); width: clamp(110px, 11vw, 170px); transform: rotate(4deg); }
+  :global(.z-guide-eyes) { right: clamp(-50px, -1vw, 0px); top: clamp(120px, 11vw, 170px); width: clamp(130px, 13vw, 200px); transform: rotate(-9deg); }
+  :global(.z-guide-hand) { left: clamp(-40px, -1vw, -6px); bottom: clamp(-120px, -7vw, -60px); width: clamp(80px, 8vw, 120px); transform: rotate(-14deg); }
+
+  /* 解读项目：莲花佛坐在右上，兰花和百合压在服务卡片的边角 */
+  :global(.z-read-buddha) { right: clamp(10px, 4vw, 70px); top: clamp(-120px, -7vw, -80px); width: clamp(120px, 11vw, 165px); z-index: 2; }
+  #content :global(.z-read-buddha) ~ .svcs { margin-top: clamp(50px, 5vw, 76px); }
+  :global(.z-read-orchid) { left: clamp(-60px, -3vw, -20px); top: clamp(60px, 7vw, 110px); width: clamp(90px, 9vw, 140px); transform: rotate(-18deg); z-index: 2; }
+  :global(.z-read-lily) { right: clamp(-50px, -2vw, -14px); bottom: clamp(-30px, -1vw, 10px); width: clamp(100px, 11vw, 170px); transform: rotate(12deg); z-index: 2; }
+
+
+  @media (max-width: 760px) {
+    :global(.z-about-lotus), :global(.z-guide-hand), :global(.z-read-orchid), :global(.z-guide-eyes) { display: none; }
+    :global(.z-about-buddha) { left: auto; right: 6px; top: -40px; width: 84px; }
+    :global(.z-guide-shh) { right: 4px; top: -26px; width: 78px; }
+    :global(.z-read-buddha) { right: 4px; top: -56px; width: 88px; }
+    #content :global(.z-read-buddha) ~ .svcs { margin-top: 30px; }
+    :global(.z-read-lily) { right: -24px; bottom: -40px; width: 80px; }
+  }
 
   /* ── 手机目录 ───────────────────────────────────────── */
   .menu-btn, .mmenu, .mmenu-veil { display: none; }
