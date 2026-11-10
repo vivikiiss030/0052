@@ -81,12 +81,14 @@ const otherLang = lang === 'en' ? 'zh' : 'en';
             <Image src={kidRed} alt={lang === 'en' ? 'Vicky as a toddler, laughing in a red coat' : '小时候的 Vicky，穿红棉袄大笑'} width={340} densities={[1, 2]} format="webp" quality={84} class="kid kid-b" />
             <span class="kids-cap">mini vicky</span>
           </div>
+          <!-- 一句主张，带一对大引号 -->
+          <blockquote class="about-quote"><p>{about.body}</p></blockquote>
         </div>
         <div class="about-r">
           <ul class="tags">
             {about.tags.map((t) => <li>{t}</li>)}
           </ul>
-          <p class="prose-t">{about.body}</p>
+          <div class="prose-t about-story">{about.story.map((t) => <p>{t}</p>)}</div>
           <p class="motto">{about.motto}</p>
         </div>
       </div>
@@ -546,18 +548,47 @@ const otherLang = lang === 'en' ? 'zh' : 'en';
 
   :global(.z-about-frog) { right: clamp(20px, 6vw, 110px); top: clamp(-40px, -2vw, -10px); width: clamp(140px, 13vw, 200px); transform: rotate(-6deg); }
 
+  .about-story { margin-top: 1.4em; }
+  .about-quote {
+    position: relative;
+    margin: clamp(90px, 9vw, 130px) 0 0;
+    padding: 34px 6px 0 46px;
+    max-width: 24em;
+  }
+  .about-quote::before,
+  .about-quote::after {
+    position: absolute;
+    font-family: 'Instrument Serif', Georgia, 'Times New Roman', serif;
+    font-size: clamp(110px, 10vw, 150px);
+    line-height: 1;
+    color: #c9a26a;
+    opacity: 0.75;
+  }
+  .about-quote::before { content: '“'; left: -6px; top: -20px; }
+  .about-quote::after { content: '”'; right: 0; bottom: -86px; }
+  .about-quote p {
+    margin: 0;
+    font-family: var(--didot);
+    font-style: italic;
+    font-size: clamp(18px, 1.6vw, 22px);
+    line-height: 1.55;
+    color: #6e4a3e;
+  }
+  .about-quote p:lang(zh) { font-family: 'PingFang SC', var(--cjk); font-style: normal; font-size: clamp(16px, 1.4vw, 19px); line-height: 1.9; letter-spacing: 0.06em; }
+  .about-story p { margin: 0 0 1.1em; }
+
   /* 小时候的照片 */
   .about-l { display: flex; flex-direction: column; gap: clamp(20px, 3vw, 40px); }
-  .kids { position: relative; height: clamp(300px, 30vw, 430px); max-width: 420px; }
+  .kids { position: relative; height: clamp(360px, 36vw, 510px); max-width: 420px; }
   .kids :global(.kid) { position: absolute; height: auto; filter: drop-shadow(0 10px 14px rgba(96, 60, 48, 0.28)); transition: transform 0.6s cubic-bezier(0.22, 0.61, 0.36, 1); }
-  .kids :global(.kid-a) { left: 4%; top: 0; width: 46%; transform: rotate(-6deg); z-index: 1; }
-  .kids :global(.kid-b) { left: 44%; top: 14%; width: 42%; transform: rotate(5deg); z-index: 2; }
+  .kids :global(.kid-a) { left: 4%; top: 12%; width: 46%; transform: rotate(-6deg); z-index: 1; }
+  .kids :global(.kid-b) { left: 44%; top: 26%; width: 42%; transform: rotate(5deg); z-index: 2; }
   .kids:hover :global(.kid-a) { transform: rotate(-9deg) translate(-6px, -6px); }
   .kids:hover :global(.kid-b) { transform: rotate(8deg) translate(6px, -4px); }
   .kids-cap {
     position: absolute;
     left: 26%;
-    bottom: 0;
+    bottom: -9%;
     z-index: 3;
     font-family: 'Monsieur La Doulaise', 'Bodoni Moda Variable', cursive;
     font-size: clamp(32px, 3.1vw, 44px);
@@ -588,7 +619,9 @@ const otherLang = lang === 'en' ? 'zh' : 'en';
     :global(.z-about-buddha) { left: auto; right: 6px; top: -40px; width: 84px; }
     :global(.z-guide-fan) { right: 0; top: -30px; width: 110px; }
     .about-l { display: contents; }
-    .kids { order: 3; height: 300px; margin: 8px auto 0; width: 100%; max-width: 340px; }
+    .kids { order: 3; height: 340px; margin-bottom: 30px !important; margin: 8px auto 0; width: 100%; max-width: 340px; }
+    .about-quote { order: 4; margin: 80px auto 40px; }
+    .kids-cap { bottom: -20%; left: 30%; }
     :global(.z-read-buddha) { right: -22px; top: -64px; width: 92px; }
     #content .svcs { margin-top: 70px; }
     :global(.z-read-buddha) { right: -14px; top: -58px; width: 80px; }

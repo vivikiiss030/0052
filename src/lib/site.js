@@ -26,7 +26,7 @@ export const T = {
       body: [
         'Hi, I’m Vicky — welcome to my healing space, The Open Space 自留地.',
         'The name came to me in a flash one night. I had always wanted my tarot practice to be demystified: an open, friendly space where the person asking and the person reading both grow a little, and discover something, as we read the cards and connect. In a fast world, I want fewer final verdicts — and more of the blank space we keep for ourselves, those moments that matter.',
-        'Liúbái 留白, leaving space empty, is part of traditional Chinese aesthetics, and a deeply philosophical idea in itself. As with yin and yang: where there is yin there is yang, and where there is yang there is yin. Nothing is absolute, and nothing stays the same. Only by walking the road yourself can you step into another person’s shoes and know whether they are warm or cold.',
+        'Liúbái 留白, leaving space empty, is part of traditional Chinese aesthetics, and a deeply philosophical idea in itself. As with yin and yang: where there is yin there is yang, and where there is yang there is yin. Nothing is absolute, and nothing stays the same. Often, all we need is a prompt, a doorway, a pause after a conversation — something that lets us step into our inner world and find answers of our own.',
         'Two kinds of sessions are open for now — you’ll find them, and everything to know before booking, just below. Please DM me ahead of time to book; if you have any particular needs, I’ll do my best to find a slot that suits us both.',
       ],
     },
@@ -35,6 +35,13 @@ export const T = {
       title: 'Vicky',
       tags: ['Psychology background', 'Spiritual practitioner', 'Manifestor', 'Tarot reader'],
       body: 'I believe in self-care and self-acceptance, and in tarot as a tool for looking inward.',
+      story: [
+        'A little about me: I’m Vicky — you can also call me Yifan.',
+        'From a very young age, I found myself full of imagination about what might exist beyond the physical world. As a child I’d often ask my parents, “Wow — could I fly?” A sincere question that seems sweet and a little funny now, but it became the thread running through the path my life has taken.',
+        'Of course, the Wright brothers made my childhood “dream” come true long ago. But I don’t think any of us need a pair of “wings” to “fly” — to see our lives from higher up and further out. We’re born with the ability already: imagination, which lets us explore our own worlds as freely as we like.',
+        'I believe the answers aren’t out there — they’re within each of us. The world is a space we interact with and project onto; through what’s outside, we come to see ourselves more clearly and understand who we really are. Tarot is a tool that helps with exactly this. Beyond its traditional role in divination, it mirrors the querent’s subconscious and energy (which is, in fact, why it can divine at all). Through its symbolic images, it opens a door to the subconscious and invites us to consider the reasons we hadn’t yet noticed.',
+        'So I decided to create this space — an open place without standard answers — bringing together my own background, experience and readings to offer a fresh perspective to anyone who needs one. If you have questions about love, study, career, personal growth or anything else, you’re very welcome to reach out :)',
+      ],
       motto: 'Let the person lead the cards — and the cards lead the luck.',
     },
     how: {
@@ -126,7 +133,7 @@ export const T = {
       body: [
         '嗨你好，欢迎来到我的疗愈空间「The Open Space 自留地」，我是 Vicky。',
         '这个空间的名字来源于一个夜晚的灵光一闪——我一直想为自己的占卜愿景打造一个「去神秘化」的开放友好空间，希望我与问卜者都能够在读牌、链接的过程中彼此有所成长与发现。在这个快节奏的时代，少一点「断言定论」，多一些留给自己的，那些重要的空白时刻。',
-        '「留白」作为中国传统美学的一部分，本身也是一个极具哲学意味的理念。正如阴阳之中，有阴必有阳，有阳必有阴。没有什么是绝对的，也没有什么是一成不变的。持续在道路中体验，才能把脚踏进另一个人的鞋子里，知其冷暖。',
+        '「留白」作为中国传统美学的一部分，本身也是一个极具哲学意味的理念。正如阴阳之中，有阴必有阳，有阳必有阴。没有什么是绝对的，也没有什么是一成不变的。很多时候，我们或许只是需要一个引子，一道大门，一场谈话后的留白，来让我们进入内在的世界，发现属于自己的答案。',
         '目前已开放两类服务，具体项目和须知就在下面，价目表请私信获取。咨询需求请提前私信预约，如有任何特殊需要，我会尽可能协调一个双方都方便的 slot 完成。',
       ],
     },
@@ -135,6 +142,13 @@ export const T = {
       title: 'Vicky',
       tags: ['心理学专业', '灵修者', '显化者', '塔罗师'],
       body: '主张自我关怀与自我接纳，让塔罗牌成为向内探索的工具。',
+      story: [
+        '介绍一下我自己：我是Vicky，大家也可以叫我Yifan。',
+        '很小的时候，我就发现自己对这个物质世界之外的可能性充满了想象力。小时候，我经常和父母说：“哇！我能不能飞起来呢？” 这句在现在看起来可爱又好笑的真诚发问，成为了我日后人生道路的索引。',
+        '诚然，在这个宇宙里，早已有怀特兄弟实现我儿时的“梦想”。但我想，我们每个人并不需要一双“翅膀”才能“飞起来”，将自己的人生看得更高、更远。我们拥有与生俱来的能力——想象力，来帮助我们在自己的世界里尽情探索。',
+        '我信奉一个理念，那就是：答案并不在外面，而在每个人的内心之中。这个世界是我们与之互动与投射的一个空间，我们借由外部，来更好地观照自己，认识自己到底是谁。而塔罗牌，就是一个能够帮助我们达到这一点的工具。它除了具有传统的占卜作用之外，更可以映射问卜者的内心潜意识与能量（其实，这也是为什么它能占卜的原因），通过象征性的画面，帮助问卜者打开一道潜意识的大门，引导人们去思考背后未被察觉的原因。',
+        '因此，我决定创办这个空间——一个没有标准答案的开放之地。结合我自己的背景、经历和解读，来为更多有需要的朋友提供新的视角。如果你对自己的感情、学业、事业、自我成长等等方面有所疑问，欢迎前来咨询 :)',
+      ],
       motto: '以人驭牌，以牌驭运。',
     },
     how: {
