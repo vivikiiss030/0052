@@ -66,7 +66,7 @@ export const T = {
         spreads: [
           { k: 3, lay: 'three', name: 'Three-card spread', zh: '万能牌阵', pos: 'Development · Outcome · Thoughts', for: 'Works for almost any single question.', tag: 'Any question' },
           { k: 5, lay: 'cross', name: 'Cross spread', zh: '综合十字', pos: 'Development · Influences · Obstacles · Outcome / Advice', for: 'A rounded look at one situation, with advice on what to do next.', tag: 'Any question' },
-          { k: 5, kl: '5 / 7', lay: 'choice', name: 'Choice spread', zh: '二选一 / 三选一', pos: 'You at the base · one line of cards for each path', for: 'Torn between two paths, or three? See how each is likely to unfold — and which way to go.', tag: 'Decisions' },
+          { k: 5, kl: '5 / 7', lay: 'choice', name: 'Choice spread', zh: '二选一 / 三选一', pos: 'Shows how each of your paths is likely to unfold', for: 'Torn between two paths, or three? See how each is likely to unfold — and which way to go.', tag: 'Decisions' },
           { k: 6, lay: 'six', name: 'Thoughts & direction', zh: '想法及发展', pos: 'Their thoughts · Where it’s heading', for: 'Any relationship in your life — a partner, a colleague, a classmate, a friend: what they currently think of you, and where things between you are going.', tag: 'Relationships' },
           { k: 8, lay: 'venus', name: 'Venus love spread', zh: '爱情维纳斯', pos: 'Both sides · Influences · Direction · Obstacles · Outcome', for: 'A deep reading of a relationship, from both people’s side.', tag: 'Love' },
           { k: 10, lay: 'celtic', name: 'Celtic Cross', zh: '凯尔特十字', pos: 'Present · Obstacles · Past · Future · Conscious · Subconscious · Advice · Influences · Outcome', for: 'The most complete spread, for when you want the whole picture.', tag: 'The full picture' },
