@@ -10,7 +10,7 @@ export const T = {
       sub: 'tarot with Vicky',
       tagline: 'Tarot readings · online · in English & 中文',
       // 左上角：一句话让人知道这里是干什么的
-      intro: 'Tarot · Self-healing',
+      intro: 'Tarot · Self-reflection & healing',
       // 手机上没有鼠标悬停，进场时轻轻提示一句「名字可以点」
       hint: 'step inside',
     },
@@ -24,9 +24,9 @@ export const T = {
       kicker: 'The Open Space · 自留地',
       title: 'Where am I?',
       body: [
-        'Hi, I’m Vicky — welcome to my healing space, The Open Space 自留地.',
-        'The name came to me in a flash one night. I had always wanted my tarot practice to be demystified: an open, friendly space where the person asking and the person reading both grow a little, and discover something, as we read the cards and connect. In a fast world, I want fewer final verdicts — and more of the blank space we keep for ourselves, those moments that matter.',
-        'Liúbái 留白, leaving space empty, is part of traditional Chinese aesthetics, and a deeply philosophical idea in itself. As with yin and yang: where there is yin there is yang, and where there is yang there is yin. Nothing is absolute, and nothing stays the same. Often, all we need is a prompt, a doorway, a pause after a conversation — something that lets us step into our inner world and find answers of our own.',
+        'Hi, I’m Vicky — welcome to The Open Space 自留地.',
+        'The name came to me in a flash one night. I had always wanted my tarot practice to be demystified: an open, friendly space where the person asking and the person reading both grow a little, and discover something, as we read the cards and connect. In a fast world, I want fewer final verdicts — and more of those little moments of stillness that we rarely make time for ourselves.',
+        'Liúbái 留白, leaving space empty, is part of traditional Chinese aesthetics, and a deeply philosophical idea in itself. As with yin and yang: where there is yin there is yang, and where there is yang there is yin. Nothing is absolute, and nothing stays the same. Sometimes, all we need is a little prompt, a doorway, or a pause after a conversation — something that lets us step into our inner world and find answers of our own.',
         'Two kinds of sessions are open for now — you’ll find them, and everything to know before booking, just below. Please DM me ahead of time to book; if you have any particular needs, I’ll do my best to find a slot that suits us both.',
       ],
     },
@@ -37,8 +37,8 @@ export const T = {
       body: 'I believe in self-care and self-acceptance, and in tarot as a tool for looking inward.',
       story: [
         'A little about me: I’m Vicky — you can also call me Yifan.',
-        'From a very young age, I found myself full of imagination about what might exist beyond the physical world. As a child I’d often ask my parents, “Wow — could I fly?” A sincere question that seems sweet and a little funny now, but it became the thread running through the path my life has taken.',
-        'Of course, the Wright brothers made my childhood “dream” come true long ago. But I don’t think any of us need a pair of “wings” to “fly” — to see our lives from higher up and further out. We’re born with the ability already: imagination, which lets us explore our own worlds as freely as we like.',
+        'Even as a child, I was fascinated by the possibilities that might exist beyond the physical world. As a child I’d often ask my parents, “Wow — could I fly?” A sincere question that seems sweet and a little funny now, but it became something of a guiding thread in my life.',
+        'Of course, the Wright brothers had already figured out how to get humans off the ground long before I was born. But I don’t think any of us need a pair of “wings” to “fly” — to see our lives from higher up and further out. We’re born with the ability already: imagination, which lets us explore our own worlds as freely as we like.',
         'I believe the answers aren’t out there — they’re within each of us. The world is a space we interact with and project onto; through what’s outside, we come to see ourselves more clearly and understand who we really are. Tarot is a tool that helps with exactly this. Beyond its traditional role in divination, it mirrors the querent’s subconscious and energy (which is, in fact, why it can divine at all). Through its symbolic images, it opens a door to the subconscious and invites us to consider the reasons we hadn’t yet noticed.',
         'So I decided to create this space — an open place without standard answers — bringing together my own background, experience and readings to offer a fresh perspective to anyone who needs one. If you have questions about love, study, career, personal growth or anything else, you’re very welcome to reach out :)',
       ],
@@ -48,10 +48,10 @@ export const T = {
       kicker: 'Good to know',
       title: ['A reading isn’t a final ending.', 'It’s a way of seeing yourself.'],
       items: [
-        { t: 'What tarot can answer', b: ['Tarot suits questions with a timeframe — usually anything within the next three to six months, or sooner. It isn’t the right tool for long-range questions; for your long-term fortune, astrology or other systems will serve you better.'] },
-        { t: 'How a reading works', b: ['You tell me the background and what’s puzzling you → we talk it through and settle on the question and the right spread → you pay to book → I shuffle → you wait quietly and settle yourself → you give me numbers, or I draw → we read and discuss → done.', 'A typical reading takes about 20 minutes: one question, one answer, follow-up questions not included.'] },
-        { t: 'When I’ll decline', b: ['Tarot can’t help much if you arrive with an answer already decided, or while caught in a strong fixation, an unresolved knot, or big swings of emotion. I also don’t read on life and death, health, gambling, or anything involving lives or the law.', 'Please come calm and centred — not superstitious, not blindly following.'] },
-        { t: 'How to hold a reading', b: ['A spread mirrors the energy of your subconscious right now. It isn’t the final ending — only the most likely timeline if nothing changes. Everyone has the power to change their own fate, so please don’t put blind faith in any tool: a reading offers a perspective on your heart and habits, and the reader knows no more than anyone else.', '“Character is fate” means the habits, emotions, thoughts and patterns we run without thinking add up to our fate. The point of a reading is to see those automatic programmes clearly, step off the worn path, and add some luck of your own.'] },
+        { t: 'What tarot can answer', b: ['Tarot works best with questions that have a clear timeframe, usually within the next 3 to 6 months, or sooner. It isn’t the right tool for long-range questions; for your long-term fortune, astrology or other systems will serve you better (but dw, I’m already learning! Stay tuned!)'] },
+        { t: 'How a reading works', b: ['You tell me the background and what’s puzzling you → we talk it through and agree on a question and a suitable spread → you confirm your booking with payment → I shuffle → you take a moment to relax and center yourself → you choose numbers, or I draw the cards for you → we read and discuss → done.', 'A typical reading takes about 20 minutes: one question, one answer, follow-up questions not included.'] },
+        { t: 'When I’ll decline', b: ['Tarot may not be particularly helpful if you’re approaching a reading with an answer already decided in your mind, or if you’re experiencing intense emotional distress, fixation or inner conflict. I also don’t offer readings on matters involving life and death, health, gambling or legal issues.', 'Please come calm and centred — not superstitious, not blindly following.'] },
+        { t: 'How to approach a reading', b: ['A spread mirrors the energy of your subconscious right now. It isn’t the final ending — only the most likely timeline if nothing changes. We all have the power to shape our own future, so I encourage you not to place blind faith in any tool. Tarot offers a perspective — a way to look inward, reflect on your habits and understand yourself a little better. The reader knows no more than anyone else, especially you, yourself.', '“Character is fate” means the habits, emotions, thoughts and patterns we run without thinking add up to our fate. The purpose of a reading is to bring these automatic patterns into awareness, so we can step beyond familiar paths and make more conscious choices. After all, the cards don’t decide your future. You do.'] },
       ],
     },
     readingsKicker: 'Readings',
@@ -155,7 +155,7 @@ export const T = {
       kicker: '占卜服务须知',
       title: ['占卜不是最终结局，', '而是一个看清自己的视角。'],
       items: [
-        { t: '关于问题范围', b: ['塔罗适合询问具有时效性的问题，一般 3–6 个月甚至更短的事情都可以看，但更长远的问题不太适用这种工具。如需咨询长期运势类问题，请寻求星盘、命理等工具帮助。'] },
+        { t: '关于问题范围', b: ['塔罗适合询问具有时效性的问题，一般 3–6 个月甚至更短的事情都可以看，但更长远的问题不太适用这种工具。如需咨询长期运势类问题，请寻求星盘、命理等工具帮助（不过我已经在学啦！敬请期待！）。'] },
         { t: '关于咨询流程', b: ['你向我详细描述问题背景以及困惑点 → 我和你讨论后确认咨询问题及合适牌阵 → 你付款预定 → 我洗牌 → 你等候并静心 → 你向我报数字或我抽牌 → 解读与讨论 → 结束。', '一般问题占卜时长在 20 分钟左右。一问一答，不包含延伸问题。'] },
         { t: '拒收案例标准', b: ['占卜并不适用于问卜者带着已有预设答案，或内心有强烈执念、心结、情绪起伏时的状态来解答；同样不接受关于生死、健康、赌博等任何涉及生命或违法事宜的预测。', '请确保自身状态平和中正，不迷信、不盲从，方宜占卜。'] },
         { t: '对待占卜的态度', b: ['纸牌占卜本质上是对问卜者当下潜意识能量的映射。占卜解读并不代表「最终结局」，仅仅代表「如果按照当下什么都不改变，最可能的时间线结果是什么」。因此，每个人都有力量改变自己的命运，请不要迷信任何工具。占卜只是给你一个视角，帮助你面对自己的内心与习性，占卜师并不比任何人懂得更多。', '「性格决定命运」，指的就是那些我们不假思索的习惯、情绪、思维以及行为模式，共同造就了我们的「命」。而占卜的意义，就在于看清这些「自动化程式」后打破已有路径，为自己增添「运」的力量。'] },
