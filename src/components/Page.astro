@@ -611,11 +611,13 @@ const otherLang = lang === 'en' ? 'zh' : 'en';
 
   @media (max-width: 760px) {
     :global(.z-guide-hand), :global(.z-read-orchid), :global(.z-guide-eyes) { display: none; }
-    :global(.z-about-frog) { right: 118px; top: 2px; width: 78px; }
+    :global(.z-about-frog) { display: none; }
     :global(.z-about-buddha) { left: auto; right: 6px; top: -40px; width: 84px; }
-    :global(.z-guide-fan) { right: 0; top: -30px; width: 110px; }
+    :global(.z-guide-fan) { right: 0; top: -78px; width: 110px; }
     .about-l { display: contents; }
-    .kids { order: 3; height: 340px; margin-bottom: 30px !important; margin: 8px auto 0; width: 100%; max-width: 340px; }
+    .about-title { order: 1; }
+    .about-r { order: 3; }
+    .kids { order: 2; height: 340px; margin-bottom: 64px !important; margin: -26px auto 0; width: 100%; max-width: 340px; }
     .about-quote { order: 4; margin: 20px auto 40px; padding: 26px 24px 0 46px; }
     .about-quote::after { bottom: -104px; }
     .kids-cap { bottom: -13%; left: 14%; }
