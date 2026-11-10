@@ -11,7 +11,6 @@ const { lang = 'en' } = Astro.props;
 
 import satin from '../assets/collage/satin.jpg';
 import caladium from '../assets/collage/caladium.png';
-import paleflower from '../assets/collage/paleflower.png';
 import paleflower2 from '../assets/collage/paleflower2.png';
 import nautilus from '../assets/collage/nautilus.png';
 import star from '../assets/collage/star.png';
@@ -25,7 +24,7 @@ import lilypad2 from '../assets/collage/lilypad2.png';
 import lotus from '../assets/collage/lotus.png';
 import begonia from '../assets/collage/begonia.png';
 import starfish from '../assets/collage/starfish.png';
-import orchid from '../assets/collage/orchid.png';
+import frog from '../assets/zen/frog.png';
 import cherub from '../assets/collage/cherub.png';
 import planet from '../assets/collage/planet.png';
 import moonlet from '../assets/collage/moonlet.png';
@@ -34,6 +33,10 @@ import butterflyGreen from '../assets/collage/butterfly-green.png';
 // 三张塔罗牌牌面上的画
 // 下拉页上零星的拼贴：一页旧信、一只瓢虫、一朵蓝花、一颗海星
 import ladybug from '../assets/collage/ladybug.png';
+// 信封两边的拼贴
+import zFace from '../assets/zen/frame-face.png';
+import zSun from '../assets/zen/sunflower.png';
+import zStars2 from '../assets/zen/stars-gold2.png';
 // zen 拼贴（Vicky 找的素材，抠了底）
 import zBuddha from '../assets/zen/buddha-white.png';
 import zLily from '../assets/zen/lily-pink.png';
@@ -47,7 +50,6 @@ const pieces = [
 
   { k: 'caladium', src: caladium, alt: '粉脉彩叶芋', d: 1.0, ph: 0.0 },
   { k: 'paleflower2', src: paleflower2, alt: '淡蓝色花', d: 0.35, ph: 1.7 },
-  { k: 'paleflower', src: paleflower, alt: '浅蓝色花', d: 0.55, ph: 0.4 },
   { k: 'nautilus2', src: nautilus2, alt: '鹦鹉螺壳', d: 0.3, ph: 1.1 },
   { k: 'star', src: star, alt: '金色星芒', d: 0.85, ph: 2.2 },
   { k: 'moon', src: moon, alt: '金色月牙', d: 0.7, ph: 0.8 },
@@ -60,7 +62,7 @@ const pieces = [
   { k: 'lotus', src: lotus, alt: '粉色睡莲', d: 1.0, ph: 0.6 },
   { k: 'begonia', src: begonia, alt: '螺旋秋海棠叶', d: 0.6, ph: 2.4 },
   { k: 'starfish', src: starfish, alt: '海星', d: 0.6, ph: 1.3 },
-  { k: 'orchid', src: orchid, alt: '绿色兰花', d: 0.5, ph: 0.9 },
+  { k: 'frog', src: frog, alt: '戴花帽的小青蛙', d: 0.5, ph: 0.9 },
   { k: 'cherub', src: cherub, alt: '金色小天使', d: 0.9, ph: 2.0 },
   { k: 'planet', src: planet, alt: '蓝色星球', d: 0.3, ph: 3.6 },
   { k: 'moon2', src: moon2, alt: '金色月牙', d: 0.35, ph: 1.2 },
@@ -163,7 +165,13 @@ const nav = ['about', 'guide', 'readings'].map((k) => ({ href: url(lang, k), lab
         {myDoors.map((d, i) => (
           <li style={`--k:${i}`}>
             <a class="door" href={url(lang, d.key)} data-portal>
-              <TarotCard k={i} title={pageMeta[lang][d.key].title} />
+              <!-- 发牌：先扣着叠成一摞（星星牌背），滚到这里时铺开，再一张张翻过来 -->
+              <span class="deal">
+                <span class="deal-in">
+                  <TarotCard k={i} title={pageMeta[lang][d.key].title} />
+                  <span class="deal-back" aria-hidden="true"></span>
+                </span>
+              </span>
               {i === 0 && <Image src={ladybug} alt="" width={80} format="webp" quality={85} class="bits bit-ladybug" aria-hidden="true" />}
               <span class="door-b">{d.line}</span>
             </a>
@@ -172,6 +180,9 @@ const nav = ['about', 'guide', 'readings'].map((k) => ({ href: url(lang, k), lab
       </ul>
       <div class="door-book">
         <Image src={zPearl} alt="" width={140} format="webp" quality={85} class="bits bit-pearl" aria-hidden="true" />
+        <Image src={zFace} alt="" width={320} format="webp" quality={84} class="bits bit-face" aria-hidden="true" />
+        <Image src={zSun} alt="" width={320} format="webp" quality={84} class="bits bit-sun" aria-hidden="true" />
+        <Image src={zStars2} alt="" width={120} format="webp" quality={84} class="bits bit-stars2" aria-hidden="true" />
         <Book lang={lang} variant="cta" />
       </div>
     </section>
@@ -264,6 +275,22 @@ const nav = ['about', 'guide', 'readings'].map((k) => ({ href: url(lang, k), lab
 
     // 从内容页点「这个空间」带着 #space 进来：直接停在下拉页
     if (location.hash === '#space') requestAnimationFrame(() => scrollTo(0, target()));
+  }
+
+  // ── 发牌：三张牌先扣着叠在一起，滚到它们时铺开、再一张张翻过来 ──
+  {
+    const doorsEl = document.querySelector('.doors');
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (doorsEl && !reduce && 'IntersectionObserver' in window) {
+      doorsEl.classList.add('will-deal');
+      const io = new IntersectionObserver((es) => {
+        if (es.some((e) => e.isIntersecting)) {
+          setTimeout(() => doorsEl.classList.add('is-dealt'), 120);
+          io.disconnect();
+        }
+      }, { threshold: 0.45 });
+      io.observe(doorsEl.querySelector('.door-list'));
+    }
   }
 
   // ── 点一张牌：牌被抽起来，然后朝你放大、冲出屏幕，背景淡成米色，接着进内容页 ──
@@ -795,7 +822,7 @@ const nav = ['about', 'guide', 'readings'].map((k) => ({ href: url(lang, k), lab
   .cherub { top: 60%; left: 74%; width: 20.0vmin; --rot: -13deg; z-index: 5; }
   .planet { top: 63%; left: 87%; width: 6.4vmin; z-index: 4; }
   .moon2 { top: 43%; left: 86%; width: 7.4vmin; --rot: 26deg; z-index: 3; }
-  .orchid { top: 76%; left: 60%; width: 10.4vmin; --rot: 10deg; z-index: 4; }
+  .frog { top: 77%; left: 59%; width: 11.5vmin; --rot: -6deg; z-index: 4; }
   .moonlet { top: 84%; left: 66%; width: 4.8vmin; z-index: 3; }
 
   /* 蝴蝶：一只停在叶尖，一只从剑尖那头飞出去 */
@@ -888,7 +915,7 @@ const nav = ['about', 'guide', 'readings'].map((k) => ({ href: url(lang, k), lab
     .el { filter: drop-shadow(0 3vw 5vw rgba(118, 94, 90, 0.24)); }
 
     .paleflower2, .paleflower, .nightflower, .star, .nautilus2,
-    .lilypad2, .begonia, .orchid, .moon2,
+    .lilypad2, .begonia, .frog, .moon2,
     .moonlet, .planet {
       display: none;
     }
@@ -1055,16 +1082,59 @@ const nav = ['about', 'guide', 'readings'].map((k) => ({ href: url(lang, k), lab
     text-align: center;
   }
 
-  .door:hover :global(.card),
-  .door:focus-visible :global(.card) {
-    transform: rotate(0deg) translateY(-14px);
+  /* ── 发牌 ── */
+  .door-list { --gap: clamp(14px, 3.4vw, 52px); }
+  .deal {
+    display: block;
+    width: 100%;
+    max-width: 270px;
+    perspective: 1200px;
+    transform: rotate(calc((var(--k) - 1) * 4deg)) translateY(calc((var(--k) - 1) * (var(--k) - 1) * 14px));
+    transition: transform 0.9s cubic-bezier(0.22, 0.61, 0.36, 1);
+    transition-delay: calc(var(--k) * 0.06s);
   }
+  .deal-in {
+    position: relative;
+    display: block;
+    transform-style: preserve-3d;
+    transition: transform 0.9s cubic-bezier(0.3, 1.25, 0.5, 1);
+    transition-delay: calc(0.75s + var(--k) * 0.22s);
+  }
+  .deal-in :global(.card) { max-width: none; backface-visibility: hidden; -webkit-backface-visibility: hidden; }
+  .deal-back {
+    position: absolute;
+    inset: 0;
+    border-radius: 3px;
+    background: url('/card-back.jpg') center / cover;
+    box-shadow: 0 0 0 5px #fbf8f1, 0 0 0 6px rgba(80, 60, 40, 0.16), 0 20px 28px -12px rgba(70, 40, 30, 0.45);
+    transform: rotateY(180deg);
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+  }
+  /* 还没滚到：三张牌扣着叠在中间那张的位置，微微错开像一摞 */
+  .doors.will-deal:not(.is-dealt) .deal {
+    transform: translateX(calc((1 - var(--k)) * (100% + var(--gap)))) rotate(calc((var(--k) - 1) * -3deg)) translateY(calc(var(--k) * -3px));
+    transition-delay: 0s;
+  }
+  .doors.will-deal:not(.is-dealt) .deal-in { transform: rotateY(180deg); transition-delay: 0s; }
+  .doors.will-deal:not(.is-dealt) .door-b,
+  .doors.will-deal:not(.is-dealt) :global(.bit-ladybug) { opacity: 0; }
+  .doors .door-b { transition: color 0.4s, opacity 0.6s 1.5s; }
+  :global(.bit-ladybug) { transition: opacity 0.6s 1.5s; }
+  .doors.will-deal:not(.is-dealt) .door { pointer-events: none; }
+
+  .doors.is-dealt .door:hover .deal,
+  .doors.is-dealt .door:focus-visible .deal { transform: rotate(0deg) translateY(-14px); transition-delay: 0s; }
   /* 点下去：牌被抽出来，往前一凑 */
-  .door.is-picked :global(.card) { transform: rotate(0deg) translateY(-22px) scale(1.06); transition-duration: 0.26s; }
-  .door :global(.card) { transform: rotate(calc((var(--k) - 1) * 4deg)) translateY(calc((var(--k) - 1) * (var(--k) - 1) * 14px)); max-width: 270px; }
+  .doors.is-dealt .door.is-picked .deal { transform: rotate(0deg) translateY(-22px) scale(1.06); transition-duration: 0.26s; transition-delay: 0s; }
   .door:hover :global(.card .art-main) { scale: 1.06; }
   .door:hover :global(.card .a0-frame) { translate: 0 -4px; }
   .door:hover :global(.card .a2-fish) { translate: -6px -4px; }
+
+  /* 信封两边：左边一幅带框的脸，右边一朵向日葵和几颗金星 */
+  :global(.bit-face) { left: calc(50% - clamp(380px, 33vw, 470px)); top: -10px; width: clamp(130px, 13vw, 180px); transform: rotate(-8deg); z-index: 1; }
+  :global(.bit-sun) { right: calc(50% - clamp(400px, 34vw, 480px)); top: 30px; width: clamp(130px, 13vw, 180px); transform: rotate(10deg); z-index: 1; }
+  :global(.bit-stars2) { right: calc(50% - clamp(240px, 21vw, 300px)); top: -20px; width: clamp(40px, 4vw, 56px); transform: rotate(-8deg); z-index: 2; }
 
   /* 点牌时浮在最上面的两层：慢慢盖上来的米色、牌的复制品 */
   :global(.portal-veil) {
@@ -1109,7 +1179,12 @@ const nav = ['about', 'guide', 'readings'].map((k) => ({ href: url(lang, k), lab
     .doors { margin-top: 56px; }
     .door-list { gap: 10px; }
     .door { gap: 12px; }
-    .door :global(.card) { transform: rotate(calc((var(--k) - 1) * 4deg)) translateY(calc((var(--k) - 1) * (var(--k) - 1) * 8px)); }
+    .door-list { --gap: 10px; }
+    .deal { transform: rotate(calc((var(--k) - 1) * 4deg)) translateY(calc((var(--k) - 1) * (var(--k) - 1) * 8px)); }
+    .deal-back { box-shadow: 0 0 0 3px #fbf8f1, 0 0 0 4px rgba(80, 60, 40, 0.16), 0 12px 18px -8px rgba(70, 40, 30, 0.45); }
+    :global(.bit-face) { left: -10px; top: auto; bottom: -30px; width: 84px; }
+    :global(.bit-sun) { right: -14px; top: -40px; width: 90px; }
+    :global(.bit-stars2) { display: none; }
     .door-b { display: none; }
   }
 </style>

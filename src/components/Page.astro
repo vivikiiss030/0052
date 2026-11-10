@@ -28,6 +28,8 @@ const u = ui[lang];
 const me = pm[page];
 const idx = order.indexOf(page);
 const nextKey = order[idx + 1];
+const prevKey = idx > 0 ? order[idx - 1] : null;
+const prev = prevKey ? { href: url(lang, prevKey), label: pm[prevKey].title } : { href: `${url(lang)}#space`, label: 'The Open Space' };
 const next = nextKey ? { href: url(lang, nextKey), label: pm[nextKey].title } : { href: url(lang), label: u.backToStart };
 const otherLang = lang === 'en' ? 'zh' : 'en';
 ---
@@ -75,7 +77,7 @@ const otherLang = lang === 'en' ? 'zh' : 'en';
           <div class="kids">
             <Image src={kidGrass} alt={lang === 'en' ? 'Vicky as a little girl, running on the grass' : '小时候的 Vicky，在草地上跑'} width={420} densities={[1, 2]} format="webp" quality={84} class="kid kid-a" />
             <Image src={kidRed} alt={lang === 'en' ? 'Vicky as a toddler, laughing in a red coat' : '小时候的 Vicky，穿红棉袄大笑'} width={340} densities={[1, 2]} format="webp" quality={84} class="kid kid-b" />
-            <span class="kids-cap">{lang === 'en' ? 'mini Vicky' : 'mini Vicky · 小时候'}</span>
+            <span class="kids-cap">mini Vicky</span>
           </div>
         </div>
         <div class="about-r">
@@ -184,15 +186,37 @@ const otherLang = lang === 'en' ? 'zh' : 'en';
     )}
 
     <!-- 最底下：预约 + 下一页 -->
+    {page === 'readings' && (
+      <section class="wrap book-block">
+        <div class="end-book">
+          <h2 class="stance end-title">{book.title}</h2>
+          <p class="prose-t end-body">{book.body}</p>
+          <Book lang={lang} variant="cta" />
+        </div>
+      </section>
+    )}
+
+    <!-- 最底下：左边一张「返回上一张」，右边一张「翻开下一张」。鼠标移上去（手机上点一下）翻开，再点就进去 -->
     <section class="wrap endbar">
-      <div class="end-book">
-        {page === 'readings' && <h2 class="stance end-title">{book.title}</h2>}
-        {page === 'readings' && <p class="prose-t end-body">{book.body}</p>}
-        <Book lang={lang} variant="cta" />
-      </div>
-      <!-- 下一页：一张扣着的牌。鼠标移上去（手机上点一下）翻开，看到下一页是哪张；再点就进去 -->
+      <a class="next is-prev" href={prev.href} data-flip data-k={prevKey ? order.indexOf(prevKey) : 3}>
+        <span class="next-k label">{lang === 'en' ? 'Back to the last card' : '返回上一张'}</span>
+        <span class="flip">
+          <span class="flip-in">
+            <span class="flip-back" aria-hidden="true"></span>
+            {prevKey ? (
+              <span class="flip-front is-card">
+                <TarotCard k={order.indexOf(prevKey)} title={pm[prevKey].title} class="is-mini" />
+              </span>
+            ) : (
+              <span class="flip-front is-home">
+                <img src="/home-thumb.jpg" alt="" loading="lazy" />
+              </span>
+            )}
+          </span>
+        </span>
+      </a>
       <a class="next" href={next.href} data-flip data-k={nextKey ? order.indexOf(nextKey) : 3}>
-        <span class="next-k label">{lang === 'en' ? (nextKey ? 'Draw the next card' : 'Back to the start') : (nextKey ? '翻开下一张' : '回到开始')}</span>
+        <span class="next-k label">{lang === 'en' ? (nextKey ? 'Draw the next card' : 'Back to the start') : (nextKey ? '翻开下一张' : '回到首页')}</span>
         <span class="flip">
           <span class="flip-in">
             <span class="flip-back" aria-hidden="true"></span>
@@ -201,10 +225,8 @@ const otherLang = lang === 'en' ? 'zh' : 'en';
                 <TarotCard k={order.indexOf(nextKey)} title={pm[nextKey].title} class="is-mini" />
               </span>
             ) : (
-              <span class="flip-front">
-                <span class="ff-n">✦</span>
-                <span class="ff-t">{next.label}</span>
-                <span class="ff-go" aria-hidden="true">→</span>
+              <span class="flip-front is-home">
+                <img src="/home-thumb.jpg" alt="" loading="lazy" />
               </span>
             )}
           </span>
@@ -463,6 +485,14 @@ const otherLang = lang === 'en' ? 'zh' : 'en';
   }
   /* 翻开的牌面颜色 = 首页那张牌的底：I 天空 / II 灰绿 / III 粉 */
   .flip-front.is-card { padding: 0; background: none; box-shadow: none; display: block; }
+  .flip-front.is-home { padding: 0; overflow: hidden; display: block; background: #e9d6d3; }
+  .flip-front.is-home img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  /* 左边那张：往左歪，排在左边 */
+  .next.is-prev { margin-left: 0; margin-right: auto; }
+  .next.is-prev .flip { transform: rotate(-6deg); }
+  .next.is-prev:hover .flip, .next.is-prev.is-flipped .flip { transform: rotate(0deg) translateY(-8px); }
+  .book-block { display: flex; justify-content: center; margin-top: clamp(56px, 7vw, 100px); }
+  .book-block .end-book { align-items: center; text-align: center; max-width: 36em; }
   .flip-front.is-card :global(.card) { width: 100%; height: 100%; max-width: none; }
   .next[data-k='0'] .flip-front { background: radial-gradient(40% 12% at 30% 78%, #fff, rgba(255,255,255,0) 70%), linear-gradient(180deg, #6f9fcf, #a9c8e2 50%, #e9dccb); }
   .next[data-k='1'] .flip-front { background: radial-gradient(60% 40% at 50% 45%, #eef0e0, rgba(238,240,224,0) 70%), linear-gradient(180deg, #a8b394, #d6d9c2 55%, #eadbd6); }
@@ -644,9 +674,10 @@ const otherLang = lang === 'en' ? 'zh' : 'en';
     .pnav a { display: none; }
     .strip-title { bottom: 58px; right: 110px; }
     .strip-h { font-size: 11.5vw; line-height: 1; }
-    .endbar { flex-direction: column; align-items: stretch; }
-    .endbar .next { margin: 12px auto 0; }
-    .next { align-items: flex-start; text-align: left; margin-left: 0; }
+    .endbar { flex-direction: row; align-items: flex-end; flex-wrap: nowrap; gap: 12px; }
+    .next-k { font-size: 9px; letter-spacing: 0.16em; }
+    .endbar .next { margin: 0; }
+    .next { align-items: center; text-align: center; }
   }
 
   /* ── 第一屏之下：一块从下方升起、盖住第一屏的面板 ── */
@@ -879,17 +910,38 @@ const otherLang = lang === 'en' ? 'zh' : 'en';
   /* ── 解读项目：可以展开的两张卡 ──────────────────────── */
   .svcs { list-style: none; margin: clamp(18px, 2.4vw, 30px) 0 0; padding: 0; display: grid; gap: 16px; }
 
-  /* 直角，像一张印着双线框的卡片 */
+  /* 花藤框：没有硬边框，左上和右下各长出一丛马蹄莲（参考 Vicky 给的手绘花框），
+     中间用一根极细的橄榄绿线连起来，像藤蔓 */
   .svc {
-    border: 1px solid rgba(43, 35, 29, 0.55);
+    position: relative;
+    border: 0;
     border-radius: 0;
-    background: rgba(251, 248, 241, 0.8);
-    box-shadow: inset 0 0 0 5px rgba(251, 248, 241, 0.9), inset 0 0 0 6px rgba(43, 35, 29, 0.22), 0 18px 40px -28px rgba(96, 60, 48, 0.35);
-    transition: box-shadow 0.4s ease, border-color 0.4s ease;
-    overflow: hidden;
+    background:
+      linear-gradient(rgba(122, 140, 84, 0.55), rgba(122, 140, 84, 0.55)) 0 0 / 100% 1px no-repeat,
+      linear-gradient(rgba(122, 140, 84, 0.55), rgba(122, 140, 84, 0.55)) 0 100% / 100% 1px no-repeat,
+      rgba(251, 248, 241, 0.72);
+    box-shadow: 0 18px 40px -30px rgba(96, 60, 48, 0.35);
+    transition: box-shadow 0.4s ease;
+    overflow: visible;
   }
+  .svc::before,
+  .svc::after {
+    content: '';
+    position: absolute;
+    width: clamp(70px, 8vw, 112px);
+    aspect-ratio: 279 / 320;
+    background: url('/lily-corner.png') center / contain no-repeat;
+    pointer-events: none;
+    z-index: 2;
+    transition: transform 0.6s cubic-bezier(0.22, 0.61, 0.36, 1);
+  }
+  .svc::before { left: clamp(-30px, -2vw, -16px); top: clamp(-44px, -3vw, -24px); }
+  .svc::after { right: clamp(-30px, -2vw, -16px); bottom: clamp(-44px, -3vw, -24px); transform: scale(-1, -1); }
+  .svc:hover::before { transform: rotate(-4deg); }
+  .svc:hover::after { transform: scale(-1, -1) rotate(-4deg); }
 
-  .svc:hover, .svc.is-open { border-color: rgba(43, 35, 29, 0.8); box-shadow: inset 0 0 0 5px rgba(251, 248, 241, 0.9), inset 0 0 0 6px rgba(43, 35, 29, 0.32), 0 26px 50px -30px rgba(96, 60, 48, 0.45); }
+  .svc:hover, .svc.is-open { box-shadow: 0 26px 50px -30px rgba(96, 60, 48, 0.45); }
+  .svc + .svc { margin-top: 26px; }
 
   .svc-head {
     all: unset;
