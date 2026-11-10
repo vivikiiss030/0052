@@ -71,6 +71,7 @@ const otherLang = lang === 'en' ? 'zh' : 'en';
     <section class="wrap block" id="content">
       <Image src={zPink} alt="" width={420} format="webp" quality={82} class="zen z-about-buddha" />
       <Image src={zTeacup} alt="" width={320} format="webp" quality={82} class="zen z-about-cup" />
+      <Image src={zFrog} alt="" width={300} format="webp" quality={84} class="zen z-about-frog" />
       <div class="two">
         <div class="about-l">
           <h2 class="cjk-title about-title">{about.title}</h2>
@@ -113,11 +114,11 @@ const otherLang = lang === 'en' ? 'zh' : 'en';
     {page === 'readings' && (
     <section class="wrap block" id="content">
       <Image src={zOrchid} alt="" width={320} format="webp" quality={82} class="zen z-read-orchid" />
-      <Image src={zLily} alt="" width={320} format="webp" quality={82} class="zen z-read-lily" />
       <ul class="svcs">
         {readings.map((r, i) => (
           <li class="svc">
             {i === 0 && <Image src={zLotusBuddha} alt="" width={440} format="webp" quality={82} class="zen z-read-buddha" />}
+            {i === 1 && <Image src={zLily} alt="" width={320} format="webp" quality={82} class="zen z-read-lily" />}
             <!-- 一圈手绘花枝：四边是带叶子的花茎，四个角是马蹄莲 -->
             <span class="vine" aria-hidden="true"><i class="v-t"></i><i class="v-b"></i><i class="v-l"></i><i class="v-r"></i><i class="c c-tl"></i><i class="c c-tr"></i><i class="c c-bl"></i><i class="c c-br"></i></span>
             <button class="svc-head" type="button" aria-expanded="false" aria-controls={`svc-${i}`} data-open={r.toggle[1]} data-closed={r.toggle[0]}>
@@ -185,7 +186,6 @@ const otherLang = lang === 'en' ? 'zh' : 'en';
         ))}
       </ul>
       <p class="menu-note">{readingsNote}</p>
-      <Image src={zFrog} alt="" width={300} format="webp" quality={84} class="zen z-read-frog" />
     </section>
     )}
 
@@ -544,6 +544,8 @@ const otherLang = lang === 'en' ? 'zh' : 'en';
   :global(.z-about-buddha) { left: clamp(150px, 20vw, 300px); top: clamp(-20px, -1vw, 0px); width: clamp(120px, 12vw, 175px); }
   :global(.z-about-cup) { right: clamp(10px, 4vw, 70px); top: clamp(300px, 27vw, 400px); width: clamp(110px, 11vw, 165px); transform: rotate(10deg); }
 
+  :global(.z-about-frog) { right: clamp(20px, 6vw, 110px); top: clamp(-40px, -2vw, -10px); width: clamp(140px, 13vw, 200px); transform: rotate(-6deg); }
+
   /* 小时候的照片 */
   .about-l { display: flex; flex-direction: column; gap: clamp(20px, 3vw, 40px); }
   .kids { position: relative; height: clamp(300px, 30vw, 430px); max-width: 420px; }
@@ -572,16 +574,17 @@ const otherLang = lang === 'en' ? 'zh' : 'en';
 
   /* 解读项目：莲花佛坐在右上，兰花和百合压在服务卡片的边角 */
   :global(.z-read-buddha) { right: clamp(-62px, -4vw, -34px); top: clamp(-110px, -7vw, -80px); width: clamp(130px, 12vw, 175px); z-index: 4; }
-  :global(.z-read-frog) { position: relative !important; display: block; margin: 150px auto 0 clamp(-60px, -3vw, -30px); width: clamp(150px, 15vw, 220px); transform: rotate(6deg); }
   /* 第一张卡右上角的花枝让给莲花佛 */
   .svcs > .svc:first-child .c-tr { display: none; }
   #content .svcs { margin-top: clamp(80px, 8vw, 110px); }
   :global(.z-read-orchid) { left: clamp(-70px, -4vw, -30px); top: clamp(140px, 13vw, 200px); width: clamp(90px, 9vw, 140px); transform: rotate(-18deg); z-index: 2; }
-  :global(.z-read-lily) { right: clamp(-60px, -3vw, -24px); bottom: clamp(-170px, -11vw, -120px); width: clamp(100px, 10vw, 150px); transform: rotate(12deg); z-index: 2; }
+  :global(.z-read-lily) { right: clamp(-60px, -4vw, -34px); bottom: clamp(-80px, -5vw, -50px); width: clamp(130px, 12vw, 175px); transform: rotate(12deg); z-index: 4; }
+  .svcs > .svc:nth-child(2) .c-br { display: none; }
 
 
   @media (max-width: 760px) {
     :global(.z-about-cup), :global(.z-guide-hand), :global(.z-read-orchid), :global(.z-guide-eyes) { display: none; }
+    :global(.z-about-frog) { right: 6px; top: 70px; width: 86px; }
     :global(.z-about-buddha) { left: auto; right: 6px; top: -40px; width: 84px; }
     :global(.z-guide-fan) { right: 0; top: -30px; width: 110px; }
     .about-l { display: contents; }
@@ -589,9 +592,8 @@ const otherLang = lang === 'en' ? 'zh' : 'en';
     :global(.z-read-buddha) { right: -22px; top: -64px; width: 92px; }
     #content .svcs { margin-top: 70px; }
     :global(.z-read-buddha) { right: -14px; top: -58px; width: 80px; }
-    :global(.z-read-frog) { width: 96px; margin-top: 20px; }
-    :global(.z-read-lily) { right: -24px; bottom: -40px; width: 80px; }
-  }
+    :global(.z-read-lily) { right: -16px; bottom: -44px; width: 84px; }
+    }
 
   /* ── 手机目录 ───────────────────────────────────────── */
   .menu-btn, .mmenu, .mmenu-veil { display: none; }
