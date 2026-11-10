@@ -5,6 +5,7 @@ import { Image, Picture } from 'astro:assets';
 import Base from '../layouts/Base.astro';
 import LangSeal from './LangSeal.astro';
 import Book from './Book.astro';
+import TarotCard from './TarotCard.astro';
 import WeChatSheet from './WeChatSheet.astro';
 import satin from '../assets/collage/satin.jpg';
 // 每页一组 zen 拼贴（Vicky 找的素材，抠了底）
@@ -41,7 +42,6 @@ const otherLang = lang === 'en' ? 'zh' : 'en';
         {order.map((k) => (
           <a href={url(lang, k)} aria-current={k === page ? 'page' : undefined}>{pm[k].nav}</a>
         ))}
-        <Book lang={lang} variant="nav" />
         <button class="menu-btn" type="button" aria-expanded="false" aria-controls="mmenu" data-open={lang === 'en' ? 'Close' : '收起'} data-closed={lang === 'en' ? 'Menu' : '目录'}>{lang === 'en' ? 'Menu' : '目录'}</button>
       </nav>
     </div>
@@ -75,7 +75,7 @@ const otherLang = lang === 'en' ? 'zh' : 'en';
           <div class="kids">
             <Image src={kidGrass} alt={lang === 'en' ? 'Vicky as a little girl, running on the grass' : '小时候的 Vicky，在草地上跑'} width={420} densities={[1, 2]} format="webp" quality={84} class="kid kid-a" />
             <Image src={kidRed} alt={lang === 'en' ? 'Vicky as a toddler, laughing in a red coat' : '小时候的 Vicky，穿红棉袄大笑'} width={340} densities={[1, 2]} format="webp" quality={84} class="kid kid-b" />
-            <span class="kids-cap">{lang === 'en' ? 'little me' : 'little me · 小时候'}</span>
+            <span class="kids-cap">{lang === 'en' ? 'mini Vicky' : 'mini Vicky · 小时候'}</span>
           </div>
         </div>
         <div class="about-r">
@@ -196,11 +196,17 @@ const otherLang = lang === 'en' ? 'zh' : 'en';
         <span class="flip">
           <span class="flip-in">
             <span class="flip-back" aria-hidden="true"></span>
-            <span class="flip-front">
-              <span class="ff-n">{nextKey ? pm[nextKey].n : '✦'}</span>
-              <span class="ff-t">{next.label}</span>
-              <span class="ff-go" aria-hidden="true">→</span>
-            </span>
+            {nextKey ? (
+              <span class="flip-front is-card">
+                <TarotCard k={order.indexOf(nextKey)} title={pm[nextKey].title} class="is-mini" />
+              </span>
+            ) : (
+              <span class="flip-front">
+                <span class="ff-n">✦</span>
+                <span class="ff-t">{next.label}</span>
+                <span class="ff-go" aria-hidden="true">→</span>
+              </span>
+            )}
           </span>
         </span>
       </a>
@@ -456,6 +462,8 @@ const otherLang = lang === 'en' ? 'zh' : 'en';
     color: #2b231d;
   }
   /* 翻开的牌面颜色 = 首页那张牌的底：I 天空 / II 灰绿 / III 粉 */
+  .flip-front.is-card { padding: 0; background: none; box-shadow: none; display: block; }
+  .flip-front.is-card :global(.card) { width: 100%; height: 100%; max-width: none; }
   .next[data-k='0'] .flip-front { background: radial-gradient(40% 12% at 30% 78%, #fff, rgba(255,255,255,0) 70%), linear-gradient(180deg, #6f9fcf, #a9c8e2 50%, #e9dccb); }
   .next[data-k='1'] .flip-front { background: radial-gradient(60% 40% at 50% 45%, #eef0e0, rgba(238,240,224,0) 70%), linear-gradient(180deg, #a8b394, #d6d9c2 55%, #eadbd6); }
   .next[data-k='3'] .flip-front { background: linear-gradient(180deg, #f2d8b8, #fbf1e2); }
@@ -500,7 +508,7 @@ const otherLang = lang === 'en' ? 'zh' : 'en';
 
   /* 关于我：粉色佛像坐在大标题下面，荷花从右下探出 */
   :global(.z-about-buddha) { left: clamp(150px, 20vw, 300px); top: clamp(-20px, -1vw, 0px); width: clamp(120px, 12vw, 175px); }
-  :global(.z-about-cup) { right: clamp(-40px, -1vw, 0px); top: clamp(-100px, -6vw, -60px); width: clamp(110px, 11vw, 165px); transform: rotate(10deg); }
+  :global(.z-about-cup) { right: clamp(10px, 4vw, 70px); top: clamp(300px, 27vw, 400px); width: clamp(110px, 11vw, 165px); transform: rotate(10deg); }
 
   /* 小时候的照片 */
   .about-l { display: flex; flex-direction: column; gap: clamp(20px, 3vw, 40px); }

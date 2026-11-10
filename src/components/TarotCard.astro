@@ -1,0 +1,166 @@
+---
+// 一张拼贴塔罗牌（首页三扇门、内容页底部「翻开下一张」共用）
+// 海报拼贴风：没有卡纸边框，整张就是一块饱和的纯色底 + 顶上一行很大的红色粗体牌名
+// + 剪贴物件层层叠上去（带白边、投影），压一层印刷颗粒。
+// k：0 关于我 / 1 占卜须知 / 2 解读项目；title：牌名
+import { Image } from 'astro:assets';
+import eyeArt from '../assets/collage/eye-painted.png';
+import keyArt from '../assets/collage/key.png';
+import wingsArt from '../assets/collage/wings.png';
+// 牌面上的小件：都是只在牌上用、网站别处没出现过的素材
+import frame from '../assets/zen/frame-green.png';
+import sparkle from '../assets/zen/sparkle.png';
+import gflower from '../assets/zen/flower-green.png';
+import ammonite from '../assets/zen/ammonite.png';
+import coupe from '../assets/zen/coupe.png';
+import rose from '../assets/zen/rose.png';
+import starsGold from '../assets/zen/stars-gold.png';
+import lilies from '../assets/zen/lilies-white.png';
+import disco from '../assets/zen/disco.png';
+import goldfish from '../assets/zen/goldfish.png';
+import bubbles from '../assets/zen/bubbles.png';
+const { k = 0, title = '', class: cls = '' } = Astro.props;
+const i = Number(k);
+const roman = ['I', 'II', 'III'][i];
+// 牌名太长时（英文 GOOD TO KNOW）分两行
+const words = String(title).split(' ');
+const lines = words.length > 2 ? [words.slice(0, 2).join(' '), words.slice(2).join(' ')] : [String(title)];
+---
+
+<span class={`card ${cls}`} data-k={i} style={`--k:${i}`}>
+  <span class="card-n">{roman}</span>
+  <span class="card-title">{lines.map((l) => <span>{l}</span>)}</span>
+
+  {i === 0 && <>
+    <Image src={gflower} alt="" width={200} format="webp" quality={82} class="art a0-flower" />
+    <Image src={sparkle} alt="" width={120} format="webp" quality={84} class="art a0-sparkle" />
+    <Image src={eyeArt} alt="" width={420} format="webp" quality={84} class="art art-main a0-eye" />
+    <Image src={frame} alt="" width={360} format="webp" quality={84} class="art a0-frame" />
+    <Image src={ammonite} alt="" width={160} format="webp" quality={82} class="art a0-shell" />
+  </>}
+
+  {i === 1 && <>
+    <Image src={rose} alt="" width={260} format="webp" quality={82} class="art a1-rose" />
+    <Image src={coupe} alt="" width={220} format="webp" quality={82} class="art a1-coupe" />
+    <Image src={keyArt} alt="" width={420} format="webp" quality={84} class="art art-main a1-key" />
+    <Image src={starsGold} alt="" width={100} format="webp" quality={84} class="art a1-stars" />
+  </>}
+
+  {i === 2 && <>
+    <Image src={lilies} alt="" width={360} format="webp" quality={82} class="art a2-lilies" />
+    <Image src={disco} alt="" width={240} format="webp" quality={82} class="art a2-disco" />
+    <Image src={wingsArt} alt="" width={420} format="webp" quality={84} class="art art-main a2-wings" />
+    <Image src={goldfish} alt="" width={260} format="webp" quality={82} class="art a2-fish" />
+    <Image src={bubbles} alt="" width={200} format="webp" quality={82} class="art a2-bubbles" />
+  </>}
+</span>
+
+<style>
+  .card {
+    position: relative;
+    display: block;
+    width: 100%;
+    max-width: 270px;
+    aspect-ratio: 7 / 12;
+    overflow: hidden;
+    isolation: isolate;
+    border-radius: 2px;
+    box-shadow: 0 22px 30px -14px rgba(70, 40, 30, 0.45), 0 3px 6px rgba(70, 40, 30, 0.18);
+    transition: transform 0.6s cubic-bezier(0.22, 0.61, 0.36, 1);
+  }
+  /* 纯色底，每张一个颜色（参考海报拼贴：天蓝 / 芥末黄 / 粉） */
+  .card[data-k='0'] { background: #5fa8dc; }
+  .card[data-k='1'] { background: #f2c230; }
+  .card[data-k='2'] { background: #ee9db3; }
+  /* 印刷颗粒 + 一点不均匀的油墨，压在最上面 */
+  .card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 9;
+    pointer-events: none;
+    background:
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='p'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.2 0 0 0 0 0.15 0 0 0 0 0.1 0 0 0 0.16 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23p)'/%3E%3C/svg%3E"),
+      radial-gradient(120% 80% at 30% 20%, rgba(255, 255, 255, 0.14), rgba(0, 0, 0, 0) 60%),
+      radial-gradient(90% 60% at 80% 100%, rgba(60, 30, 10, 0.12), rgba(0, 0, 0, 0) 70%);
+    mix-blend-mode: multiply;
+  }
+
+  /* 大牌名：Bodoni 最粗那档，红色，压在物件下面一层（物件会盖住一点字，像拼贴） */
+  .card-title {
+    position: absolute;
+    z-index: 1;
+    left: 6%;
+    right: 6%;
+    top: 8%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-family: var(--didot);
+    font-weight: 900;
+    font-size: clamp(22px, 2.6vw, 34px);
+    line-height: 0.9;
+    letter-spacing: -0.01em;
+    text-transform: uppercase;
+    text-align: center;
+    color: #d8392b;
+  }
+  .card[data-k='1'] .card-title { color: #c6311f; }
+  .card[data-k='2'] .card-title { color: #b8241a; }
+  .card-title:lang(zh) { font-family: 'PingFang SC', var(--cjk); font-weight: 800; letter-spacing: 0.08em; font-size: clamp(22px, 2.4vw, 32px); }
+
+  /* 罗马数字：左上角一小块深蓝色签 */
+  .card-n {
+    position: absolute;
+    z-index: 6;
+    left: 0;
+    top: 0;
+    padding: 5px 9px 4px;
+    background: #233a63;
+    color: #f5ecdb;
+    font-family: var(--didot);
+    font-weight: 700;
+    font-size: clamp(10px, 1vw, 13px);
+    letter-spacing: 0.14em;
+  }
+
+  /* 剪贴物件：一圈白边 + 投影 */
+  .card :global(.art) {
+    position: absolute;
+    z-index: 3;
+    height: auto;
+    filter:
+      drop-shadow(1.4px 0 0 #fff) drop-shadow(-1.4px 0 0 #fff) drop-shadow(0 1.4px 0 #fff) drop-shadow(0 -1.4px 0 #fff)
+      drop-shadow(0 7px 7px rgba(40, 20, 10, 0.35));
+    transition: transform 0.7s cubic-bezier(0.22, 0.61, 0.36, 1);
+  }
+
+  /* I 关于我：天蓝底 · 绿瓷相框框住一只眼睛 · 绿花 · 金色四角星 · 彩虹菊石 */
+  .card :global(.a0-flower) { left: -6%; top: 26%; width: 38%; transform: rotate(-14deg); z-index: 2; }
+  .card :global(.a0-sparkle) { right: 8%; top: 24%; width: 18%; z-index: 6; }
+  .card :global(.a0-frame) { left: 52%; top: 56%; width: 74%; transform: translate(-50%, -50%) rotate(5deg); z-index: 5; }
+  .card :global(.a0-eye) { left: 52%; top: 56%; width: 66%; transform: translate(-50%, -50%) rotate(5deg); z-index: 4; filter: drop-shadow(0 4px 6px rgba(40,20,10,.3)); }
+  .card :global(.a0-shell) { right: -4%; bottom: 3%; width: 34%; transform: rotate(16deg); z-index: 6; }
+
+  /* II 占卜须知：芥末黄 · 粉玫瑰 · 粉色香槟杯 · 钥匙 · 金星 */
+  .card :global(.a1-rose) { left: -8%; top: 28%; width: 52%; transform: rotate(-12deg); z-index: 2; }
+  .card :global(.a1-coupe) { right: 2%; bottom: 3%; width: 40%; transform: rotate(6deg); z-index: 3; }
+  .card :global(.a1-key) { left: 44%; top: 55%; width: 62%; transform: translate(-50%, -50%) rotate(22deg); z-index: 4; }
+  .card :global(.a1-stars) { right: 7%; top: 23%; width: 16%; z-index: 5; }
+
+  /* III 解读项目：粉底 · 白百合 · 迪斯科球 · 翅膀 · 金鱼 · 泡泡（各自留出空隙，不黏在一起） */
+  .card :global(.a2-lilies) { left: -14%; bottom: -8%; width: 50%; transform: rotate(-10deg); z-index: 2; }
+  .card :global(.a2-disco) { right: -12%; top: 22%; width: 38%; z-index: 2; }
+  .card :global(.a2-wings) { left: 50%; top: 45%; width: 64%; transform: translate(-50%, -50%) rotate(-4deg); z-index: 4; }
+  .card :global(.a2-fish) { right: -3%; bottom: 3%; width: 44%; transform: rotate(-6deg); z-index: 5; }
+  .card :global(.a2-bubbles) { left: 5%; top: 25%; width: 22%; z-index: 5; }
+
+  @media (max-width: 760px) {
+    .card-title { font-size: 15px; top: 12%; }
+    .card-title:lang(zh) { font-size: 15px; }
+    .card-n { font-size: 8px; padding: 3px 5px 2px; }
+  }
+  /* 小尺寸用（内容页底部那张） */
+  .card.is-mini .card-title { font-size: 20px; top: 11%; }
+  .card.is-mini .card-title:lang(zh) { font-size: 19px; }
+</style>

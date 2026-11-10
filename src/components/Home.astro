@@ -3,6 +3,7 @@ import { Image, Picture } from 'astro:assets';
 import Base from '../layouts/Base.astro';
 import LangSeal from './LangSeal.astro';
 import Book from './Book.astro';
+import TarotCard from './TarotCard.astro';
 import WeChatSheet from './WeChatSheet.astro';
 import { T, url, pageMeta, doors } from '../lib/site.js';
 
@@ -12,7 +13,6 @@ import satin from '../assets/collage/satin.jpg';
 import caladium from '../assets/collage/caladium.png';
 import paleflower from '../assets/collage/paleflower.png';
 import paleflower2 from '../assets/collage/paleflower2.png';
-import uranus from '../assets/collage/uranus.png';
 import nautilus from '../assets/collage/nautilus.png';
 import star from '../assets/collage/star.png';
 import moon from '../assets/collage/moon.png';
@@ -32,9 +32,6 @@ import moonlet from '../assets/collage/moonlet.png';
 import nautilus2 from '../assets/collage/nautilus2.png';
 import butterflyGreen from '../assets/collage/butterfly-green.png';
 // 三张塔罗牌牌面上的画
-import eyeArt from '../assets/collage/eye-painted.png';
-import keyArt from '../assets/collage/key.png';
-import butterflyArt from '../assets/collage/wings.png';
 // 下拉页上零星的拼贴：一页旧信、一只瓢虫、一朵蓝花、一颗海星
 import ladybug from '../assets/collage/ladybug.png';
 // zen 拼贴（Vicky 找的素材，抠了底）
@@ -43,14 +40,6 @@ import zLily from '../assets/zen/lily-pink.png';
 import zOrchid from '../assets/zen/orchid-green.png';
 import zPearl from '../assets/zen/pearl.png';
 import zHand from '../assets/zen/hand-spiral.png';
-// 三张拼贴牌面上的小件
-import cBird from '../assets/zen/hummingbird.png';
-import cStar from '../assets/collage/star8.png';
-import cRug from '../assets/zen/rug.png';
-import cPearl from '../assets/zen/pearl.png';
-import cBubbles from '../assets/zen/bubbles.png';
-import cStars from '../assets/collage/stars-red.png';
-import cLotus from '../assets/zen/lotus-pink.png';
 
 // 首屏的拼贴元素。位置在下面的 CSS 里，这里只定义层次：
 // depth 决定视差幅度（越「近」动得越多），ph 是漂浮的相位差
@@ -59,7 +48,6 @@ const pieces = [
   { k: 'caladium', src: caladium, alt: '粉脉彩叶芋', d: 1.0, ph: 0.0 },
   { k: 'paleflower2', src: paleflower2, alt: '淡蓝色花', d: 0.35, ph: 1.7 },
   { k: 'paleflower', src: paleflower, alt: '浅蓝色花', d: 0.55, ph: 0.4 },
-  { k: 'uranus', src: uranus, alt: '天王星', d: 0.3, ph: 2.9 },
   { k: 'nautilus2', src: nautilus2, alt: '鹦鹉螺壳', d: 0.3, ph: 1.1 },
   { k: 'star', src: star, alt: '金色星芒', d: 0.85, ph: 2.2 },
   { k: 'moon', src: moon, alt: '金色月牙', d: 0.7, ph: 0.8 },
@@ -143,7 +131,6 @@ const nav = ['about', 'guide', 'readings'].map((k) => ({ href: url(lang, k), lab
       <p class="intro">{site.intro}</p>
       <nav aria-label="Sections">
         {nav.map((item) => <a href={item.href}>{item.label}</a>)}
-        <Book lang={lang} variant="nav" />
       </nav>
     </div>
 
@@ -176,25 +163,7 @@ const nav = ['about', 'guide', 'readings'].map((k) => ({ href: url(lang, k), lab
         {myDoors.map((d, i) => (
           <li style={`--k:${i}`}>
             <a class="door" href={url(lang, d.key)} data-portal>
-              <!-- 一张拼贴塔罗牌：白色卡纸边 → 一幅拼贴小画（各自的底 + 剪贴的物件）→ 底下一条牌名签 -->
-              <span class="card" data-k={i}>
-                <span class="card-scene">
-                  {i === 1 && <Image src={cRug} alt="" width={800} format="webp" quality={78} class="scene-bg" />}
-                  <span class="card-n">{['I', 'II', 'III'][i]}</span>
-                  {i === 0 && <>
-                    <Image src={cStar} alt="" width={120} format="webp" quality={82} class="art art-star" />
-                    <Image src={cBird} alt="" width={200} format="webp" quality={82} class="art art-bird" />
-                  </>}
-                  {i === 1 && <Image src={cPearl} alt="" width={120} format="webp" quality={82} class="art art-pearl" />}
-                  {i === 2 && <>
-                    <Image src={cStars} alt="" width={140} format="webp" quality={82} class="art art-stars" />
-                    <Image src={cBubbles} alt="" width={200} format="webp" quality={82} class="art art-bubbles" />
-                    <Image src={cLotus} alt="" width={260} format="webp" quality={82} class="art art-lotus" />
-                  </>}
-                  <Image src={[eyeArt, keyArt, butterflyArt][i]} alt="" width={420} format="webp" quality={84} class="art art-main" />
-                </span>
-                <span class="card-name">{pageMeta[lang][d.key].title}</span>
-              </span>
+              <TarotCard k={i} title={pageMeta[lang][d.key].title} />
               {i === 0 && <Image src={ladybug} alt="" width={80} format="webp" quality={85} class="bits bit-ladybug" aria-hidden="true" />}
               <span class="door-b">{d.line}</span>
             </a>
@@ -1086,146 +1055,16 @@ const nav = ['about', 'guide', 'readings'].map((k) => ({ href: url(lang, k), lab
     text-align: center;
   }
 
-  /* ── 牌：拼贴艺术塔罗 ──────────────────────────────────
-     白色卡纸边，里面是一幅拼贴小画（每张一个底：天空 / 地毯纹 / 粉色），
-     物件像剪下来贴上去的：带一圈白边和一点投影。底下是一条牌名签。 */
-  .card {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    gap: 5%;
-    width: 100%;
-    max-width: 270px;
-    aspect-ratio: 7 / 12;
-    padding: 5.5% 5.5% 6%;
-    background:
-      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='p'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.4 0 0 0 0 0.32 0 0 0 0 0.2 0 0 0 0.08 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23p)'/%3E%3C/svg%3E"),
-      #fbf8f1;
-    border-radius: 3px;
-    box-shadow:
-      0 0 0 1px rgba(80, 60, 40, 0.12),
-      0 18px 26px -10px rgba(96, 60, 48, 0.32),
-      0 3px 6px rgba(96, 60, 48, 0.14);
-    transform: rotate(calc((var(--k) - 1) * 4deg)) translateY(calc((var(--k) - 1) * (var(--k) - 1) * 14px));
-    transition: transform 0.6s cubic-bezier(0.22, 0.61, 0.36, 1), box-shadow 0.6s;
-  }
-
-  .door:hover .card,
-  .door:focus-visible .card {
+  .door:hover :global(.card),
+  .door:focus-visible :global(.card) {
     transform: rotate(0deg) translateY(-14px);
   }
-
   /* 点下去：牌被抽出来，往前一凑 */
-  .door.is-picked .card { transform: rotate(0deg) translateY(-22px) scale(1.06); transition-duration: 0.26s; }
-  .defs { position: absolute; width: 0; height: 0; overflow: hidden; }
-
-  /* 拼贴小画 */
-  .card-scene {
-    position: relative;
-    flex: 1;
-    min-height: 0;
-    overflow: hidden;
-    border: 1.5px solid #2b231d;
-    isolation: isolate;
-  }
-  /* 一层印刷颗粒，压在整幅画上 */
-  .card-scene::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    z-index: 5;
-    pointer-events: none;
-    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='p'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.2 0 0 0 0 0.15 0 0 0 0 0.1 0 0 0 0.13 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23p)'/%3E%3C/svg%3E");
-    mix-blend-mode: multiply;
-  }
-  /* I 天空：上蓝下暖，两团云 */
-  .card[data-k='0'] .card-scene {
-    background:
-      radial-gradient(38% 12% at 26% 74%, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0) 70%),
-      radial-gradient(30% 9% at 40% 70%, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0) 70%),
-      radial-gradient(34% 10% at 80% 32%, rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0) 70%),
-      linear-gradient(180deg, #6f9fcf 0%, #a9c8e2 46%, #e9dccb 100%);
-  }
-  /* II 地毯纹（素材图） */
-  .card[data-k='1'] .card-scene { background: #c9cfb4; }
-  .card-scene :global(.scene-bg) {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transform: scale(1.12);
-    filter: saturate(1.15) contrast(1.05);
-  }
-  /* III 粉 */
-  .card[data-k='2'] .card-scene {
-    background:
-      radial-gradient(70% 45% at 50% 58%, #fbe6e8 0%, rgba(251, 230, 232, 0) 70%),
-      linear-gradient(180deg, #e9a3b6 0%, #f1c6cf 55%, #f6dcd9 100%);
-  }
-
-  /* 罗马数字：顶上一张小签 */
-  .card-n {
-    position: absolute;
-    z-index: 4;
-    top: 5%;
-    left: 50%;
-    transform: translateX(-50%);
-    padding: 3px 9px 2px;
-    background: #f5ecdb;
-    border: 1px solid #2b231d;
-    font-family: var(--didot);
-    font-weight: 600;
-    font-size: clamp(11px, 1.2vw, 15px);
-    letter-spacing: 0.16em;
-    line-height: 1.2;
-    color: #2b231d;
-  }
-
-  /* 剪贴物件：带一圈白边（drop-shadow 叠出来）和一点投影 */
-  .card-scene :global(.art) {
-    position: absolute;
-    z-index: 2;
-    height: auto;
-    filter:
-      drop-shadow(1.2px 0 0 #fff) drop-shadow(-1.2px 0 0 #fff) drop-shadow(0 1.2px 0 #fff) drop-shadow(0 -1.2px 0 #fff)
-      drop-shadow(0 6px 6px rgba(40, 24, 16, 0.32));
-    transition: transform 0.7s cubic-bezier(0.22, 0.61, 0.36, 1);
-  }
-  .card-scene :global(.art-main) { z-index: 3; left: 50%; top: 54%; width: 76%; transform: translate(-50%, -50%); }
-  .door:hover .card-scene :global(.art-main) { transform: translate(-50%, -52%) scale(1.05) rotate(-2deg); }
-
-  .card-scene :global(.art-star) { left: 8%; top: 17%; width: 24%; transform: rotate(-12deg); }
-  .card-scene :global(.art-bird) { right: 2%; top: 22%; width: 42%; transform: scaleX(-1) rotate(-8deg); }
-  .door:hover .card-scene :global(.art-bird) { transform: scaleX(-1) rotate(-14deg) translate(4px, -6px); }
-  .card[data-k='0'] .card-scene :global(.art-main) { top: 60%; width: 84%; }
-
-  .card[data-k='1'] .card-scene :global(.art-main) { width: 70%; top: 56%; transform: translate(-50%, -50%) rotate(12deg); }
-  .door:hover .card[data-k='1'] .card-scene :global(.art-main) { transform: translate(-50%, -52%) rotate(4deg) scale(1.05); }
-  .card-scene :global(.art-pearl) { right: 12%; bottom: 10%; width: 20%; }
-
-  .card-scene :global(.art-stars) { left: 6%; top: 20%; width: 26%; transform: rotate(-10deg); }
-  .card-scene :global(.art-bubbles) { right: 4%; top: 15%; width: 34%; opacity: 0.95; }
-  .card-scene :global(.art-lotus) { left: 50%; bottom: -6%; width: 78%; transform: translateX(-50%); z-index: 2; }
-  .card[data-k='2'] .card-scene :global(.art-main) { top: 46%; width: 72%; }
-
-  /* 牌名签 */
-  .card-name {
-    display: block;
-    padding: 6% 4% 5%;
-    background: #f5ecdb;
-    border: 1.5px solid #2b231d;
-    font-family: var(--didot);
-    font-weight: 600;
-    font-size: clamp(11px, 1.3vw, 16px);
-    letter-spacing: 0.12em;
-    line-height: 1.1;
-    text-transform: uppercase;
-    text-align: center;
-    color: #2b231d;
-    white-space: nowrap;
-  }
-  .card-name:lang(zh) { font-family: 'PingFang SC', var(--cjk); font-weight: 600; letter-spacing: 0.3em; text-transform: none; }
+  .door.is-picked :global(.card) { transform: rotate(0deg) translateY(-22px) scale(1.06); transition-duration: 0.26s; }
+  .door :global(.card) { transform: rotate(calc((var(--k) - 1) * 4deg)) translateY(calc((var(--k) - 1) * (var(--k) - 1) * 14px)); max-width: 270px; }
+  .door:hover :global(.card .art-main) { scale: 1.06; }
+  .door:hover :global(.card .a0-frame) { translate: 0 -4px; }
+  .door:hover :global(.card .a2-fish) { translate: -6px -4px; }
 
   /* 点牌时浮在最上面的两层：慢慢盖上来的米色、牌的复制品 */
   :global(.portal-veil) {
@@ -1270,11 +1109,7 @@ const nav = ['about', 'guide', 'readings'].map((k) => ({ href: url(lang, k), lab
     .doors { margin-top: 56px; }
     .door-list { gap: 10px; }
     .door { gap: 12px; }
-    .card { transform: rotate(calc((var(--k) - 1) * 4deg)) translateY(calc((var(--k) - 1) * (var(--k) - 1) * 8px)); }
-    .card-name { font-size: 8.5px; letter-spacing: 0.04em; padding: 7% 2% 6%; }
-    .card-name:lang(zh) { font-size: 10px; letter-spacing: 0.12em; }
-    .card-n { font-size: 9px; padding: 2px 5px 1px; }
-    .card { padding: 6%; gap: 6%; }
+    .door :global(.card) { transform: rotate(calc((var(--k) - 1) * 4deg)) translateY(calc((var(--k) - 1) * (var(--k) - 1) * 8px)); }
     .door-b { display: none; }
   }
 </style>
