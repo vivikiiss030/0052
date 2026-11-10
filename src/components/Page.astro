@@ -82,7 +82,7 @@ const otherLang = lang === 'en' ? 'zh' : 'en';
             <span class="kids-cap">mini vicky</span>
           </div>
           <!-- 一句主张，带一对大引号 -->
-          <blockquote class="about-quote"><p>{about.body}</p></blockquote>
+          <blockquote class="about-quote"><p>{lang === 'zh' ? about.body.split('，').map((t, j, arr) => <>{t}{j < arr.length - 1 && <>，<br /></>}</>) : about.body}</p></blockquote>
         </div>
         <div class="about-r">
           <ul class="tags">
@@ -552,8 +552,8 @@ const otherLang = lang === 'en' ? 'zh' : 'en';
   .about-quote {
     position: relative;
     margin: clamp(40px, 4vw, 60px) 0 0;
-    padding: 34px 6px 0 46px;
-    max-width: 24em;
+    padding: 34px 40px 0 46px;
+    max-width: 28em;
   }
   .about-quote::before,
   .about-quote::after {
@@ -565,7 +565,7 @@ const otherLang = lang === 'en' ? 'zh' : 'en';
     opacity: 0.75;
   }
   .about-quote::before { content: '“'; left: -6px; top: -20px; }
-  .about-quote::after { content: '”'; right: 0; bottom: -86px; }
+  .about-quote::after { content: '”'; right: 0; bottom: -112px; }
   .about-quote p {
     margin: 0;
     font-family: var(--didot);
@@ -620,7 +620,8 @@ const otherLang = lang === 'en' ? 'zh' : 'en';
     :global(.z-guide-fan) { right: 0; top: -30px; width: 110px; }
     .about-l { display: contents; }
     .kids { order: 3; height: 340px; margin-bottom: 30px !important; margin: 8px auto 0; width: 100%; max-width: 340px; }
-    .about-quote { order: 4; margin: 20px auto 40px; }
+    .about-quote { order: 4; margin: 20px auto 40px; padding: 26px 24px 0 46px; }
+    .about-quote::after { bottom: -104px; }
     .kids-cap { bottom: -13%; left: 14%; }
     :global(.z-read-buddha) { right: -22px; top: -64px; width: 92px; }
     #content .svcs { margin-top: 70px; }
