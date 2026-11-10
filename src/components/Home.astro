@@ -24,7 +24,6 @@ import lilypad2 from '../assets/collage/lilypad2.png';
 import lotus from '../assets/collage/lotus.png';
 import begonia from '../assets/collage/begonia.png';
 import starfish from '../assets/collage/starfish.png';
-import frog from '../assets/zen/frog.png';
 import cherub from '../assets/collage/cherub.png';
 import planet from '../assets/collage/planet.png';
 import moonlet from '../assets/collage/moonlet.png';
@@ -62,7 +61,6 @@ const pieces = [
   { k: 'lotus', src: lotus, alt: '粉色睡莲', d: 1.0, ph: 0.6 },
   { k: 'begonia', src: begonia, alt: '螺旋秋海棠叶', d: 0.6, ph: 2.4 },
   { k: 'starfish', src: starfish, alt: '海星', d: 0.6, ph: 1.3 },
-  { k: 'frog', src: frog, alt: '戴花帽的小青蛙', d: 0.5, ph: 0.9 },
   { k: 'cherub', src: cherub, alt: '金色小天使', d: 0.9, ph: 2.0 },
   { k: 'planet', src: planet, alt: '蓝色星球', d: 0.3, ph: 3.6 },
   { k: 'moon2', src: moon2, alt: '金色月牙', d: 0.35, ph: 1.2 },
@@ -822,7 +820,6 @@ const nav = ['about', 'guide', 'readings'].map((k) => ({ href: url(lang, k), lab
   .cherub { top: 60%; left: 74%; width: 20.0vmin; --rot: -13deg; z-index: 5; }
   .planet { top: 63%; left: 87%; width: 6.4vmin; z-index: 4; }
   .moon2 { top: 43%; left: 86%; width: 7.4vmin; --rot: 26deg; z-index: 3; }
-  .frog { top: 77%; left: 59%; width: 11.5vmin; --rot: -6deg; z-index: 4; }
   .moonlet { top: 84%; left: 66%; width: 4.8vmin; z-index: 3; }
 
   /* 蝴蝶：一只停在叶尖，一只从剑尖那头飞出去 */
@@ -915,7 +912,7 @@ const nav = ['about', 'guide', 'readings'].map((k) => ({ href: url(lang, k), lab
     .el { filter: drop-shadow(0 3vw 5vw rgba(118, 94, 90, 0.24)); }
 
     .paleflower2, .paleflower, .nightflower, .star, .nautilus2,
-    .lilypad2, .begonia, .frog, .moon2,
+    .lilypad2, .begonia, .moon2,
     .moonlet, .planet {
       display: none;
     }
@@ -1133,7 +1130,7 @@ const nav = ['about', 'guide', 'readings'].map((k) => ({ href: url(lang, k), lab
 
   /* 信封两边：左边一幅带框的脸，右边一朵向日葵和几颗金星 */
   /* 左边一大张旧信纸斜插着；右边的向日葵离信封远一点，免得看起来像能点 */
-  :global(.bit-letter) { left: calc(50% - clamp(460px, 40vw, 600px)); top: -60px; width: clamp(180px, 18vw, 250px); transform: rotate(-12deg); z-index: 0; opacity: 0.95; }
+  :global(.bit-letter) { left: calc(-1 * var(--gutter) - 70px); top: -150px; width: clamp(170px, 16vw, 230px); transform: rotate(-80deg); transform-origin: 50% 50%; z-index: 0; opacity: 0.95; }
   :global(.bit-sun) { right: calc(50% - clamp(520px, 45vw, 640px)); top: 60px; width: clamp(120px, 12vw, 165px); transform: rotate(10deg); z-index: 1; }
   :global(.bit-stars2) { right: calc(50% - clamp(400px, 34vw, 480px)); top: -10px; width: clamp(40px, 4vw, 56px); transform: rotate(-8deg); z-index: 2; }
 
