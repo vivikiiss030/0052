@@ -598,7 +598,10 @@ const nav = ['about', 'guide', 'readings'].map((k) => ({ href: url(lang, k), lab
   .ml-open {
     position: relative;
     z-index: 2;
-    margin: 0 0 0.06em 0.55em;
+    /* Ballet 的 O 那一圈花笔画会伸到字框外面；iPhone 的 Safari 会把伸出去的部分切掉。
+       这里四周垫一圈 padding 把整个字装进框里，再用同样大小的负 margin 抵消，位置不变 */
+    padding: 0.45em 0.5em;
+    margin: -0.45em -0.5em calc(0.06em - 0.45em) calc(0.55em - 0.5em);
     font-family: 'Ballet', cursive;
     font-weight: 400;
     font-variation-settings: normal;
