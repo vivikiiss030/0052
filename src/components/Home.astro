@@ -1,11 +1,11 @@
 ---
 import { Image, Picture } from 'astro:assets';
 import Base from '../layouts/Base.astro';
-import LangSeal from './LangSeal.astro';
+import LangToggle from './LangToggle.astro';
 import Book from './Book.astro';
 import TarotCard from './TarotCard.astro';
 import WeChatSheet from './WeChatSheet.astro';
-import { T, url, pageMeta, doors } from '../lib/site.js';
+import { T, url, pageMeta, doors, hl } from '../lib/site.js';
 
 const { lang = 'en' } = Astro.props;
 
@@ -131,6 +131,7 @@ const nav = ['about', 'guide', 'readings'].map((k) => ({ href: url(lang, k), lab
       <p class="intro">{site.intro}</p>
       <nav aria-label="Sections">
         {nav.map((item) => <a href={item.href}>{item.label}</a>)}
+        <span class="lt-wrap"><LangToggle lang={lang} href={url(lang === 'en' ? 'zh' : 'en')} /></span>
       </nav>
     </div>
 
@@ -152,7 +153,7 @@ const nav = ['about', 'guide', 'readings'].map((k) => ({ href: url(lang, k), lab
       <div class="two">
         <h2 class={`space-title ${lang === 'en' ? 'is-en' : ''}`}>{lang === 'en' ? 'What is this place?' : '自留地'}</h2>
         <div class="prose-t">
-          {nameStory.body.map((t) => <p>{t}</p>)}
+          {nameStory.body.map((t) => <p set:html={hl(t)} />)}
         </div>
       </div>
     </section>
@@ -189,7 +190,6 @@ const nav = ['about', 'guide', 'readings'].map((k) => ({ href: url(lang, k), lab
 
 
   {lang === 'zh' && <WeChatSheet />}
-  <LangSeal lang={lang} href={url(lang === 'en' ? 'zh' : 'en')} />
 </Base>
 
 <script>
@@ -851,6 +851,7 @@ const nav = ['about', 'guide', 'readings'].map((k) => ({ href: url(lang, k), lab
   }
 
   .topbar nav a:hover { color: var(--accent); }
+  .topbar .lt-wrap { padding-left: clamp(16px, 2.4vw, 34px); border-left: 1px solid rgba(94, 75, 71, 0.35); }
 
   /* 底栏：一句话说清这是什么。从 IG 点进来的人只看这一眼 */
   .tagline {
@@ -935,6 +936,7 @@ const nav = ['about', 'guide', 'readings'].map((k) => ({ href: url(lang, k), lab
     /* 手机：左上角让给导航（剑也在那儿），这句话挪到右下角，
        顶替底栏那行 tagline —— 位置一样醒目，不和拼贴打架 */
     .topbar .intro, .tagline { display: none; }
+    .topbar .lt-wrap { position: absolute; right: 0; top: 2px; padding-left: 0; border-left: 0; }
     .intro-m { display: block; font-size: 13px; line-height: 1.5; text-align: right; max-width: 16.5em; }
     .intro-m:lang(zh) { letter-spacing: 0.06em; }
     .bottombar { bottom: 26px; }

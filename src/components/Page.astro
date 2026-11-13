@@ -3,7 +3,7 @@
 // 中间是这一页的内容，最底下「预约」+「下一页」。
 import { Image, Picture } from 'astro:assets';
 import Base from '../layouts/Base.astro';
-import LangSeal from './LangSeal.astro';
+import LangToggle from './LangToggle.astro';
 import Book from './Book.astro';
 import TarotCard from './TarotCard.astro';
 import WeChatSheet from './WeChatSheet.astro';
@@ -19,7 +19,7 @@ import zLotusBuddha from '../assets/zen/buddha-lotus.png';
 import zOrchid from '../assets/zen/orchid-pink.png';
 import zLily from '../assets/zen/lily-pale.png';
 import zFrog from '../assets/zen/frog.png';
-import { T, layouts, W, H, order, pageMeta, ui, url } from '../lib/site.js';
+import { T, layouts, W, H, order, pageMeta, ui, url, hl } from '../lib/site.js';
 
 const { lang = 'en', page } = Astro.props;
 const { site, nameStory, about, how, readings, readingsNote, book } = T[lang];
@@ -44,6 +44,7 @@ const otherLang = lang === 'en' ? 'zh' : 'en';
         {order.map((k) => (
           <a href={url(lang, k)} aria-current={k === page ? 'page' : undefined}>{pm[k].nav}</a>
         ))}
+        <span class="lt-wrap"><LangToggle lang={lang} href={url(otherLang, page)} /></span>
         <button class="menu-btn" type="button" aria-expanded="false" aria-controls="mmenu" data-open={lang === 'en' ? 'Close' : '收起'} data-closed={lang === 'en' ? 'Menu' : '目录'}>{lang === 'en' ? 'Menu' : '目录'}</button>
       </nav>
     </div>
@@ -51,13 +52,11 @@ const otherLang = lang === 'en' ? 'zh' : 'en';
       <p class="strip-n">{me.n}</p>
       <h1 class="strip-h">{me.title}</h1>
     </div>
-    <LangSeal lang={lang} href={url(otherLang, page)} inline />
   </header>
 
   <!-- 手机上的小目录：点右上角「Menu / 目录」从顶上滑下来 -->
   <div class="mmenu" id="mmenu" aria-hidden="true">
     <ol class="mmenu-list">
-      <li><a href={`${url(lang)}#space`} tabindex="-1"><span class="mm-n"></span>{lang === 'en' ? 'The space' : '这个空间'}</a></li>
       {order.map((k) => (
         <li><a href={url(lang, k)} tabindex="-1" aria-current={k === page ? 'page' : undefined}><span class="mm-n">{pm[k].n}</span>{pm[k].title}</a></li>
       ))}
@@ -86,7 +85,7 @@ const otherLang = lang === 'en' ? 'zh' : 'en';
           <ul class="tags">
             {about.tags.map((t) => <li>{t}</li>)}
           </ul>
-          <div class="prose-t about-story">{about.story.map((t) => <p>{t}</p>)}</div>
+          <div class="prose-t about-story">{about.story.map((t) => <p set:html={hl(t)} />)}</div>
           <p class="motto">{about.motto}</p>
         </div>
       </div>
@@ -104,7 +103,7 @@ const otherLang = lang === 'en' ? 'zh' : 'en';
           <li>
             <span class="rules-n">{String(i + 1).padStart(2, '0')}</span>
             <h3>{it.t}</h3>
-            {it.b.map((t) => <p>{t}</p>)}
+            {it.b.map((t) => <p set:html={hl(t)} />)}
           </li>
         ))}
       </ol>
@@ -385,7 +384,8 @@ const otherLang = lang === 'en' ? 'zh' : 'en';
   .back:hover { color: var(--accent); }
   .back:hover .back-arrow { transform: translateX(-5px); }
 
-  .pnav { display: flex; gap: clamp(14px, 2.2vw, 32px); }
+  .pnav { display: flex; align-items: baseline; gap: clamp(14px, 2.2vw, 32px); }
+  .lt-wrap { padding-left: clamp(14px, 2.2vw, 32px); border-left: 1px solid rgba(78, 57, 51, 0.3); }
   .pnav a { border-bottom: 1px solid transparent; padding-bottom: 2px; transition: color 0.3s, border-color 0.3s; }
   .pnav a:hover { color: var(--accent); }
   .pnav a[aria-current='page'] { color: var(--ink); border-bottom-color: rgba(78, 57, 51, 0.5); }

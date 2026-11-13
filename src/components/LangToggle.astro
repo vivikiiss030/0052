@@ -1,0 +1,41 @@
+---
+// 右上角的语言开关：「中 / EN」，当前语言是实色、下面一个金色小点。整个都能点。
+const { lang = 'en', href } = Astro.props;
+---
+
+<a class="lt" href={href} hreflang={lang === 'en' ? 'zh-Hans' : 'en'} lang={lang === 'en' ? 'zh-Hans' : 'en'} aria-label={lang === 'en' ? '切换到中文' : 'Switch to English'}>
+  <span class:list={['lt-o', { on: lang === 'zh' }]} lang="zh-Hans">中</span>
+  <span class="lt-s" aria-hidden="true">/</span>
+  <span class:list={['lt-o', { on: lang === 'en' }]} lang="en">EN</span>
+</a>
+
+<style>
+  .lt {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.45em;
+    font-family: var(--hero-serif);
+    font-style: normal;
+    font-size: 15px;
+    letter-spacing: 0.06em;
+    line-height: 1;
+    color: inherit;
+    white-space: nowrap;
+  }
+  .lt-o { position: relative; opacity: 0.55; transition: opacity 0.3s; }
+  .lt-o[lang='zh-Hans'] { font-family: 'PingFang SC', var(--cjk); font-size: 14px; }
+  .lt-o.on { opacity: 1; }
+  .lt-o.on::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    bottom: -8px;
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: #c4923c;
+    transform: translateX(-50%);
+  }
+  .lt-s { opacity: 0.35; }
+  .lt:hover .lt-o { opacity: 1; }
+</style>

@@ -25,9 +25,9 @@ export const T = {
       title: 'Where am I?',
       body: [
         'Hi, I’m Vicky — welcome to The Open Space 自留地.',
-        'The name came to me in a flash one night. I had always wanted my tarot practice to be demystified: an open, friendly space where the person asking and the person reading both grow a little, and discover something, as we read the cards and connect. In a fast world, I want fewer final verdicts — and more of those little moments of stillness that we rarely make time for ourselves.',
-        'Liúbái 留白, leaving space empty, is part of traditional Chinese aesthetics, and a deeply philosophical idea in itself. As with yin and yang: where there is yin there is yang, and where there is yang there is yin. Nothing is absolute, and nothing stays the same. Sometimes, all we need is a little prompt, a doorway, or a pause after a conversation — something that lets us step into our inner world and find answers of our own.',
-        'Two kinds of sessions are open for now — you’ll find them, and everything to know before booking, just below. Please DM me ahead of time to book; if you have any particular needs, I’ll do my best to find a slot that suits us both.',
+        'The name came to me in a flash one night. I had always wanted my tarot practice to be demystified: an open, friendly space where the person asking and the person reading both grow a little, and discover something, as we read the cards and connect. In a fast world, I want fewer final verdicts — and more of ==those little moments of stillness== that we rarely make time for ourselves.',
+        'Liúbái 留白, leaving space empty, is part of traditional Chinese aesthetics, and a deeply philosophical idea in itself. As with yin and yang: where there is yin there is yang, and where there is yang there is yin. Nothing is absolute, and nothing stays the same. Sometimes, all we need is a little prompt, a doorway, or a pause after a conversation — something that lets us step into our inner world and ==find answers of our own==.',
+        'Two kinds of sessions are open for now — you’ll find them, and everything to know before booking, just below. Please ==DM me ahead of time== to book; if you have any particular needs, I’ll do my best to find a slot that suits us both.',
       ],
     },
     about: {
@@ -37,10 +37,10 @@ export const T = {
       body: 'I believe in self-care and self-acceptance, and in tarot as a tool for looking inward.',
       story: [
         'A little about me: I’m Vicky — you can also call me Yifan.',
-        'Even as a child, I was fascinated by the possibilities that might exist beyond the physical world. As a child I’d often ask my parents, “Wow — could I fly?” A sincere question that seems sweet and a little funny now, but it became something of a guiding thread in my life.',
-        'Of course, the Wright brothers had already figured out how to get humans off the ground long before I was born. But I don’t think any of us need a pair of “wings” to “fly” — to see our lives from higher up and further out. We’re born with the ability already: imagination, which lets us explore our own worlds as freely as we like.',
-        'I believe the answers aren’t out there — they’re within each of us. The world is a space we interact with and project onto; through what’s outside, we come to see ourselves more clearly and understand who we really are. Tarot is a tool that helps with exactly this. Beyond its traditional role in divination, it mirrors the querent’s subconscious and energy (which is, in fact, why it can divine at all). Through its symbolic images, it opens a door to the subconscious and invites us to consider the reasons we hadn’t yet noticed.',
-        'So I decided to create this space — an open place without standard answers — bringing together my own background, experience and readings to offer a fresh perspective to anyone who needs one. If you have questions about love, study, career, personal growth or anything else, you’re very welcome to reach out :)',
+        'Even as a child, I was fascinated by the possibilities that might exist beyond the physical world. As a child I’d often ask my parents, ==“Wow — could I fly?”== A sincere question that seems sweet and a little funny now, but it became something of a guiding thread in my life.',
+        'Of course, the Wright brothers had already figured out how to get humans off the ground long before I was born. But I don’t think any of us need a pair of “wings” to “fly” — to see our lives from higher up and further out. We’re born with the ability already: ==imagination==, which lets us explore our own worlds as freely as we like.',
+        'I believe ==the answers aren’t out there — they’re within each of us==. The world is a space we interact with and project onto; through what’s outside, we come to see ourselves more clearly and understand who we really are. Tarot is a tool that helps with exactly this. Beyond its traditional role in divination, it mirrors the querent’s subconscious and energy (which is, in fact, why it can divine at all). Through its symbolic images, it opens a door to the subconscious and invites us to consider the reasons we hadn’t yet noticed.',
+        'So I decided to create this space — ==an open place without standard answers== — bringing together my own background, experience and readings to offer a fresh perspective to anyone who needs one. If you have questions about love, study, career, personal growth or anything else, you’re very welcome to reach out :)',
       ],
       motto: 'Let the cards reveal. Let yourself decide.',
     },
@@ -48,10 +48,10 @@ export const T = {
       kicker: 'Good to know',
       title: ['A reading isn’t a final ending.', 'It’s a way of seeing yourself.'],
       items: [
-        { t: 'What tarot can answer', b: ['Tarot works best with questions that have a clear timeframe, usually within the next 3 to 6 months, or sooner. It isn’t the right tool for long-range questions; for your long-term fortune, astrology or other systems will serve you better (but dw, I’m already learning! Stay tuned!)'] },
-        { t: 'How a reading works', b: ['You tell me the background and what’s puzzling you → we talk it through and agree on a question and a suitable spread → you confirm your booking with payment → I shuffle → you take a moment to relax and center yourself → you choose numbers, or I draw the cards for you → we read and discuss → done.', 'A typical reading takes about 20 minutes: one question, one answer, follow-up questions not included.'] },
-        { t: 'When I’ll decline', b: ['Tarot may not be particularly helpful if you’re approaching a reading with an answer already decided in your mind, or if you’re experiencing intense emotional distress, fixation or inner conflict. I also don’t offer readings on matters involving life and death, health, gambling or legal issues.', 'Please come calm and centred — not superstitious, not blindly following.'] },
-        { t: 'How to approach a reading', b: ['A spread mirrors the energy of your subconscious right now. It isn’t the final ending — only the most likely timeline if nothing changes. We all have the power to shape our own future, so I encourage you not to place blind faith in any tool. Tarot offers a perspective — a way to look inward, reflect on your habits and understand yourself a little better. The reader knows no more than anyone else, especially you, yourself.', '“Character is fate” means the habits, emotions, thoughts and patterns we run without thinking add up to our fate. The purpose of a reading is to bring these automatic patterns into awareness, so we can step beyond familiar paths and make more conscious choices. After all, the cards don’t decide your future. You do :)'] },
+        { t: 'What tarot can answer', b: ['Tarot works best with questions that have a clear timeframe, usually ==within the next 3 to 6 months==, or sooner. It isn’t the right tool for long-range questions; for your long-term fortune, astrology or other systems will serve you better (but dw, I’m already learning! Stay tuned!)'] },
+        { t: 'How a reading works', b: ['You tell me the background and what’s puzzling you → we talk it through and agree on a question and a suitable spread → you confirm your booking with payment → I shuffle → you take a moment to relax and center yourself → you choose numbers, or I draw the cards for you → we read and discuss → done.', 'A typical reading takes about 20 minutes: ==one question, one answer==, follow-up questions not included.'] },
+        { t: 'When I’ll decline', b: ['Tarot may not be particularly helpful if you’re approaching a reading with an answer already decided in your mind, or if you’re experiencing intense emotional distress, fixation or inner conflict. I also don’t offer readings on matters involving life and death, health, gambling or legal issues.', 'Please come ==calm and centred== — not superstitious, not blindly following.'] },
+        { t: 'How to approach a reading', b: ['A spread mirrors the energy of your subconscious right now. It isn’t the final ending — only the most likely timeline if nothing changes. ==We all have the power to shape our own future==, so I encourage you not to place blind faith in any tool. Tarot offers a perspective — a way to look inward, reflect on your habits and understand yourself a little better. The reader knows no more than anyone else, especially you, yourself.', '“Character is fate” means the habits, emotions, thoughts and patterns we run without thinking add up to our fate. The purpose of a reading is to bring these automatic patterns into awareness, so we can step beyond familiar paths and make more conscious choices. After all, ==the cards don’t decide your future. You do== :)'] },
       ],
     },
     readingsKicker: 'Readings',
@@ -132,9 +132,9 @@ export const T = {
       title: '自留地',
       body: [
         '嗨你好，欢迎来到我的疗愈空间「The Open Space 自留地」，我是 Vicky。',
-        '这个空间的名字来源于一个夜晚的灵光一闪——我一直想为自己的占卜愿景打造一个「去神秘化」的开放友好空间，希望我与问卜者都能够在读牌、链接的过程中彼此有所成长与发现。在这个快节奏的时代，少一点「断言定论」，多一些留给自己的，那些重要的空白时刻。',
-        '「留白」作为中国传统美学的一部分，本身也是一个极具哲学意味的理念。正如阴阳之中，有阴必有阳，有阳必有阴。没有什么是绝对的，也没有什么是一成不变的。很多时候，我们或许只是需要一个引子，一道大门，一场谈话后的留白，来让我们进入内在的世界，发现属于自己的答案。',
-        '目前已开放两类服务，具体项目和须知就在下面，价目表请私信获取。咨询需求请提前私信预约，如有任何特殊需要，我会尽可能协调一个双方都方便的 slot 完成。',
+        '这个空间的名字来源于一个夜晚的灵光一闪——我一直想为自己的占卜愿景打造一个「去神秘化」的开放友好空间，希望我与问卜者都能够在读牌、链接的过程中彼此有所成长与发现。在这个快节奏的时代，少一点「断言定论」，多一些留给自己的，==那些重要的空白时刻==。',
+        '「留白」作为中国传统美学的一部分，本身也是一个极具哲学意味的理念。正如阴阳之中，有阴必有阳，有阳必有阴。没有什么是绝对的，也没有什么是一成不变的。很多时候，我们或许只是需要一个引子，一道大门，一场谈话后的留白，来让我们进入内在的世界，==发现属于自己的答案==。',
+        '目前已开放两类服务，具体项目和须知就在下面，价目表请私信获取。咨询需求请==提前私信预约==，如有任何特殊需要，我会尽可能协调一个双方都方便的 slot 完成。',
       ],
     },
     about: {
@@ -144,10 +144,10 @@ export const T = {
       body: '主张自我关怀与自我接纳，让塔罗牌成为向内探索的工具。',
       story: [
         '介绍一下我自己：我是Vicky，大家也可以叫我Yifan。',
-        '很小的时候，我就发现自己对这个物质世界之外的可能性充满了想象力。小时候，我经常和父母说：“哇！我能不能飞起来呢？” 这句在现在看起来可爱又好笑的真诚发问，成为了我日后人生道路的索引。',
-        '诚然，在这个宇宙里，早已有怀特兄弟实现我儿时的“梦想”。但我想，我们每个人并不需要一双“翅膀”才能“飞起来”，将自己的人生看得更高、更远。我们拥有与生俱来的能力——想象力，来帮助我们在自己的世界里尽情探索。',
-        '我信奉一个理念，那就是：答案并不在外面，而在每个人的内心之中。这个世界是我们与之互动与投射的一个空间，我们借由外部，来更好地观照自己，认识自己到底是谁。而塔罗牌，就是一个能够帮助我们达到这一点的工具。它除了具有传统的占卜作用之外，更可以映射问卜者的内心潜意识与能量（其实，这也是为什么它能占卜的原因），通过象征性的画面，帮助问卜者打开一道潜意识的大门，引导人们去思考背后未被察觉的原因。',
-        '因此，我决定创办这个空间——一个没有标准答案的开放之地。结合我自己的背景、经历和解读，来为更多有需要的朋友提供新的视角。如果你对自己的感情、学业、事业、自我成长等等方面有所疑问，欢迎前来咨询 :)',
+        '很小的时候，我就发现自己对这个物质世界之外的可能性充满了想象力。小时候，我经常和父母说：==“哇！我能不能飞起来呢？”== 这句在现在看起来可爱又好笑的真诚发问，成为了我日后人生道路的索引。',
+        '诚然，在这个宇宙里，早已有怀特兄弟实现我儿时的“梦想”。但我想，我们每个人并不需要一双“翅膀”才能“飞起来”，将自己的人生看得更高、更远。我们拥有与生俱来的能力——==想象力==，来帮助我们在自己的世界里尽情探索。',
+        '我信奉一个理念，那就是：==答案并不在外面，而在每个人的内心之中==。这个世界是我们与之互动与投射的一个空间，我们借由外部，来更好地观照自己，认识自己到底是谁。而塔罗牌，就是一个能够帮助我们达到这一点的工具。它除了具有传统的占卜作用之外，更可以映射问卜者的内心潜意识与能量（其实，这也是为什么它能占卜的原因），通过象征性的画面，帮助问卜者打开一道潜意识的大门，引导人们去思考背后未被察觉的原因。',
+        '因此，我决定创办这个空间——==一个没有标准答案的开放之地==。结合我自己的背景、经历和解读，来为更多有需要的朋友提供新的视角。如果你对自己的感情、学业、事业、自我成长等等方面有所疑问，欢迎前来咨询 :)',
       ],
       motto: '以人驭牌，以牌驭运。',
     },
@@ -155,10 +155,10 @@ export const T = {
       kicker: '占卜服务须知',
       title: ['占卜不是最终结局，', '而是一个看清自己的视角。'],
       items: [
-        { t: '关于问题范围', b: ['塔罗适合询问具有时效性的问题，一般 3–6 个月甚至更短的事情都可以看，但更长远的问题不太适用这种工具。如需咨询长期运势类问题，请寻求星盘、命理等工具帮助（不过我已经在学啦！敬请期待！）。'] },
-        { t: '关于咨询流程', b: ['你向我详细描述问题背景以及困惑点 → 我和你讨论后确认咨询问题及合适牌阵 → 你付款预定 → 我洗牌 → 你等候并静心 → 你向我报数字或我抽牌 → 解读与讨论 → 结束。', '一般问题占卜时长在 20 分钟左右。一问一答，不包含延伸问题。'] },
-        { t: '拒收案例标准', b: ['占卜并不适用于问卜者带着已有预设答案，或内心有强烈执念、心结、情绪起伏时的状态来解答；同样不接受关于生死、健康、赌博等任何涉及生命或违法事宜的预测。', '请确保自身状态平和中正，不迷信、不盲从，方宜占卜。'] },
-        { t: '对待占卜的态度', b: ['纸牌占卜本质上是对问卜者当下潜意识能量的映射。占卜解读并不代表「最终结局」，仅仅代表「如果按照当下什么都不改变，最可能的时间线结果是什么」。因此，每个人都有力量改变自己的命运，请不要迷信任何工具。占卜只是给你一个视角，帮助你面对自己的内心与习性，占卜师并不比任何人懂得更多。', '「性格决定命运」，指的就是那些我们不假思索的习惯、情绪、思维以及行为模式，共同造就了我们的「命」。而占卜的意义，就在于看清这些「自动化程式」后打破已有路径，为自己增添「运」的力量。'] },
+        { t: '关于问题范围', b: ['塔罗适合询问具有时效性的问题，一般 ==3–6 个月==甚至更短的事情都可以看，但更长远的问题不太适用这种工具。如需咨询长期运势类问题，请寻求星盘、命理等工具帮助（不过我已经在学啦！敬请期待！）。'] },
+        { t: '关于咨询流程', b: ['你向我详细描述问题背景以及困惑点 → 我和你讨论后确认咨询问题及合适牌阵 → 你付款预定 → 我洗牌 → 你等候并静心 → 你向我报数字或我抽牌 → 解读与讨论 → 结束。', '一般问题占卜时长在 20 分钟左右。==一问一答==，不包含延伸问题。'] },
+        { t: '拒收案例标准', b: ['占卜并不适用于问卜者带着已有预设答案，或内心有强烈执念、心结、情绪起伏时的状态来解答；同样不接受关于生死、健康、赌博等任何涉及生命或违法事宜的预测。', '请确保自身状态==平和中正==，不迷信、不盲从，方宜占卜。'] },
+        { t: '对待占卜的态度', b: ['纸牌占卜本质上是对问卜者当下潜意识能量的映射。占卜解读并不代表「最终结局」，仅仅代表「如果按照当下什么都不改变，最可能的时间线结果是什么」。因此，==每个人都有力量改变自己的命运==，请不要迷信任何工具。占卜只是给你一个视角，帮助你面对自己的内心与习性，占卜师并不比任何人懂得更多。', '「性格决定命运」，指的就是那些我们不假思索的习惯、情绪、思维以及行为模式，共同造就了我们的「命」。而占卜的意义，就在于看清这些「自动化程式」后打破已有路径，==为自己增添「运」的力量==。'] },
       ],
     },
     readingsKicker: '解读项目',
@@ -273,3 +273,9 @@ export const doors = {
     { key: 'readings', line: '两类服务，以及我常用的牌阵。' },
   ],
 };
+
+// 荧光笔：文案里用 ==这样== 包起来的字，页面上会画一道粉色荧光笔
+export function hl(t) {
+  const esc = String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  return esc.replace(/==(.+?)==/g, '<mark class="hl">$1</mark>');
+}
