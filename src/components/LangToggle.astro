@@ -1,12 +1,12 @@
 ---
-// 右上角的语言开关：「中 / EN」，当前语言是实色、下面一个金色小点。整个都能点。
+// 右上角的语言开关：「EN / 中」，当前语言是实色、下面一个金色小点。整个都能点。
 const { lang = 'en', href } = Astro.props;
 ---
 
 <a class="lt" href={href} hreflang={lang === 'en' ? 'zh-Hans' : 'en'} lang={lang === 'en' ? 'zh-Hans' : 'en'} aria-label={lang === 'en' ? '切换到中文' : 'Switch to English'}>
-  <span class:list={['lt-o', { on: lang === 'zh' }]} lang="zh-Hans">中</span>
-  <span class="lt-s" aria-hidden="true">/</span>
   <span class:list={['lt-o', { on: lang === 'en' }]} lang="en">EN</span>
+  <span class="lt-s" aria-hidden="true">/</span>
+  <span class:list={['lt-o', { on: lang === 'zh' }]} lang="zh-Hans">中</span>
 </a>
 
 <style>
