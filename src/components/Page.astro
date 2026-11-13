@@ -13,6 +13,11 @@ import zPink from '../assets/zen/buddha-pink.png';
 import kidGrass from '../assets/zen/kid-grass.png';
 import kidRed from '../assets/zen/kid-red.png';
 import zFan from '../assets/zen/fan.png';
+import zBird from '../assets/zen/hummingbird.png';
+import zMoon from '../assets/collage/moon-sepia.png';
+import zOrchidPale from '../assets/zen/orchid-pale.png';
+import zLeafPale from '../assets/collage/pale-leaf.png';
+import zStarGold from '../assets/zen/star-gold.png';
 import zEyes from '../assets/zen/buddha-eyes.png';
 import zHand from '../assets/zen/hand-spiral.png';
 import zLotusBuddha from '../assets/zen/buddha-lotus.png';
@@ -190,6 +195,12 @@ const otherLang = lang === 'en' ? 'zh' : 'en';
     <!-- 最底下：预约 + 下一页 -->
     {page === 'readings' && (
       <section class="wrap book-block">
+        <!-- 信封旁边的一小撮拼贴：蜂鸟衔信飞来，旧月亮挂在右上，兰花和叶子垫在下面 -->
+        <Image src={zMoon} alt="" width={320} format="webp" quality={82} class="zen zb-moon" />
+        <Image src={zBird} alt="" width={340} format="webp" quality={84} class="zen zb-bird" />
+        <Image src={zOrchidPale} alt="" width={320} format="webp" quality={82} class="zen zb-orchid" />
+        <Image src={zLeafPale} alt="" width={280} format="webp" quality={82} class="zen zb-leaf" />
+        <Image src={zStarGold} alt="" width={90} format="webp" quality={85} class="zen zb-star" />
         <div class="end-book">
           <h2 class="stance end-title">{book.title}</h2>
           <p class="prose-t end-body">{book.body}</p>
@@ -495,7 +506,19 @@ const otherLang = lang === 'en' ? 'zh' : 'en';
   .next.is-prev .flip { transform: rotate(-6deg); }
   .next.is-prev:hover .flip, .next.is-prev.is-flipped .flip { transform: rotate(0deg) translateY(-8px); }
   .book-block { display: flex; justify-content: center; margin-top: clamp(56px, 7vw, 100px); }
-  .book-block .end-book { align-items: center; text-align: center; max-width: 36em; }
+  .book-block .end-book { align-items: center; text-align: center; max-width: 36em; position: relative; z-index: 1; }
+  .book-block { position: relative; }
+  :global(.zb-moon) { right: clamp(40px, 9vw, 170px); top: clamp(-30px, -1vw, 0px); width: clamp(110px, 11vw, 160px); opacity: 0.92; }
+  :global(.zb-bird) { left: clamp(20px, 13vw, 230px); top: clamp(110px, 11vw, 160px); width: clamp(140px, 14vw, 205px); transform: rotate(8deg) scaleX(-1); }
+  :global(.zb-orchid) { right: clamp(30px, 12vw, 230px); bottom: clamp(10px, 2vw, 40px); width: clamp(130px, 13vw, 190px); transform: rotate(14deg); }
+  :global(.zb-leaf) { left: clamp(30px, 6vw, 110px); bottom: clamp(-40px, -2vw, -10px); width: clamp(90px, 8.5vw, 125px); transform: rotate(-28deg); z-index: 0; }
+  :global(.zb-star) { right: clamp(130px, 19vw, 340px); top: clamp(110px, 11vw, 150px); width: clamp(26px, 2.6vw, 38px); transform: rotate(12deg); }
+  @media (max-width: 760px) {
+    :global(.zb-moon) { right: -22px; top: -36px; width: 82px; }
+    :global(.zb-bird) { left: -18px; top: auto; bottom: 150px; width: 96px; }
+    :global(.zb-orchid) { right: -26px; bottom: 10px; width: 100px; }
+    :global(.zb-leaf), :global(.zb-star) { display: none; }
+  }
   .flip-front.is-card :global(.card) { width: 100%; height: 100%; max-width: none; }
   .next[data-k='0'] .flip-front { background: radial-gradient(40% 12% at 30% 78%, #fff, rgba(255,255,255,0) 70%), linear-gradient(180deg, #6f9fcf, #a9c8e2 50%, #e9dccb); }
   .next[data-k='1'] .flip-front { background: radial-gradient(60% 40% at 50% 45%, #eef0e0, rgba(238,240,224,0) 70%), linear-gradient(180deg, #a8b394, #d6d9c2 55%, #eadbd6); }
