@@ -127,7 +127,7 @@ const otherLang = lang === 'en' ? 'zh' : 'en';
               </span>
               <span class="rmeta">
                 <span class="rlen label">{r.len}</span>
-                <span class="rprice">{r.price}</span>
+                <span class="rprice">{r.price.replace(/\s*起$/, '')}{/起$/.test(r.price) && <span class="rprice-from"> 起</span>}</span>
               </span>
               <span class="svc-toggle">
                 <span class="svc-toggle-t">{r.toggle[0]}</span>
@@ -633,6 +633,7 @@ const otherLang = lang === 'en' ? 'zh' : 'en';
   @media (max-width: 760px) {
     .pnav { align-items: baseline; gap: 22px; }
 
+    .lt-wrap { padding-left: 0; border-left: 0; padding-right: 16px; border-right: 1px solid rgba(78, 57, 51, 0.3); }
     .menu-btn {
       display: inline-block;
       font: inherit;
@@ -1036,6 +1037,8 @@ const otherLang = lang === 'en' ? 'zh' : 'en';
     font-size: clamp(17px, 1.6vw, 21px);
     color: var(--accent);
   }
+  .rprice:lang(zh) { font-family: var(--didot), var(--cjk); }
+  .rprice-from { font-family: var(--cjk); font-style: normal; font-size: 0.82em; margin-left: 0.15em; }
 
   .svc-toggle {
     grid-area: toggle;
@@ -1393,7 +1396,6 @@ const otherLang = lang === 'en' ? 'zh' : 'en';
   .sp-pos:lang(zh),
   .healing-after:lang(zh),
   .svc-toggle:lang(zh),
-  .rprice:lang(zh),
   .how-title i:lang(zh) { font-style: normal; font-family: var(--cjk); letter-spacing: 0.06em; }
   .tags li:lang(zh) { font-family: var(--cjk); font-style: normal; letter-spacing: 0.1em; }
   .sp-tag:lang(zh) { letter-spacing: 0.2em; }
