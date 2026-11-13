@@ -40,7 +40,6 @@ const otherLang = lang === 'en' ? 'zh' : 'en';
     <div class="strip-bar">
       <a class="back" href={url(lang)}><span class="back-arrow" aria-hidden="true">←</span> {u.home}</a>
       <nav class="pnav" aria-label="Pages">
-        <a href={`${url(lang)}#space`}>{lang === 'en' ? 'The space' : '这个空间'}</a>
         {order.map((k) => (
           <a href={url(lang, k)} aria-current={k === page ? 'page' : undefined}>{pm[k].nav}</a>
         ))}
