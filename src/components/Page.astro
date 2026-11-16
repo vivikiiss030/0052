@@ -196,7 +196,7 @@ const otherLang = lang === 'en' ? 'zh' : 'en';
           </li>
         ))}
       </ul>
-      <p class="menu-note">{readingsNote}</p>
+      <p class="menu-note" set:html={hl(readingsNote)} />
     </section>
     )}
 
@@ -1452,6 +1452,8 @@ const otherLang = lang === 'en' ? 'zh' : 'en';
     line-height: 1.8;
     color: var(--ink-soft);
   }
+  .menu-note :global(strong) { font-weight: 600; color: var(--ink); }
+  .menu-note:lang(zh) :global(strong) { font-weight: 700; }
 
   /* ── 反馈 ───────────────────────────────────────────── */
   .says {

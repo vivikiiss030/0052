@@ -90,7 +90,7 @@ export const T = {
         after: 'At the end we make a growth plan together, with practical steps to help you change. It’s a journey of exploration we share — I hope we both bring care for ourselves, mutual respect and cooperation.',
       },
     ],
-    readingsNote: 'All sessions are online, in English or Chinese — whichever you think in. Payment by PayPal or UK bank transfer, once we’ve agreed on your question and spread.',
+    readingsNote: 'All sessions are **online**, in English or Chinese. I’m usually free **11am to 3pm London time** (7 to 11pm Beijing time), and payment is by **PayPal** or **UK bank transfer** once we’ve agreed on your question and spread.',
     saysKicker: 'What people say',
     says: [
       { quote: '〔a few lines someone wrote you after a reading〕', who: '〔R., London〕' },
@@ -197,7 +197,7 @@ export const T = {
         after: '结束后会与你共同制定可帮助改进的成长实践计划。这是一场共同的探索旅程，希望我们彼此都能带着对自我的关怀，相互尊重与配合。',
       },
     ],
-    readingsNote: '全部线上进行，中文或英文都可以。支持 PayPal 或英国银行转账，确认问题与牌阵后付款预约。',
+    readingsNote: '全部**线上**进行，中英文都可以。我一般在**伦敦时间上午 11 点到下午 3 点**有空（北京时间晚上 7 点到 11 点），确认问题与牌阵后，可通过 **PayPal** 或**英国银行转账**付款。',
     saysKicker: '他们说',
     says: [
       { quote: '〔有人在解读之后写给你的几句话〕', who: '〔小 R，上海〕' },
@@ -278,5 +278,6 @@ export const doors = {
 export function hl(t) {
   const esc = String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
   // 荧光笔高亮暂时关掉：==…== 标记保留在文案里，想恢复就把 '$1' 换回 '<mark class="hl">$1</mark>'
-  return esc.replace(/==(.+?)==/g, '$1');
+  // **…** 加粗（价目表下面那句：线上 / 时间 / 付款方式）
+  return esc.replace(/==(.+?)==/g, '$1').replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
 }
