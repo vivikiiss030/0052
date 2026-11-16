@@ -365,7 +365,7 @@ const otherLang = lang === 'en' ? 'zh' : 'en';
   // 正文一段一段往上浮出来：往下滑到哪一段，哪一段才出现
   if (!reduce && 'IntersectionObserver' in window) {
     const paras = document.querySelectorAll<HTMLElement>(
-      '.about-quote, .about-story p, .motto, .rules > li > h3, .rules > li > p, .rules > li > .steps-d, .healing-after, .menu-note'
+      '.about-quote, .about-story p, .motto, .rules > li > h3, .rules > li > p, .rules > li > .steps-d'
     );
     const ro = new IntersectionObserver((entries) => {
       entries.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('up'); ro.unobserve(e.target); } });
@@ -1531,6 +1531,8 @@ const otherLang = lang === 'en' ? 'zh' : 'en';
   /* ── 中文版的字 ─────────────────────────────────────── */
   .prose-t:lang(zh),
   .rules p:lang(zh),
+  .steps-d summary:lang(zh),
+  .steps li:lang(zh),
   .svc-note:lang(zh),
   .sp-for:lang(zh),
   .points li:lang(zh),
