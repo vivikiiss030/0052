@@ -108,9 +108,12 @@ const otherLang = lang === 'en' ? 'zh' : 'en';
             <span class="rules-n">{String(i + 1).padStart(2, '0')}</span>
             <h3>{it.t}</h3>
             {it.steps && (
-              <ol class="steps">
-                {it.steps.map((t, j) => <li><span class="step-n">Step {j + 1}</span><span class="step-t" set:html={hl(t)} /></li>)}
-              </ol>
+              <details class="steps-d">
+                <summary><span class="steps-s">{it.stepsLabel}</span><span class="steps-pm" aria-hidden="true"></span></summary>
+                <ol class="steps">
+                  {it.steps.map((t, j) => <li><span class="step-n">Step {j + 1}</span><span class="step-t" set:html={hl(t)} /></li>)}
+                </ol>
+              </details>
             )}
             {it.b.map((t) => <p set:html={hl(t)} />)}
           </li>
@@ -954,7 +957,9 @@ const otherLang = lang === 'en' ? 'zh' : 'en';
   .rules-n {
     display: block;
     margin-bottom: 10px;
-    font-family: var(--sans);
+    font-family: var(--hero-serif);
+    font-variation-settings: 'opsz' 11;
+    font-weight: 500;
     font-size: 11px;
     letter-spacing: 0.24em;
     color: var(--accent);
@@ -980,23 +985,67 @@ const otherLang = lang === 'en' ? 'zh' : 'en';
   .rules p:last-child { margin-bottom: 0; }
 
   /* 咨询流程：一步一行，左边挂 Step 几 */
+  .steps-d { margin: 0 0 0.9em; }
+  .steps-d summary {
+    list-style: none;
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.6em;
+    cursor: pointer;
+    font-family: var(--sans);
+    font-size: 15.5px;
+    line-height: 1.85;
+    color: var(--ink);
+  }
+  .steps-d summary::-webkit-details-marker { display: none; }
+  .steps-s { border-bottom: 1px solid var(--accent); padding-bottom: 1px; transition: color 0.3s; }
+  .steps-d summary:hover .steps-s { color: var(--accent); }
+  /* 右边一个细的 + ，展开后变成 − */
+  .steps-pm { position: relative; width: 11px; height: 11px; flex: none; align-self: center; }
+  .steps-pm::before, .steps-pm::after {
+    content: ''; position: absolute; left: 0; right: 0; top: 50%; height: 1px; background: var(--accent);
+    transition: transform 0.3s ease;
+  }
+  .steps-pm::after { transform: rotate(90deg); }
+  .steps-d[open] .steps-pm::after { transform: rotate(0deg); }
+
+  /* 收起时：一道很淡的金光从左往右扫过文字，+ 号跟着微微发光；展开后就停 */
+  @media (prefers-reduced-motion: no-preference) {
+    .steps-d:not([open]) .steps-s {
+      background: linear-gradient(100deg, var(--ink) 0%, var(--ink) 42%, #d9a95b 49%, #f6dfa8 51%, #d9a95b 53%, var(--ink) 60%, var(--ink) 100%);
+      background-size: 260% 100%;
+      background-position: 100% 0;
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      animation: steps-sheen 3.6s ease-in-out infinite;
+    }
+    .steps-d:not([open]) .steps-pm { animation: steps-glow 3.6s ease-in-out infinite; }
+  }
+  @keyframes steps-sheen {
+    0%, 30% { background-position: 100% 0; }
+    75%, 100% { background-position: 0% 0; }
+  }
+  @keyframes steps-glow {
+    0%, 45%, 100% { filter: drop-shadow(0 0 0 rgba(217, 169, 91, 0)); }
+    70% { filter: drop-shadow(0 0 4px rgba(217, 169, 91, 0.95)) drop-shadow(0 0 9px rgba(246, 223, 168, 0.7)); }
+  }
   .steps {
     list-style: none;
-    margin: 0 0 1.1em;
+    margin: 0.5em 0 0;
     padding: 0;
   }
   .steps li {
     display: grid;
     grid-template-columns: 4.4em 1fr;
     align-items: baseline;
-    padding: 0.42em 0;
-    border-bottom: 1px dotted var(--rule);
+    padding: 0.18em 0;
+    border-top: 0;
     font-family: var(--sans);
     font-size: 15.5px;
     line-height: 1.6;
     color: var(--ink-soft);
   }
-  .steps li:last-child { border-bottom: 0; }
   .step-n {
     font-family: var(--didot);
     font-style: italic;
@@ -1229,7 +1278,9 @@ const otherLang = lang === 'en' ? 'zh' : 'en';
     padding: 4px 11px 3px;
     border-radius: 999px;
     background: rgba(201, 163, 90, 0.16);
-    font-family: var(--sans);
+    font-family: var(--hero-serif);
+    font-variation-settings: 'opsz' 11;
+    font-weight: 500;
     font-size: 11px;
     letter-spacing: 0.14em;
     text-transform: uppercase;
@@ -1313,7 +1364,9 @@ const otherLang = lang === 'en' ? 'zh' : 'en';
     content: counter(b, decimal-leading-zero);
     display: block;
     margin-bottom: 8px;
-    font-family: var(--sans);
+    font-family: var(--hero-serif);
+    font-variation-settings: 'opsz' 11;
+    font-weight: 500;
     font-size: 11px;
     letter-spacing: 0.24em;
     color: var(--accent);
