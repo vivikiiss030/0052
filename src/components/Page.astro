@@ -107,6 +107,11 @@ const otherLang = lang === 'en' ? 'zh' : 'en';
           <li>
             <span class="rules-n">{String(i + 1).padStart(2, '0')}</span>
             <h3>{it.t}</h3>
+            {it.steps && (
+              <ol class="steps">
+                {it.steps.map((t, j) => <li><span class="step-n">Step {j + 1}</span><span class="step-t" set:html={hl(t)} /></li>)}
+              </ol>
+            )}
             {it.b.map((t) => <p set:html={hl(t)} />)}
           </li>
         ))}
@@ -387,7 +392,7 @@ const otherLang = lang === 'en' ? 'zh' : 'en';
     font-family: var(--hero-serif);
     font-size: clamp(14px, 1.15vw, 17px);
     letter-spacing: 0.05em;
-    color: #5e4b47;
+    color: #45332f;
   }
 
   .back { display: inline-flex; align-items: baseline; gap: 10px; font-style: italic; }
@@ -415,7 +420,7 @@ const otherLang = lang === 'en' ? 'zh' : 'en';
     font-style: italic;
     font-size: clamp(15px, 1.4vw, 19px);
     letter-spacing: 0.2em;
-    color: #8a6a5e;
+    color: #6b4d42;
   }
 
   .strip-h {
@@ -425,7 +430,7 @@ const otherLang = lang === 'en' ? 'zh' : 'en';
     font-size: clamp(46px, 7.4vw, 112px);
     line-height: 0.95;
     letter-spacing: -0.02em;
-    color: #4e3933;
+    color: #3a2823;
   }
 
   .strip-h.is-italic { font-style: italic; font-weight: 400; }
@@ -495,7 +500,7 @@ const otherLang = lang === 'en' ? 'zh' : 'en';
     background:
       radial-gradient(60% 40% at 50% 45%, #fbe6e8, rgba(251, 230, 232, 0) 70%),
       linear-gradient(180deg, #e9a3b6, #f6dcd9);
-    color: #2b231d;
+    color: #1e1712;
   }
   /* 翻开的牌面颜色 = 首页那张牌的底：I 天空 / II 灰绿 / III 粉 */
   .flip-front.is-card { padding: 0; background: none; box-shadow: none; display: block; }
@@ -591,7 +596,7 @@ const otherLang = lang === 'en' ? 'zh' : 'en';
     font-style: italic;
     font-size: clamp(18px, 1.6vw, 22px);
     line-height: 1.55;
-    color: #6e4a3e;
+    color: #553328;
   }
   .about-quote p:lang(zh) { font-family: 'PingFang SC', var(--cjk); font-style: normal; font-size: clamp(16px, 1.4vw, 19px); line-height: 1.9; letter-spacing: 0.06em; }
   .about-story p { margin: 0 0 1.1em; }
@@ -709,7 +714,7 @@ const otherLang = lang === 'en' ? 'zh' : 'en';
       color: var(--ink);
     }
     .mmenu-list a:lang(zh) { font-family: 'PingFang SC', var(--cjk); font-size: 20px; font-weight: 500; letter-spacing: 0.08em; }
-    .mmenu-list a[aria-current='page'] { color: #7a5246; }
+    .mmenu-list a[aria-current='page'] { color: #5e3a2f; }
     .mmenu-list a[aria-current='page']::after { content: '✦'; margin-left: auto; font-size: 10px; color: #c4923c; }
 
     .mm-n {
@@ -929,7 +934,7 @@ const otherLang = lang === 'en' ? 'zh' : 'en';
     font-style: italic;
     font-size: clamp(22px, 2.4vw, 32px);
     line-height: 1.35;
-    color: #7a5246;
+    color: #5e3a2f;
   }
 
   /* ── 占卜服务须知：四条，两列 ─────────────────────────── */
@@ -973,6 +978,33 @@ const otherLang = lang === 'en' ? 'zh' : 'en';
   }
 
   .rules p:last-child { margin-bottom: 0; }
+
+  /* 咨询流程：一步一行，左边挂 Step 几 */
+  .steps {
+    list-style: none;
+    margin: 0 0 1.1em;
+    padding: 0;
+  }
+  .steps li {
+    display: grid;
+    grid-template-columns: 4.4em 1fr;
+    align-items: baseline;
+    padding: 0.42em 0;
+    border-bottom: 1px dotted var(--rule);
+    font-family: var(--sans);
+    font-size: 15.5px;
+    line-height: 1.6;
+    color: var(--ink-soft);
+  }
+  .steps li:last-child { border-bottom: 0; }
+  .step-n {
+    font-family: var(--didot);
+    font-style: italic;
+    font-size: 14px;
+    letter-spacing: 0.02em;
+    color: var(--accent);
+    white-space: nowrap;
+  }
 
   /* ── 解读项目：可以展开的两张卡 ──────────────────────── */
   .svcs { list-style: none; margin: clamp(18px, 2.4vw, 30px) 0 0; padding: 0; display: grid; gap: 16px; }
@@ -1073,7 +1105,7 @@ const otherLang = lang === 'en' ? 'zh' : 'en';
     font-style: italic;
     font-size: 15px;
     letter-spacing: 0.03em;
-    color: #7a5246;
+    color: #5e3a2f;
   }
 
   .svc-toggle-t { border-bottom: 1px solid rgba(122, 82, 70, 0.35); padding-bottom: 1px; }
@@ -1182,7 +1214,7 @@ const otherLang = lang === 'en' ? 'zh' : 'en';
     font-style: italic;
     font-size: 14px;
     letter-spacing: 0.02em;
-    color: #7a5246;
+    color: #5e3a2f;
   }
 
   .sp-for { font-family: var(--sans); font-size: 15px; line-height: 1.7; color: var(--ink-soft); }
@@ -1242,7 +1274,7 @@ const otherLang = lang === 'en' ? 'zh' : 'en';
     font-style: italic;
     font-size: 15.5px;
     line-height: 1.75;
-    color: #5e4b47;
+    color: #45332f;
   }
 
   .menu-note {

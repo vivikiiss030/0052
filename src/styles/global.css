@@ -62,9 +62,9 @@
   /* 颜色。没有纯黑，没有纯白。 */
   --ground: #efeae1;
   --ground-deep: #e7e0d4;
-  --ink: #22271f;
-  --ink-soft: #5e6158;
-  --ink-faint: #8b8d83;
+  --ink: #171a14;
+  --ink-soft: #3f423a;
+  --ink-faint: #6a6c63;
   --rule: #d8d1c3;
   --accent: #a9784f;
 
@@ -100,6 +100,9 @@ body {
   font-size: 16px;
   line-height: 1.7;
   font-variant-numeric: lining-nums;
+  /* Bodoni 默认按字号自动选光学尺寸，标题字号大 → 发丝线极细，看着累眼。
+     统一锁在 18：保留高反差，细线粗一些。首页大标题自己设了 96，不受影响 */
+  font-variation-settings: 'opsz' 18;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
@@ -173,7 +176,7 @@ a {
   font-weight: 300;
   line-height: 2;
   letter-spacing: 0.02em;
-  color: #2b302a;
+  color: #1d201b;
 }
 
 .prose p {

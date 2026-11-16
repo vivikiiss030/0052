@@ -47,7 +47,7 @@ import zHand from '../assets/zen/hand-spiral.png';
 // depth 决定视差幅度（越「近」动得越多），ph 是漂浮的相位差
 const pieces = [
 
-  { k: 'caladium', src: caladium, alt: '粉脉彩叶芋', d: 1.0, ph: 0.0 },
+  { k: 'caladium', src: caladium, alt: '粉脉彩叶芋', d: 0.5, ph: 0.0 },
   { k: 'paleflower2', src: paleflower2, alt: '淡蓝色花', d: 0.35, ph: 1.7 },
   { k: 'nautilus2', src: nautilus2, alt: '鹦鹉螺壳', d: 0.3, ph: 1.1 },
   { k: 'star', src: star, alt: '金色星芒', d: 0.85, ph: 2.2 },
@@ -474,9 +474,12 @@ const nav = ['about', 'guide', 'readings'].map((k) => ({ href: url(lang, k), lab
           // 漂浮：周期约 20 秒，幅度 8–24px
           const amp = 8 + o.d * 16;
           const fx = Math.sin(t * 0.3 + o.ph) * amp;
-          const fy = Math.cos(t * 0.23 + o.ph) * amp * 0.75;
+          let fy = Math.cos(t * 0.23 + o.ph) * amp * 0.75;
+          // 彩叶芋只往下飘，不往上顶到语言切换
+          if (o.el.classList.contains('caladium')) fy = Math.abs(fy);
           // 视差：越「近」的元素随滚动上移越多
-          const py = -prog * 220 * o.d;
+          // 右上角的彩叶芋紧挨着语言切换，不让它随滚动往上飘
+          const py = o.el.classList.contains('caladium') ? 0 : -prog * 220 * o.d;
           const px = Math.sin(o.ph) * prog * 26 * o.d;
 
           // 被推开之后往回弹：弹簧 + 阻尼，晃两下就停
@@ -489,7 +492,9 @@ const nav = ['about', 'guide', 'readings'].map((k) => ({ href: url(lang, k), lab
           o.pop *= Math.pow(0.3, dt);
 
           o.el.style.setProperty('--tx', (fx + px + o.ox).toFixed(2) + 'px');
-          o.el.style.setProperty('--ty', (fy + py + o.oy).toFixed(2) + 'px');
+          let ty = fy + py + o.oy;
+          if (o.el.classList.contains('caladium')) ty = Math.max(0, ty);
+          o.el.style.setProperty('--ty', ty.toFixed(2) + 'px');
           o.el.style.setProperty('--rw', o.rw.toFixed(2) + 'deg');
           // 一起往后退一点，越近的退得越多；被碰到的瞬间还会鼓一下
           o.el.style.setProperty('--sc', (1 - ease * 0.09 * o.d + o.pop).toFixed(4));
@@ -578,7 +583,7 @@ const nav = ['about', 'guide', 'readings'].map((k) => ({ href: url(lang, k), lab
     font-variation-settings: 'opsz' 96;
     line-height: 0.84;
     letter-spacing: -0.025em;
-    color: #4e3933;
+    color: #3a2823;
     z-index: 2;
     transform: translate3d(0, var(--mty, 0px), 0);
     will-change: transform;
@@ -623,7 +628,7 @@ const nav = ['about', 'guide', 'readings'].map((k) => ({ href: url(lang, k), lab
     font-family: 'PingFang SC', -apple-system, 'Noto Sans SC Subset', 'Microsoft YaHei', sans-serif;
     font-weight: 600;
     letter-spacing: 0.05em;
-    color: #5a423c;
+    color: #432e29;
   }
 
   .vicky {
@@ -752,7 +757,7 @@ const nav = ['about', 'guide', 'readings'].map((k) => ({ href: url(lang, k), lab
     font-weight: 400;
     letter-spacing: 0.12em;
     line-height: 1;
-    color: #8a7370;
+    color: #6a5450;
     opacity: 0;
     pointer-events: none;
   }
@@ -850,7 +855,7 @@ const nav = ['about', 'guide', 'readings'].map((k) => ({ href: url(lang, k), lab
     font-family: var(--hero-serif);
     font-size: clamp(14px, 1.15vw, 17px);
     letter-spacing: 0.06em;
-    color: #5e4b47;
+    color: #45332f;
   }
 
   .topbar nav a:hover { color: var(--accent); }
@@ -863,7 +868,7 @@ const nav = ['about', 'guide', 'readings'].map((k) => ({ href: url(lang, k), lab
     font-size: clamp(12px, 1.05vw, 15px);
     font-style: italic;
     letter-spacing: 0.08em;
-    color: #5e4b47;
+    color: #45332f;
   }
 
   /* 左上角：这里是干什么的 */
@@ -873,7 +878,7 @@ const nav = ['about', 'guide', 'readings'].map((k) => ({ href: url(lang, k), lab
     font-size: clamp(14px, 1.15vw, 17px);
     font-style: italic;
     letter-spacing: 0.04em;
-    color: #5e4b47;
+    color: #45332f;
   }
 
   .intro-m { display: none; }
