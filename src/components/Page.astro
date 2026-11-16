@@ -361,9 +361,28 @@ const otherLang = lang === 'en' ? 'zh' : 'en';
     }, { rootMargin: '0px 0px -8% 0px' });
     blocks.forEach((b) => io.observe(b));
   }
+
+  // 正文一段一段往上浮出来：往下滑到哪一段，哪一段才出现
+  if (!reduce && 'IntersectionObserver' in window) {
+    const paras = document.querySelectorAll<HTMLElement>(
+      '.about-quote, .about-story p, .motto, .rules > li > h3, .rules > li > p, .rules > li > .steps-d, .healing-after, .menu-note'
+    );
+    const ro = new IntersectionObserver((entries) => {
+      entries.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('up'); ro.unobserve(e.target); } });
+    }, { rootMargin: '0px 0px -14% 0px' });
+    paras.forEach((el) => { el.classList.add('rise'); ro.observe(el); });
+  }
 </script>
 
 <style>
+  /* 一段一段浮出来（.rise 由脚本加上，没有脚本时文字照常显示） */
+  :global(.rise) {
+    opacity: 0;
+    transform: translateY(34px);
+    transition: opacity 0.9s ease, transform 1.1s cubic-bezier(0.2, 0.7, 0.2, 1);
+  }
+  :global(.rise.up) { opacity: 1; transform: none; }
+
   @property --amp { syntax: '<number>'; inherits: true; initial-value: 0; }
 
   /* ── 顶上一条丝缎 ───────────────────────────────────── */
