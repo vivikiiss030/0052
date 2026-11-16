@@ -277,5 +277,6 @@ export const doors = {
 // 荧光笔：文案里用 ==这样== 包起来的字，页面上会画一道粉色荧光笔
 export function hl(t) {
   const esc = String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-  return esc.replace(/==(.+?)==/g, '<mark class="hl">$1</mark>');
+  // 荧光笔高亮暂时关掉：==…== 标记保留在文案里，想恢复就把 '$1' 换回 '<mark class="hl">$1</mark>'
+  return esc.replace(/==(.+?)==/g, '$1');
 }

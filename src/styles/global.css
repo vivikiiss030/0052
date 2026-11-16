@@ -72,6 +72,8 @@
   --display: 'Instrument Serif', 'Noto Sans SC Subset', 'PingFang SC', serif;
   --didot: 'Bodoni Moda Variable', 'Bodoni 72', 'Didot', serif;
   /* 首屏上其他的小字（导航、左上角、底栏、语言切换）也用 Bodoni，中文落到苹方 */
+  /* 全大写、拉开字距的小标签：Jost（几何无衬线），和正文的衬线字明显区分 */
+  --label: 'Jost', 'PingFang SC', 'Noto Sans SC Subset', sans-serif;
   --hero-serif: 'Bodoni Moda Variable', 'Bodoni 72', 'PingFang SC', 'Noto Sans SC Subset', serif;
   --sans: 'Cormorant Body', 'Cormorant Garamond', Georgia, 'PingFang SC', serif;
   --cjk: 'Noto Sans SC Subset', 'PingFang SC', 'Source Han Sans SC', 'Microsoft YaHei', sans-serif;
@@ -133,9 +135,8 @@ a {
 /* ── 通用排版类 ───────────────────────────── */
 
 .label {
-  font-family: var(--hero-serif);
-    font-variation-settings: 'opsz' 11;
-    font-weight: 500;
+  font-family: var(--label);
+    font-weight: 400;
   font-size: 11px;
   letter-spacing: 0.28em;
   text-transform: uppercase;
