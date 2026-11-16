@@ -367,8 +367,20 @@ const otherLang = lang === 'en' ? 'zh' : 'en';
     const paras = document.querySelectorAll<HTMLElement>(
       '.about-quote, .about-story p, .motto, .rules > li > h3, .rules > li > p, .rules > li > .steps-d'
     );
-    const ro = new IntersectionObserver((entries) => {
-      entries.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('up'); ro.unobserve(e.target); } });
+    // 同时进入画面的几段排队，一段接一段地上来，而不是一起冒出来
+    const queue: Element[] = [];
+    let timer = 0;
+    const next = () => {
+      const el = queue.shift();
+      if (!el) { timer = 0; return; }
+      el.classList.add('up');
+      timer = window.setTimeout(next, 420);
+    };
+    const ro = new IntersectionObserver((es) => {
+      es.filter((e) => e.isIntersecting)
+        .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top)
+        .forEach((e) => { queue.push(e.target); ro.unobserve(e.target); });
+      if (!timer) next();
     }, { rootMargin: '0px 0px -14% 0px' });
     paras.forEach((el) => { el.classList.add('rise'); ro.observe(el); });
   }
@@ -379,7 +391,7 @@ const otherLang = lang === 'en' ? 'zh' : 'en';
   :global(.rise) {
     opacity: 0;
     transform: translateY(34px);
-    transition: opacity 0.9s ease, transform 1.1s cubic-bezier(0.2, 0.7, 0.2, 1);
+    transition: opacity 1.2s ease, transform 1.4s cubic-bezier(0.2, 0.7, 0.2, 1);
   }
   :global(.rise.up) { opacity: 1; transform: none; }
 

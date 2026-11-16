@@ -369,7 +369,21 @@ const nav = ['about', 'guide', 'readings'].map((k) => ({ href: url(lang, k), lab
       blocks.forEach((b) => io.observe(b));
       // 自留地这段：正文一段一段往上浮出来，滑到哪段出现哪段
       const paras = document.querySelectorAll<HTMLElement>('#space .space-title, #space .prose-t p');
-      const ro = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('up'); ro.unobserve(e.target); } }), { rootMargin: '0px 0px -14% 0px' });
+      // 同时进入画面的几段排队，一段接一段地上来，而不是一起冒出来
+      const queue: Element[] = [];
+      let timer = 0;
+      const next = () => {
+        const el = queue.shift();
+        if (!el) { timer = 0; return; }
+        el.classList.add('up');
+        timer = window.setTimeout(next, 420);
+      };
+      const ro = new IntersectionObserver((es) => {
+        es.filter((e) => e.isIntersecting)
+          .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top)
+          .forEach((e) => { queue.push(e.target); ro.unobserve(e.target); });
+        if (!timer) next();
+      }, { rootMargin: '0px 0px -14% 0px' });
       paras.forEach((el) => { el.classList.add('rise'); ro.observe(el); });
     }
   }
@@ -536,7 +550,7 @@ const nav = ['about', 'guide', 'readings'].map((k) => ({ href: url(lang, k), lab
   :global(.rise) {
     opacity: 0;
     transform: translateY(34px);
-    transition: opacity 0.9s ease, transform 1.1s cubic-bezier(0.2, 0.7, 0.2, 1);
+    transition: opacity 1.2s ease, transform 1.4s cubic-bezier(0.2, 0.7, 0.2, 1);
   }
   :global(.rise.up) { opacity: 1; transform: none; }
   @property --amp { syntax: '<number>'; inherits: true; initial-value: 0; }
