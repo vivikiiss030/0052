@@ -16,7 +16,7 @@ export const T = {
     },
     nav: [
       { href: '#about', label: 'About me' },
-      { href: '#how', label: 'Good to know' },
+      { href: '#how', label: 'Keys to know' },
       { href: '#readings', label: 'Readings' },
       { href: '#book', label: 'Book' },
     ],
@@ -45,7 +45,7 @@ export const T = {
       motto: 'Let the cards reveal. Let yourself decide.',
     },
     how: {
-      kicker: 'Good to know',
+      kicker: 'Keys to know',
       title: ['A reading isn’t a final ending.', 'It’s a way of seeing yourself.'],
       items: [
         { t: 'What tarot can answer', b: ['Tarot works best with questions that have a clear timeframe, usually ==within the next 3 to 6 months==, or sooner. It isn’t the right tool for long-range questions; for your long-term fortune, astrology or other systems will serve you better (but dw, I’m already learning! Stay tuned!)'] },
@@ -243,7 +243,7 @@ export const order = ['about', 'guide', 'readings'];
 export const pageMeta = {
   en: {
     about: { n: 'I', title: 'About me', nav: 'About me' },
-    guide: { n: 'II', title: 'Good to know', nav: 'Good to know' },
+    guide: { n: 'II', title: 'Keys to know', nav: 'Keys to know' },
     readings: { n: 'III', title: 'Readings', nav: 'Readings' },
   },
   zh: {

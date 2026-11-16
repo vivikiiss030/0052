@@ -22,7 +22,7 @@ import bubbles from '../assets/zen/bubbles.png';
 const { k = 0, title = '', class: cls = '' } = Astro.props;
 const i = Number(k);
 const roman = ['I', 'II', 'III'][i];
-// 牌名太长时（英文 GOOD TO KNOW）分两行
+// 牌名太长时（英文 KEYS TO KNOW）分两行
 const words = String(title).split(' ');
 const lines = words.length > 2 ? [words.slice(0, 2).join(' '), words.slice(2).join(' ')] : [String(title)];
 ---
