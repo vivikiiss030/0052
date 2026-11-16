@@ -109,10 +109,10 @@ const otherLang = lang === 'en' ? 'zh' : 'en';
             <h3>{it.t}</h3>
             {it.steps && (
               <details class="steps-d">
-                <summary><span class="steps-halo" aria-hidden="true"></span><span class="steps-s">{it.stepsLabel}</span><span class="steps-pm" aria-hidden="true"></span><span class="steps-tw" aria-hidden="true" style="--z:14px;--d:0s;left:30%;top:-6px">✦</span><span class="steps-tw" aria-hidden="true" style="--z:10px;--d:-1.1s;left:62%;bottom:-4px">✦</span><span class="steps-tw" aria-hidden="true" style="--z:13px;--d:-2.2s;right:-14px;top:-4px">✦</span></summary>
-                <ol class="steps">
+                <summary><span class="steps-fx" aria-hidden="true"><span class="steps-halo"></span><span class="steps-tw" style="--z:14px;--d:0s;left:30%;top:-6px">✦</span><span class="steps-tw" style="--z:10px;--d:-1.1s;left:62%;bottom:-4px">✦</span><span class="steps-tw" style="--z:13px;--d:-2.2s;right:-14px;top:-4px">✦</span></span><span class="steps-s">{it.stepsLabel}</span><span class="steps-pm" aria-hidden="true"></span></summary>
+                <div class="steps-wrap"><ol class="steps">
                   {it.steps.map((t, j) => <li><span class="step-n">{lang === 'en' ? `Step ${j + 1}` : `第${'一二三四五六七八九'[j]}步`}</span><span class="step-t" set:html={hl(t)} /></li>)}
-                </ol>
+                </ol></div>
               </details>
             )}
             {it.b.map((t) => <p set:html={hl(t)} />)}
@@ -263,8 +263,9 @@ const otherLang = lang === 'en' ? 'zh' : 'en';
   // 流程步骤：点击时慢慢滑开 / 收起，而不是一下子跳出来
   for (const d of document.querySelectorAll<HTMLDetailsElement>('.steps-d')) {
     const sum = d.querySelector('summary');
-    const list = d.querySelector<HTMLElement>('.steps');
-    if (!sum || !list) continue;
+    const list = d.querySelector<HTMLElement>('.steps-wrap');
+    const inner = d.querySelector<HTMLElement>('.steps');
+    if (!sum || !list || !inner) continue;
     let busy = false;
     sum.addEventListener('click', (e) => {
       e.preventDefault();
@@ -274,10 +275,12 @@ const otherLang = lang === 'en' ? 'zh' : 'en';
       if (!d.open) {
         d.open = true;
         const h = list.scrollHeight;
-        list.animate([{ height: '0px', opacity: 0 }, { height: h + 'px', opacity: 1 }], { duration: 620, easing: 'cubic-bezier(0.22, 0.61, 0.36, 1)' }).onfinish = () => { busy = false; };
+        list.animate([{ height: '0px' }, { height: h + 'px' }], { duration: 560, easing: 'cubic-bezier(0.25, 0.8, 0.3, 1)' }).onfinish = () => { busy = false; };
+        inner.animate([{ opacity: 0, transform: 'translateY(-10px)' }, { opacity: 1, transform: 'none' }], { duration: 560, easing: 'cubic-bezier(0.25, 0.8, 0.3, 1)' });
       } else {
         const h = list.offsetHeight;
-        list.animate([{ height: h + 'px', opacity: 1 }, { height: '0px', opacity: 0 }], { duration: 480, easing: 'cubic-bezier(0.4, 0, 0.2, 1)' }).onfinish = () => { d.open = false; busy = false; };
+        inner.animate([{ opacity: 1, transform: 'none' }, { opacity: 0, transform: 'translateY(-10px)' }], { duration: 420, easing: 'ease', fill: 'forwards' });
+        list.animate([{ height: h + 'px' }, { height: '0px' }], { duration: 440, easing: 'cubic-bezier(0.4, 0, 0.2, 1)' }).onfinish = () => { d.open = false; busy = false; inner.getAnimations().forEach((a) => a.cancel()); };
       }
     });
   }
@@ -589,6 +592,7 @@ const otherLang = lang === 'en' ? 'zh' : 'en';
     pointer-events: none;
     z-index: 0;
     filter: drop-shadow(0 8px 12px rgba(96, 60, 48, 0.2));
+    will-change: transform;
   }
   #content > :not(.zen) { position: relative; z-index: 1; }
 
@@ -1033,24 +1037,24 @@ const otherLang = lang === 'en' ? 'zh' : 'en';
   /* 收起时：像首页店名那样——字后面一团粉金色的柔光慢慢呼吸，
      字本身带一圈淡淡的光晕，旁边几颗小星错开闪。展开后全部收起 */
   .steps-d summary { position: relative; isolation: isolate; }
+  /* 光和星星装在一层里：展开时整层慢慢淡出，不是一下子消失（一下子消失看着像抖了一下） */
+  .steps-fx { position: absolute; inset: 0; z-index: -1; pointer-events: none; opacity: 1; transition: opacity 0.5s ease; }
+  .steps-d[open] .steps-fx { opacity: 0; }
   .steps-halo, .steps-tw { display: none; }
   @media (prefers-reduced-motion: no-preference) {
-    .steps-d:not([open]) .steps-halo {
+    .steps-halo {
       display: block;
       position: absolute;
       inset: -70% -10% -60%;
-      z-index: -1;
       border-radius: 50%;
       background:
         radial-gradient(closest-side at 45% 50%, rgba(255, 250, 238, 0.95), rgba(244, 226, 196, 0.42) 50%, rgba(244, 226, 196, 0) 80%),
         radial-gradient(closest-side at 74% 58%, rgba(246, 210, 204, 0.38), rgba(246, 210, 204, 0) 72%);
       filter: blur(12px);
-      pointer-events: none;
+      will-change: transform, opacity;
       animation: steps-halo 6s ease-in-out infinite;
     }
-    .steps-d:not([open]) .steps-s,
-    .steps-d:not([open]) .steps-pm { animation: steps-breathe 6s ease-in-out infinite; }
-    .steps-d:not([open]) .steps-tw {
+    .steps-tw {
       display: block;
       position: absolute;
       z-index: 2;
@@ -1059,18 +1063,20 @@ const otherLang = lang === 'en' ? 'zh' : 'en';
       color: #d9a44e;
       text-shadow: 0 0 3px rgba(255, 248, 225, 1), 0 0 9px rgba(226, 178, 90, 0.9);
       opacity: 0;
-      pointer-events: none;
       animation: steps-twinkle 3.2s ease-in-out infinite;
       animation-delay: var(--d);
     }
+    /* 字只做光晕的呼吸，不上下浮动（手机上 1px 的浮动看着像在抖） */
+    .steps-d:not([open]) .steps-s { animation: steps-breathe 6s ease-in-out infinite; }
+    .steps-d[open] .steps-halo, .steps-d[open] .steps-tw { animation-play-state: paused; }
   }
   @keyframes steps-halo {
     0%, 100% { opacity: 0.4; transform: scale(0.94); translate: 0 0; }
     50% { opacity: 1; transform: scale(1.05); translate: 1.5% -4%; }
   }
   @keyframes steps-breathe {
-    0%, 100% { transform: translateY(0); text-shadow: 0 0 0 rgba(255, 253, 246, 0); }
-    50% { transform: translateY(-1.5px); text-shadow: 0 0 6px rgba(255, 251, 240, 1), 0 0 18px rgba(232, 206, 166, 0.45); }
+    0%, 100% { text-shadow: 0 0 0 rgba(255, 253, 246, 0); }
+    50% { text-shadow: 0 0 6px rgba(255, 251, 240, 1), 0 0 18px rgba(232, 206, 166, 0.45); }
   }
   @keyframes steps-twinkle {
     0%, 100% { opacity: 0; transform: scale(0.3) rotate(0deg); }
@@ -1081,8 +1087,8 @@ const otherLang = lang === 'en' ? 'zh' : 'en';
     list-style: none;
     margin: 0;
     padding: 0.5em 0 0;
-    overflow: hidden;
   }
+  .steps-wrap { overflow: hidden; }
   .step-n:lang(zh) { font-family: var(--cjk); font-style: normal; font-size: 13px; letter-spacing: 0.08em; }
   .steps li {
     display: grid;
