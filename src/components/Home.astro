@@ -367,24 +367,37 @@ const nav = ['about', 'guide', 'readings'].map((k) => ({ href: url(lang, k), lab
     else {
       const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }), { rootMargin: '0px 0px -10% 0px' });
       blocks.forEach((b) => io.observe(b));
-      // 自留地这段：正文一段一段往上浮出来，滑到哪段出现哪段
-      const paras = document.querySelectorAll<HTMLElement>('#space .space-title, #space .prose-t p');
-      // 同时进入画面的几段排队，一段接一段地上来，而不是一起冒出来
-      const queue: Element[] = [];
-      let timer = 0;
-      const next = () => {
-        const el = queue.shift();
-        if (!el) { timer = 0; return; }
-        el.classList.add('up');
-        timer = window.setTimeout(next, 420);
+      // 跟着下拉走的浮现：段落顶端从屏幕底部升到屏幕 60% 高度这一路上，
+      // 透明度和位置随滚动一点点变化（往回滑也会跟着退回去），再加一点缓动让它更平缓
+      const scrub = (els: NodeListOf<HTMLElement>) => {
+        const items = [...els].map((el) => ({ el, cur: -1 }));
+        items.forEach((it) => it.el.classList.add('scrub'));
+        let raf = 0;
+        const tick = () => {
+          raf = 0;
+          const vh = window.innerHeight;
+          let moving = false;
+          for (const it of items) {
+            const top = it.el.getBoundingClientRect().top;
+            const t = Math.min(1, Math.max(0, (vh - top) / (vh * 0.4)));
+            if (it.cur < 0) it.cur = t;
+            else it.cur += (t - it.cur) * 0.12;
+            if (Math.abs(t - it.cur) > 0.002) moving = true;
+            else it.cur = t;
+            const e = 1 - Math.pow(1 - it.cur, 2);
+            it.el.style.opacity = e.toFixed(3);
+            it.el.style.transform = `translate3d(0, ${((1 - e) * 56).toFixed(1)}px, 0)`;
+          }
+          if (moving) raf = requestAnimationFrame(tick);
+        };
+        const kick = () => { if (!raf) raf = requestAnimationFrame(tick); };
+        addEventListener('scroll', kick, { passive: true });
+        addEventListener('resize', kick);
+        if ('ResizeObserver' in window) new ResizeObserver(kick).observe(document.body); // 展开七步骤等让页面变长时也重算
+        tick();
       };
-      const ro = new IntersectionObserver((es) => {
-        es.filter((e) => e.isIntersecting)
-          .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top)
-          .forEach((e) => { queue.push(e.target); ro.unobserve(e.target); });
-        if (!timer) next();
-      }, { rootMargin: '0px 0px -14% 0px' });
-      paras.forEach((el) => { el.classList.add('rise'); ro.observe(el); });
+
+      scrub(document.querySelectorAll<HTMLElement>('#space .space-title, #space .prose-t p'));
     }
   }
 
@@ -553,6 +566,7 @@ const nav = ['about', 'guide', 'readings'].map((k) => ({ href: url(lang, k), lab
     transition: opacity 1.2s ease, transform 1.4s cubic-bezier(0.2, 0.7, 0.2, 1);
   }
   :global(.rise.up) { opacity: 1; transform: none; }
+  :global(.scrub) { will-change: opacity, transform; }
   @property --amp { syntax: '<number>'; inherits: true; initial-value: 0; }
 
   /* ── 第一屏：丝缎为地的拼贴 ───────────────── */
